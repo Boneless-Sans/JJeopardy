@@ -1,6 +1,10 @@
 {
-  "numColumns": 6,
-  "numRows": 5,
+  "numColumns": {
+    "count": 6
+  },
+  "numRows": {
+    "count": 5
+  },
 
   "column_1": {
     "title": "Game Knowledge",
@@ -10,6 +14,13 @@
       "row_3": 500,
       "row_4": 800,
       "row_5": 1000
+    },
+    "questions": {
+      "row_1": "what is the CocoaPods",
+      "row_2": "Nigger",
+      "row_3": "Fang",
+      "row_4": "sus",
+      "row_5": "gussy"
     }
   },
   "column_2": {

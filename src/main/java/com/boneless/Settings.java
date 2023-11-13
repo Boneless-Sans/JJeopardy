@@ -6,15 +6,13 @@ import com.boneless.util.NormalButtons;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.boneless.Launcher.buttonSettings;
-import static com.boneless.Launcher.frame;
+import static com.boneless.Launcher.*;
 
 public class Settings extends JFrame{
     public Settings(){
         setSize(500,500);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         NormalButtons.set();
 
         JPanel title = new JPanel(new FlowLayout());
@@ -31,8 +29,7 @@ public class Settings extends JFrame{
 
         JButton exit = new JButton("exit");
         exit.addActionListener(e -> {
-            buttonSettings.setEnabled(true);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            changeButtonState(true);
             dispose();
         });
 

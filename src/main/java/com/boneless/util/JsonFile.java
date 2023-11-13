@@ -1,5 +1,6 @@
 package com.boneless.util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -15,23 +16,93 @@ public class JsonFile {
             JSONObject jsonObject = new JSONObject(tokener);
 
             if (jsonObject.has(mainKey)) {
-                JSONObject valuesObject = jsonObject.getJSONObject(mainKey);
+                Object mainValue = jsonObject.get(mainKey);
 
-                if (valuesObject.has(valueKey)) {
-                    return valuesObject.getString(valueKey);
+                if (mainValue instanceof JSONObject) {
+                    JSONObject valuesObject = (JSONObject) mainValue;
+
+                    if (valuesObject.has(valueKey)) {
+                        Object value = valuesObject.get(valueKey);
+
+                        // Check the type of value and handle accordingly
+                        if (value instanceof String) {
+                            return (String) value;
+                        } else if (value instanceof Number) {
+                            return String.valueOf(value);
+                        } else {
+                            return "invalid value type";
+                        }
+                    } else {
+                        return "invalid key";
+                    }
                 } else {
-                    return "invalid key";
+                    return "invalid mainKey type";
                 }
             } else {
-                return "invalid mainKey";
+                return "-1"; // Return a sentinel value for invalid mainKey
             }
 
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return "invalid key";
     }
+    public static String readWithThreeKeys(String filename, String mainKey, String subKey, String valueKey) {
+        try (Reader reader = new FileReader(getFilePath(filename))) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+
+            if (jsonObject.has(mainKey)) {
+                Object mainValue = jsonObject.get(mainKey);
+
+                if (mainValue instanceof JSONObject) {
+                    JSONObject subObject = (JSONObject) mainValue;
+
+                    if (subObject.has(subKey)) {
+                        Object valuesObject = subObject.get(subKey);
+
+                        if (valuesObject instanceof JSONObject) {
+                            JSONObject valueObject = (JSONObject) valuesObject;
+
+                            if (valueObject.has(valueKey)) {
+                                Object value = valueObject.get(valueKey);
+
+                                // Check the type of value and handle accordingly
+                                if (value instanceof String) {
+                                    return (String) value;
+                                } else if (value instanceof Number) {
+                                    return String.valueOf(value);
+                                } else {
+                                    return "invalid value type";
+                                }
+                            } else {
+                                return "invalid key";
+                            }
+                        } else {
+                            return "invalid subKey type";
+                        }
+                    } else {
+                        return "invalid subKey";
+                    }
+                } else {
+                    return "invalid mainKey type";
+                }
+            } else {
+                return "-1"; // Return a sentinel value for invalid mainKey
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return "invalid key";
+    }
+
 
     public static void writeln(String filename, String mainKey, String valueKey, String value) {
         try {

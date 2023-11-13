@@ -1,13 +1,18 @@
 package com.boneless;
 
+import com.boneless.util.JsonFile;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class Game {
-    private String fileName;
+    private String fileName = "main_board.json";
     private int pointsToAdd;
     public Game(){
-        fileName = "main_board.json";
+        initUI();
+    }
+    public Game(boolean no){
+        //
     }
     private void initUI(){
         JFrame frame = new JFrame();
@@ -21,15 +26,37 @@ public class Game {
 
         JPanel teams = createTeamsPanel();
 
-        frame.add(gameBoard, BorderLayout.CENTER);
+        frame.add(createBoard(fileName), BorderLayout.CENTER);
         frame.add(teams, BorderLayout.SOUTH);
         frame.setVisible(true);
     }
-    private JPanel createBoard(){
+    private JPanel createBoard(String fileName) {
         JPanel gameBoard = new JPanel();
-        gameBoard.setPreferredSize(new Dimension(0,300));
+        //gameBoard.setPreferredSize(new Dimension(0,300));
         //gameBoard.setBackground();
+        int sizeX = Integer.parseInt(JsonFile.read(getFileName(), "numColumns", "count"));
+        int sizeY = Integer.parseInt(JsonFile.read(getFileName(), "numRows", "count"));
+
+        System.out.println("\n" + sizeX + "\n" + sizeY + "\n");
+
+        GridLayout board = new GridLayout(sizeX, sizeY);
+        gameBoard.setLayout(board);
+
+//        for (int i = 1; i <= 30; i++) {
+//            JButton button = new JButton("Button " + i);
+//            gameBoard.add(button);
+//        }
+
+        gameBoard.add(createButton(fileName, sizeX, sizeY));
         return gameBoard;
+    }
+    private JButton createButton(String filename, int maxColumn, int maxRow){
+        JButton button = new JButton();
+        for(int i = 1; i <= maxColumn; i++){
+            button = new JButton(JsonFile.readWithThreeKeys(filename, "column_1", "questions", "row_" + i));
+        }
+        System.out.println(JsonFile.readWithThreeKeys(filename, "column_1", "questions", "row_1"));
+        return button;
     }
     private JPanel createTeamsPanel(){
         JPanel teams = new JPanel();
