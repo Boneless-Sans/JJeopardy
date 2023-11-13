@@ -1,11 +1,12 @@
 {
-  "numColumns": {
-    "count": 6
+  "data": {
+    "title": "Test",
+    "font_size": 20,
+    "font_name": "Arial",
+    "font_type": "Font.PLAIN",
+    "columns": 6,
+    "rows": 5
   },
-  "numRows": {
-    "count": 5
-  },
-
   "column_1": {
     "title": "Game Knowledge",
     "points": {
@@ -16,11 +17,11 @@
       "row_5": 1000
     },
     "questions": {
-      "row_1": "what is the CocoaPods",
-      "row_2": "Nigger",
-      "row_3": "Fang",
-      "row_4": "sus",
-      "row_5": "gussy"
+      "row_1": "c1 Question 1",
+      "row_2": "c1 Question 2",
+      "row_3": "c1 Question 3",
+      "row_4": "c1 Question 4",
+      "row_5": "c1 Question 5"
     }
   },
   "column_2": {
@@ -31,6 +32,13 @@
       "row_3": 500,
       "row_4": 800,
       "row_5": 1000
+    },
+    "questions": {
+      "row_1": "c2 Question 1",
+      "row_2": "c2 Question 2",
+      "row_3": "c2 Question 3",
+      "row_4": "c2 Question 4",
+      "row_5": "c2 Question 5"
     }
   },
   "column_3": {
@@ -41,6 +49,13 @@
       "row_3": 500,
       "row_4": 800,
       "row_5": 1000
+    },
+    "questions": {
+      "row_1": "c3 Question 1",
+      "row_2": "c3 Question 2",
+      "row_3": "c3 Question 3",
+      "row_4": "c3 Question 4",
+      "row_5": "c3 Question 5"
     }
   },
   "column_4": {
@@ -51,6 +66,13 @@
       "row_3": 500,
       "row_4": 800,
       "row_5": 1000
+    },
+    "questions": {
+      "row_1": "c4 Question 1",
+      "row_2": "c4 Question 2",
+      "row_3": "c4 Question 3",
+      "row_4": "c4 Question 4",
+      "row_5": "c4 Question 5"
     }
   },
   "column_5": {
@@ -61,6 +83,13 @@
       "row_3": 500,
       "row_4": 800,
       "row_5": 1000
+    },
+    "questions": {
+      "row_1": "c5 Question 1",
+      "row_2": "c5 Question 2",
+      "row_3": "c5 Question 3",
+      "row_4": "c5 Question 4",
+      "row_5": "c5 Question 5"
     }
   },
   "column_6": {
@@ -71,6 +100,13 @@
       "row_3": 500,
       "row_4": 800,
       "row_5": 1000
+    },
+    "questions": {
+      "row_1": "c6 Question 1",
+      "row_2": "c6 Question 2",
+      "row_3": "c6 Question 3",
+      "row_4": "c6 Question 4",
+      "row_5": "c6 Question 5"
     }
   }
 }
