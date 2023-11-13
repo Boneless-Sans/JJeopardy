@@ -1,0 +1,65 @@
+{
+  "numColumns": 6,
+  "numRows": 5,
+
+  "column_1": {
+    "title": "Game Knowledge",
+    "points": {
+      "row_1": 200,
+      "row_2": 400,
+      "row_3": 500,
+      "row_4": 800,
+      "row_5": 1000
+    }
+  },
+  "column_2": {
+    "title": "Code Knowledge",
+    "points": {
+      "row_1": 200,
+      "row_2": 400,
+      "row_3": 500,
+      "row_4": 800,
+      "row_5": 1000
+    }
+  },
+  "column_3": {
+    "title": "Insert_title",
+    "points": {
+      "row_1": 200,
+      "row_2": 400,
+      "row_3": 500,
+      "row_4": 800,
+      "row_5": 1000
+    }
+  },
+  "column_4": {
+    "title": "Insert_title",
+    "points": {
+      "row_1": 200,
+      "row_2": 400,
+      "row_3": 500,
+      "row_4": 800,
+      "row_5": 1000
+    }
+  },
+  "column_5": {
+    "title": "Insert_title",
+    "points": {
+      "row_1": 200,
+      "row_2": 400,
+      "row_3": 500,
+      "row_4": 800,
+      "row_5": 1000
+    }
+  },
+  "column_6": {
+    "title": "Insert_title",
+    "points": {
+      "row_1": 200,
+      "row_2": 400,
+      "row_3": 500,
+      "row_4": 800,
+      "row_5": 1000
+    }
+  }
+}
