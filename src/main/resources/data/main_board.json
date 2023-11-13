@@ -22,6 +22,13 @@
       "row_3": "c1 Question 3",
       "row_4": "c1 Question 4",
       "row_5": "c1 Question 5"
+    },
+    "answers": {
+      "row_1": "c1 Answer 1",
+      "row_2": "c1 Answer 2",
+      "row_3": "c1 Answer 3",
+      "row_4": "c1 Answer 4",
+      "row_5": "c1 Answer 5"
     }
   },
   "column_2": {
@@ -39,6 +46,13 @@
       "row_3": "c2 Question 3",
       "row_4": "c2 Question 4",
       "row_5": "c2 Question 5"
+    },
+    "answers": {
+      "row_1": "c2 Answer 1",
+      "row_2": "c2 Answer 2",
+      "row_3": "c2 Answer 3",
+      "row_4": "c2 Answer 4",
+      "row_5": "c2 Answer 5"
     }
   },
   "column_3": {
@@ -56,6 +70,13 @@
       "row_3": "c3 Question 3",
       "row_4": "c3 Question 4",
       "row_5": "c3 Question 5"
+    },
+    "answers": {
+      "row_1": "c3 Answer 1",
+      "row_2": "c3 Answer 2",
+      "row_3": "c3 Answer 3",
+      "row_4": "c3 Answer 4",
+      "row_5": "c3 Answer 5"
     }
   },
   "column_4": {
@@ -73,6 +94,13 @@
       "row_3": "c4 Question 3",
       "row_4": "c4 Question 4",
       "row_5": "c4 Question 5"
+    },
+    "answers": {
+      "row_1": "c4 Answer 1",
+      "row_2": "c4 Answer 2",
+      "row_3": "c4 Answer 3",
+      "row_4": "c4 Answer 4",
+      "row_5": "c4 Answer 5"
     }
   },
   "column_5": {
@@ -90,6 +118,13 @@
       "row_3": "c5 Question 3",
       "row_4": "c5 Question 4",
       "row_5": "c5 Question 5"
+    },
+    "answers": {
+      "row_1": "c5 Answer 1",
+      "row_2": "c5 Answer 2",
+      "row_3": "c5 Answer 3",
+      "row_4": "c5 Answer 4",
+      "row_5": "c5 Answer 5"
     }
   },
   "column_6": {
@@ -107,6 +142,13 @@
       "row_3": "c6 Question 3",
       "row_4": "c6 Question 4",
       "row_5": "c6 Question 5"
+    },
+    "answers": {
+      "row_1": "c6 Answer 1",
+      "row_2": "c6 Answer 2",
+      "row_3": "c6 Answer 3",
+      "row_4": "c6 Answer 4",
+      "row_5": "c6 Answer 5"
     }
   }
 }

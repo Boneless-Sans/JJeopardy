@@ -4,6 +4,8 @@ import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class Game {
@@ -48,11 +50,6 @@ public class Game {
         GridLayout board = new GridLayout(sizeX, sizeY);
         gameBoard.setLayout(board);
 
-//        for (int i = 1; i <= 30; i++) {
-//            JButton button = new JButton("Button " + i);
-//            gameBoard.add(button);
-//        }
-
         JButton[] buttons = createTitles(fileName, sizeX, sizeY);
         JButton[] rowOne = createRows(fileName, sizeX, sizeY);
         for (JButton button : buttons) {
@@ -78,17 +75,68 @@ public class Game {
         }
         return buttons;
     }
-    public JButton[] createRows(String filename, int sizeX, int sizeY){
-        String[] rowOne = new String[sizeX];
-        for(int i = 1; i <= sizeX; i++){
-            rowOne[i-1] = JsonFile.readWithThreeKeys(filename, "column_" + i, "questions","row_" + i);
+    public JButton[] createRows(String filename, int sizeX, int sizeY) {
+        String[] rowData = new String[sizeX * sizeY];
+
+        for (int row = 1; row <= sizeY; row++) {
+            for (int column = 1; column <= sizeX; column++) {
+                // Assuming JsonFile.readWithThreeKeys returns a single string for each column and row
+                String columnData = JsonFile.readWithThreeKeys(filename, "column_" + column, "questions", "row_" + row);
+
+                // Calculate the array index for the current row and column
+                int arrayIndex = (row - 1) * sizeX + (column - 1);
+
+                // Ensure that the arrayIndex is within bounds
+                if (arrayIndex < rowData.length) {
+                    // Do something with rowData (e.g., store it in an array)
+                    rowData[arrayIndex] = columnData;
+                } else {
+                    System.err.println("Index out of bounds: " + arrayIndex);
+                }
+            }
         }
 
-        JButton[] buttons = new JButton[sizeX];
-        for(int i = 0; i < sizeX; i++){
-            buttons[i] = new JButton(rowOne[i]);
+        JButton[] buttons = new JButton[sizeX * sizeY];
+        for (int row = 1; row <= sizeY; row++) {
+            for (int column = 1; column <= sizeX; column++) {
+                int arrayIndex = (row - 1) * sizeX + (column - 1);
+                String buttonName = "Button_" + row + "_" + column;
+
+                buttons[arrayIndex] = new JButton(rowData[arrayIndex]);
+                buttons[arrayIndex].setName(buttonName);
+                buttons[arrayIndex].addActionListener(new ButtonActionListener(row, column));
+            }
         }
+
         return buttons;
+    }
+
+    // ActionListener for the buttons
+    private class ButtonActionListener implements ActionListener {
+        private int row;
+        private int column;
+
+        public ButtonActionListener(int row, int column) {
+            this.row = row;
+            this.column = column;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Open a new JFrame with parameters row and column
+            JFrame newFrame = new JFrame("New Frame - Row: " + row + ", Column: " + column);
+            newFrame.setSize(300, 200);
+            newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            JButton questionText = new JButton(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "questions", "row_" + row));
+            newFrame.add(questionText);
+            questionText.addActionListener(a -> {
+                JLabel answerText = new JLabel(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "answers", "row_" + row));
+
+                newFrame.remove(questionText);
+            });
+
+            newFrame.setVisible(true);
+        }
     }
 
 
