@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Game {
+    private String fileName;
+    private int pointsToAdd;
+    public Game(){
+        fileName = "main_board.json";
+    }
     private void initUI(){
         JFrame frame = new JFrame();
         frame.setSize(500,500);
@@ -32,5 +37,12 @@ public class Game {
         teams.setBackground(Color.red);
 
         return teams;
+    }
+    public void setFileName(String file){
+        this.fileName = file;
+    }
+
+    public String getFileName(){
+        return fileName;
     }
 }
