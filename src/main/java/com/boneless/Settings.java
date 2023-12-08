@@ -1,7 +1,6 @@
 package com.boneless;
 
-import com.boneless.util.JsonFile;
-import com.boneless.util.NormalButtons;
+import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +12,7 @@ public class Settings extends JFrame{
         setSize(500,500);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        NormalButtons.set();
+        SystemUI.set();
 
         JPanel title = new JPanel(new FlowLayout());
         title.setSize(new Dimension());

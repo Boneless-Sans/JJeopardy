@@ -1,14 +1,11 @@
 package com.boneless;
 
-import com.boneless.util.AudioPlayer;
-import com.boneless.util.NormalButtons;
-import org.json.JSONObject;
+import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
-import java.util.Set;
 
 public class Launcher{
     public static JButton buttonStart;
@@ -18,6 +15,7 @@ public class Launcher{
 
     public static JFrame frame;
     public static void main(String[] args){
+        SystemUI.set();
         Game game = new Game(false);
         //create frame
         frame = new JFrame();
