@@ -1,4 +1,7 @@
 {
-  "backgroundColor": {"color": "#FF0000"},
+  "colors": {
+    "background": "55, 64, 152",
+    "buttons": "55, 64, 152"
+  },
   "newKey": "#FF0000"
 }

@@ -2,35 +2,47 @@ package com.boneless;
 
 import com.boneless.util.JsonFile;
 
+import javax.imageio.plugins.tiff.TIFFDirectory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Queue;
 
 public class Game {
-    private String fileName = "main_board.json";
-    private int pointsToAdd;
+    private String fileName = "dev_board.json";
+    private JFrame frame;
+    private static boolean canOpen = true;
+    private static final Color[] colors = JsonFile.readColorArray("gameData.json","colors");
+    private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
+
+    private static final Color buttonColor = colors != null ? colors[0] : null;
+    private static final Color backgroundColor = colors != null ? colors[1] : null;
+
+    public boolean playAudio = true;
     public Game(){
-        initUI();
+
     }
-    public Game(boolean no){
-        //
-    }
-    private void initUI(){
-        JFrame frame = new JFrame();
-        frame.setSize(500,500);
+    public void initUI(){
+        frame = new JFrame();
+        frame.setSize(1280,720);
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setUndecorated(true);
+        frame.setLocationRelativeTo(null);
 
         JPanel title = new JPanel(new FlowLayout());
-        JLabel titleText = new JLabel(JsonFile.read(getFileName(), "data", "title"));
-        titleText.setFont(new Font(JsonFile.read(getFileName(), "data", "font_name"), Font.PLAIN, Integer.parseInt(JsonFile.read(getFileName(), "data", "font_size"))));
+        JLabel titleText = new JLabel();
+        titleText.setText(JsonFile.read(getFileName(), "data", "title"));
+        titleText.setFont(new Font(textFont, Font.PLAIN, 25));
         title.add(titleText);
 
         JPanel gameBoard = new JPanel(new GridLayout());
         gameBoard.setPreferredSize(new Dimension(0,300));
-        gameBoard.setBackground(Color.BLUE);
+        gameBoard.setBackground(backgroundColor);
 
         JPanel teams = createTeamsPanel();
 
@@ -45,20 +57,31 @@ public class Game {
         int sizeX = Integer.parseInt(JsonFile.read(fileName, "data", "columns"));
         int sizeY = Integer.parseInt(JsonFile.read(fileName, "data", "rows"));
 
-        System.out.println("\n" + sizeX + "\n" + sizeY + "\n");
-
         GridLayout board = new GridLayout(sizeX, sizeY);
         gameBoard.setLayout(board);
 
         JButton[] buttons = createTitles(fileName, sizeX, sizeY);
         JButton[] rowOne = createRows(fileName, sizeX, sizeY);
+
         for (JButton button : buttons) {
+            button.setFont(new Font(textFont, Font.PLAIN, 20));
+            button.setFocusable(false);
+            button.addActionListener(new ButtonActionListener());
             gameBoard.add(button);
         }
+
         for(JButton button : rowOne){
+            button.setFont(new Font(textFont,Font.PLAIN,25));
             gameBoard.add(button);
         }
+
         return gameBoard;
+    }
+    public JPanel createTeams(String teamName){
+        JPanel team = new JPanel(new FlowLayout());
+
+
+        return team;
     }
     public JButton[] createTitles(String filename, int sizeX, int sizeY) {
         //it adds left to right, so there will need to be some math to calculate when to add titles and questions
@@ -105,9 +128,9 @@ public class Game {
                 buttons[arrayIndex] = new JButton(rowData[arrayIndex]);
                 buttons[arrayIndex].setName(buttonName);
                 buttons[arrayIndex].addActionListener(new ButtonActionListener(row, column));
+                //add the cube thing to the launcher
             }
         }
-
         return buttons;
     }
 
@@ -115,27 +138,59 @@ public class Game {
     private class ButtonActionListener implements ActionListener {
         private int row;
         private int column;
-
+        public ButtonActionListener(){
+            //
+        }
         public ButtonActionListener(int row, int column) {
             this.row = row;
             this.column = column;
         }
-
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Open a new JFrame with parameters row and column
-            JFrame newFrame = new JFrame("New Frame - Row: " + row + ", Column: " + column);
-            newFrame.setSize(300, 200);
-            newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            JButton questionText = new JButton(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "questions", "row_" + row));
-            newFrame.add(questionText);
-            questionText.addActionListener(a -> {
-                JLabel answerText = new JLabel(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "answers", "row_" + row));
+            JButton clickedButton = (JButton) e.getSource();
+            clickedButton.setEnabled(false);
+            if(canOpen) {
+                canOpen = false;
+                // Open a new JFrame with parameters row and column
+                JFrame newFrame = new JFrame("New Frame - Row: " + row + ", Column: " + column);
+                newFrame.setUndecorated(true);
+                newFrame.setLocationRelativeTo(null);
+                newFrame.setSize(1280, 720);
+                newFrame.setLocation(frame.getX(),frame.getY());
+                newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-                newFrame.remove(questionText);
-            });
+                JButton questionText = new JButton(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "questions", "row_" + row));
+                questionText.setFont(new Font(textFont, Font.ITALIC, 60));
+                questionText.setFocusable(false);
 
-            newFrame.setVisible(true);
+                newFrame.add(questionText);
+                questionText.addActionListener(a -> {
+                    String question = questionText.getText();
+                    String lineBreak = "-----------------------------";
+                    String answer = JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "answers", "row_" + row);
+                    JButton answerText = new JButton("<html><head><style>.center-text{text-align:center;}</style></head><body><div class='center-text'>" +
+                            question +
+                            "<br />" +
+                            lineBreak +
+                            "<br />" +
+                            answer +
+                            "</div></body></html>");
+                    answerText.setFont(new Font(textFont, Font.ITALIC, 60));
+                    answerText.setFocusable(false);
+
+                    questionText.setFont(new Font(textFont, Font.ITALIC, 60)); //for some reason, this has to be here or else it won't show the answer
+
+                    newFrame.add(answerText);
+                    newFrame.remove(questionText);
+
+                    answerText.addActionListener(e1 -> {
+                        newFrame.dispose();
+                        canOpen = true;
+                    });
+                });
+
+                newFrame.setVisible(true);
+            }
         }
     }
 
