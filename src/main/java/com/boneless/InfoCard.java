@@ -13,8 +13,8 @@ public class InfoCard extends JFrame implements KeyListener {
     private String question;
     private String answer;
     private String fileName;
-    private JLabel text;
-    private Timer timer;
+    private JLabel questionText;
+    private JLabel answerText;
     private boolean actionPerformed = false;
     public InfoCard(String question, String answer, String fileName) {
         this.question = question;
@@ -38,56 +38,33 @@ public class InfoCard extends JFrame implements KeyListener {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.CENTER;
 
-        text = new JLabel(question);
-        text.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
+        questionText = new JLabel(question);
+        questionText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
 
-        mainPanel.add(text, gbc);
+        answerText = new JLabel(answer);
+        answerText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
+
+        mainPanel.add(questionText, gbc);
 
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
-    private void fadeInInitialText(JLabel questionLabel, JLabel answerLabel, String initialText, String finalAnswer) {
+    private void fadeIn(JLabel obj, String textToDisplay, int fadeTime) {
         Timer fadeInTimer = new Timer(50, new ActionListener() {
             private float alpha = 0.0f;
+            private long startTime = System.currentTimeMillis();
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                alpha += 0.02f; // Adjust the fading speed as needed
+                long currentTime = System.currentTimeMillis();
+                float progress = (float) (currentTime - startTime) / fadeTime;
 
-                if (alpha >= 1.0f) {
-                    alpha = 1.0f;
-                    ((Timer) e.getSource()).stop();
-
-                    // Add a line break and start fading in the finalAnswer
-                    questionLabel.setText(initialText);
-                    answerLabel.setText("<html><head><style>.center-text{text-align:center;}</style></head><body><div class='center-text'>" +
-                            finalAnswer +
-                            "</div></body></html>");
-                    fadeIn(answerLabel, 0.0f, 1.0f, finalAnswer);
-                }
-
-                questionLabel.setText(initialText);
-                questionLabel.setForeground(new Color(0, 0, 0, alpha));
-                questionLabel.repaint(); // Ensure the changes are immediately visible
-            }
-        });
-
-        fadeInTimer.start();
-    }
-
-    private void fadeIn(JLabel obj, float startAlpha, float endAlpha, String textToDisplay) {
-        Timer fadeInTimer = new Timer(50, new ActionListener() {
-            private float alpha = startAlpha;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                alpha += 0.02f; // Adjust the fading speed as needed
-
-                if (alpha >= endAlpha) {
-                    alpha = endAlpha;
+                if (progress >= 1.0f) {
+                    progress = 1.0f;
                     ((Timer) e.getSource()).stop();
                 }
 
+                alpha = progress;
                 obj.setText("<html><head><style>.center-text{text-align:center;}</style></head><body><div class='center-text'>" +
                         textToDisplay +
                         "</div></body></html>");
@@ -104,7 +81,7 @@ public class InfoCard extends JFrame implements KeyListener {
         char keyChar = Character.toLowerCase(e.getKeyChar());
         if (keyChar == ' ') {
             if (true) {
-                fadeInInitialText(text, question, answer);
+                fadeIn(questionText, answerText, question, answer, 1000);
             } else {
                 dispose();
             }

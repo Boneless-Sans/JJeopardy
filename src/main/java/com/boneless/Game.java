@@ -162,8 +162,6 @@ public class Game {
             }
         }
     }
-
-
     private JPanel createTeamsPanel(){
         JPanel teams = new JPanel();
         teams.setPreferredSize(new Dimension(0,100));

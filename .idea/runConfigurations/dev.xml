@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.boneless.Launcher" />
+  <configuration default="false" name="dev" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.boneless.Test" />
     <module name="Jeopardy.main" />
     <method v="2">
       <option name="Make" enabled="true" />
