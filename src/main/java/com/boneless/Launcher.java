@@ -13,7 +13,6 @@ public class Launcher {
     public static JButton buttonCreateBoard;
     public static JButton buttonSettings;
     public static JButton buttonExit;
-
     public static JFrame frame;
     public static ScrollGridPanel backgroundPanel;  // Use ScrollGridPanel as the background panel
 

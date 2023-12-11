@@ -2,8 +2,11 @@
   "data": {
     "title": "Test",
     "font_size": 20,
-    "font_name": "Comic Sans MS",
+    "font_name": "Arial",
     "font_type": "Font.PLAIN",
+    "text_color": "0,0,0",
+    "button_color": "0,0,255",
+    "background_color": "0,0,255",
     "columns": 6,
     "rows": 5
   },

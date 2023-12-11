@@ -13,16 +13,15 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 public class Game {
-    private String fileName = "dev_board.json";
+    private static String fileName = "dev_board.json";
     private JFrame frame;
     private static boolean canOpen = true;
-    private static final Color[] colors = JsonFile.readColorArray("gameData.json","colors");
     private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
-
-    private static final Color buttonColor = colors != null ? colors[0] : null;
-    private static final Color backgroundColor = colors != null ? colors[1] : null;
+    private final Color buttonColor = stringToColor("button_color");
+    private final Color backgroundColor = stringToColor("background_color");
 
     public boolean playAudio = true;
+
     public Game(){
 
     }
@@ -57,7 +56,7 @@ public class Game {
         int sizeX = Integer.parseInt(JsonFile.read(fileName, "data", "columns"));
         int sizeY = Integer.parseInt(JsonFile.read(fileName, "data", "rows"));
 
-        GridLayout board = new GridLayout(sizeX, sizeY);
+        GridLayout board = new GridLayout(sizeX, sizeY, 5,5);
         gameBoard.setLayout(board);
 
         JButton[] buttons = createTitles(fileName, sizeX, sizeY);
@@ -133,7 +132,14 @@ public class Game {
         }
         return buttons;
     }
-
+    private Color stringToColor(String panel){
+        String initColor = JsonFile.readTwoKeys(getFileName(), "data", panel);
+        String[] split = initColor.split(",");
+        int red = Integer.parseInt(split[0]);
+        int green = Integer.parseInt(split[1]);
+        int blue = Integer.parseInt(split[2]);
+        return new Color(red,green,blue);
+    }
     // ActionListener for the buttons
     private class ButtonActionListener implements ActionListener {
         private int row;
@@ -151,45 +157,8 @@ public class Game {
             clickedButton.setEnabled(false);
             if(canOpen) {
                 canOpen = false;
-                // Open a new JFrame with parameters row and column
-                JFrame newFrame = new JFrame("New Frame - Row: " + row + ", Column: " + column);
-                newFrame.setUndecorated(true);
-                newFrame.setLocationRelativeTo(null);
-                newFrame.setSize(1280, 720);
-                newFrame.setLocation(frame.getX(),frame.getY());
-                newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                JButton questionText = new JButton(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "questions", "row_" + row));
-                questionText.setFont(new Font(textFont, Font.ITALIC, 60));
-                questionText.setFocusable(false);
-
-                newFrame.add(questionText);
-                questionText.addActionListener(a -> {
-                    String question = questionText.getText();
-                    String lineBreak = "-----------------------------";
-                    String answer = JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "answers", "row_" + row);
-                    JButton answerText = new JButton("<html><head><style>.center-text{text-align:center;}</style></head><body><div class='center-text'>" +
-                            question +
-                            "<br />" +
-                            lineBreak +
-                            "<br />" +
-                            answer +
-                            "</div></body></html>");
-                    answerText.setFont(new Font(textFont, Font.ITALIC, 60));
-                    answerText.setFocusable(false);
-
-                    questionText.setFont(new Font(textFont, Font.ITALIC, 60)); //for some reason, this has to be here or else it won't show the answer
-
-                    newFrame.add(answerText);
-                    newFrame.remove(questionText);
-
-                    answerText.addActionListener(e1 -> {
-                        newFrame.dispose();
-                        canOpen = true;
-                    });
-                });
-
-                newFrame.setVisible(true);
+                new InfoCard(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "questions", "row_" + row),
+                        JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "answers", "row_" + row), getFileName());
             }
         }
     }

@@ -7,8 +7,6 @@ import org.json.JSONTokener;
 
 import java.awt.*;
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class JsonFile {
 
@@ -106,37 +104,37 @@ public class JsonFile {
 
         return "invalid key";
     }
-    public static String[] readArray(String filename, String mainKey) {
-        try (Reader reader = new FileReader(getFilePath(filename))) {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONObject jsonObject = new JSONObject(tokener);
-
-            if (jsonObject.has(mainKey)) {
-                Object mainValue = jsonObject.get(mainKey);
-
-                if (mainValue instanceof JSONArray) {
-                    JSONArray arrayValue = (JSONArray) mainValue;
-                    int length = arrayValue.length();
-                    String[] resultArray = new String[length];
-
-                    for (int i = 0; i < length; i++) {
-                        resultArray[i] = arrayValue.getString(i);
-                    }
-
-                    return resultArray;
-                } else {
-                    System.out.println("Invalid array type");
-                }
-            } else {
-                System.out.println("Invalid mainKey");
-            }
-
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
+//    public static String[] readArray(String filename, String mainKey) {
+//        try (Reader reader = new FileReader(getFilePath(filename))) {
+//            JSONTokener tokener = new JSONTokener(reader);
+//            JSONObject jsonObject = new JSONObject(tokener);
+//
+//            if (jsonObject.has(mainKey)) {
+//                Object mainValue = jsonObject.get(mainKey);
+//
+//                if (mainValue instanceof JSONArray) {
+//                    JSONArray arrayValue = (JSONArray) mainValue;
+//                    int length = arrayValue.length();
+//                    String[] resultArray = new String[length];
+//
+//                    for (int i = 0; i < length; i++) {
+//                        resultArray[i] = arrayValue.getString(i);
+//                    }
+//
+//                    return resultArray;
+//                } else {
+//                    System.out.println("Invalid array type");
+//                }
+//            } else {
+//                System.out.println("Invalid mainKey");
+//            }
+//
+//        } catch (IOException | JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//    }
     public static String[][] read2DArray(String filename, String mainKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -175,7 +173,7 @@ public class JsonFile {
 
         return null;
     }
-    public static String[] readTwoKeysArray(String filename, String firstKey, String secondKey) {
+    public static String readTwoKeys(String filename, String firstKey, String secondKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
             JSONObject jsonObject = new JSONObject(tokener);
@@ -189,18 +187,11 @@ public class JsonFile {
                     if (nestedObject.has(secondKey)) {
                         Object secondValue = nestedObject.get(secondKey);
 
-                        if (secondValue instanceof JSONArray) {
-                            JSONArray arrayValue = (JSONArray) secondValue;
-                            int length = arrayValue.length();
-                            String[] resultArray = new String[length];
-
-                            for (int i = 0; i < length; i++) {
-                                resultArray[i] = arrayValue.getString(i);
-                            }
-
-                            return resultArray;
+                        if (secondValue instanceof String) {
+                            // Return the single string value
+                            return (String) secondValue;
                         } else {
-                            System.out.println("Invalid array type for secondKey");
+                            System.out.println("Invalid value type for secondKey");
                         }
                     } else {
                         System.out.println("Invalid secondKey");
@@ -220,6 +211,7 @@ public class JsonFile {
 
         return null;
     }
+
 
     public static Color[] readColorArray(String filename, String mainKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
