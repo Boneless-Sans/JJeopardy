@@ -16,7 +16,6 @@ public class InfoCard extends JFrame implements KeyListener {
     private final String lineBreak = "............................";
     private JLabel questionText;
     private JLabel answerText;
-    private boolean actionPerformed = false;
     public InfoCard(String question, String answer, String fileName) {
         this.question = question;
         this.answer = answer;
@@ -33,19 +32,18 @@ public class InfoCard extends JFrame implements KeyListener {
 
         JPanel mainPanel = new JPanel(null);
 
-        int questionWidth = 400;
-        int questionHeight = 400;
-        int questionXPos = (getWidth() / 2) - questionWidth / 2;
-        int questionYPos = (getHeight() / 2) - questionHeight / 2;
+        JPanel questionPanel = new JPanel();
+        questionPanel.setBounds(50,50,50,50);
+        questionPanel.setBackground(Color.red);
         questionText = new JLabel(question);
         questionText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
-        questionText.setBounds(0,0, getWidth(),getHeight());
 
         answerText = new JLabel(answer);
         answerText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
         answerText.setForeground(new Color(0,0,0,0));
 
-        mainPanel.add(questionText);
+        questionPanel.add(questionText);
+        mainPanel.add(questionPanel);
         mainPanel.add(answerText);
 
         add(mainPanel, BorderLayout.CENTER);

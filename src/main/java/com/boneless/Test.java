@@ -28,20 +28,20 @@ public class Test {
         frame.setVisible(true);
          */
     }
-    private static void moveLabel(JLabel label){
-        //35
-
-        Timer timer = new Timer(0, e -> {
-            if(labelX < (frame.getWidth() - 14) - label.getWidth()){
-                labelX += 1;
-            }else if(labelY < (frame.getHeight() - 35) - label.getHeight()){
-                //((Timer) e.getSource()).stop();
-                labelY += 1;
-            } else if(labelX > (frame.getWidth() - 350) - label.getWidth()) {
-                labelX -= 1;
-            }
-            label.setBounds(labelX, labelY, label.getWidth(), label.getHeight());
-        });
-        timer.start();
-    }
+//    private static void moveLabel(JLabel label){
+//        //35
+//
+//        Timer timer = new Timer(0, e -> {
+//            if(labelX < (frame.getWidth() - 14) - label.getWidth()){
+//                labelX += 1;
+//            }else if(labelY < (frame.getHeight() - 35) - label.getHeight()){
+//                //((Timer) e.getSource()).stop();
+//                labelY += 1;
+//            } else if(labelX > (frame.getWidth() - 350) - label.getWidth()) {
+//                labelX -= 1;
+//            }
+//            label.setBounds(labelX, labelY, label.getWidth(), label.getHeight());
+//        });
+//        timer.start();
+//    }
 }
