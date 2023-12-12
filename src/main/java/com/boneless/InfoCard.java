@@ -10,12 +10,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class InfoCard extends JFrame implements KeyListener {
-    private String question;
-    private String answer;
-    private String fileName;
-    private final String lineBreak = "............................";
+    private final String question;
+    private final String answer;
+    private final String fileName;
+    private final String lineBreak = ".............................................";
     private JLabel questionText;
     private JLabel answerText;
+    private JPanel questionPanel;
     public InfoCard(String question, String answer, String fileName) {
         this.question = question;
         this.answer = answer;
@@ -32,9 +33,15 @@ public class InfoCard extends JFrame implements KeyListener {
 
         JPanel mainPanel = new JPanel(null);
 
-        JPanel questionPanel = new JPanel();
-        questionPanel.setBounds(50,50,50,50);
+        questionPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.CENTER;
+
+        questionPanel.setBounds((getWidth() / 2) - 500, (getHeight() / 2) - 200,1000,400);
         questionPanel.setBackground(Color.red);
+
         questionText = new JLabel(question);
         questionText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
 
@@ -42,12 +49,26 @@ public class InfoCard extends JFrame implements KeyListener {
         answerText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 60));
         answerText.setForeground(new Color(0,0,0,0));
 
-        questionPanel.add(questionText);
+        questionPanel.add(questionText, gbc);
         mainPanel.add(questionPanel);
         mainPanel.add(answerText);
 
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
+    }
+    private void moveQuestion(JPanel panel, int amount){
+        int moveAmount = amount + panel.getY();
+
+        int panelX = panel.getX();
+        int panelY = panel.getY();
+        Timer timer = new Timer(1, e -> {
+            if(panel.getY() < moveAmount){
+                panel.setLocation(panelX, panelY - 1);
+            }else{
+                ((Timer) e.getSource()).stop();
+            }
+        });
+        timer.start();
     }
     private void fadeIn(JLabel questionLabel, JLabel answerLabel, String textToDisplay, int fadeTime) {
         Timer fadeInTimer = new Timer(50, new ActionListener() {
@@ -81,7 +102,8 @@ public class InfoCard extends JFrame implements KeyListener {
         char keyChar = Character.toLowerCase(e.getKeyChar());
         if (keyChar == ' ') {
             if (true) {
-                fadeIn(questionText,answerText, answer, 1000);
+                //fadeIn(questionText,answerText, answer, 1000);
+                moveQuestion(questionPanel, 1000);
             } else {
                 dispose();
             }
