@@ -2,21 +2,17 @@ package com.boneless;
 
 import com.boneless.util.JsonFile;
 
-import javax.imageio.plugins.tiff.TIFFDirectory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Queue;
 
 public class Game {
     private static String fileName = "dev_board.json";
     private JFrame frame;
     private static boolean canOpen = true;
     private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
+    private final String fontSize = JsonFile.read(getFileName(), "data", "board_font_size");
     private final Color buttonColor = stringToColor("button_color");
     private final Color backgroundColor = stringToColor("background_color");
 
@@ -157,8 +153,11 @@ public class Game {
             clickedButton.setEnabled(false);
             if(canOpen) {
                 canOpen = false;
-                new InfoCard(JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "questions", "row_" + row),
-                        JsonFile.readWithThreeKeys(getFileName(), "column_" + column, "answers", "row_" + row), getFileName());
+                new InfoCard(JsonFile.readWithThreeKeys(fileName, "column_" + column, "questions", "row_" + row),
+                        JsonFile.readWithThreeKeys(fileName, "column_" + column, "answers", "row_" + row),
+                        fileName,
+                        JsonFile.read(fileName, "column_" + column, "title"),
+                        Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "column_" + column, "points", "row_" + row)));
             }
         }
     }

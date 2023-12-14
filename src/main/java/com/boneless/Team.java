@@ -1,6 +1,6 @@
 package com.boneless;
 
-public class Player {
+public class Team {
     private String teamName;
     private int score;
 

@@ -1,13 +1,6 @@
 {
-  "test": {
-    "value2": "emr",
-    "value1": "white_power",
-    "testa": "this_value"
-  },
-  "fuck_niggers": "white",
-  "colors": {
-    "button": "light_gray",
-    "background": "black",
-    "foreground": ""
+  "keyBinds": {
+    "exit": "0x1B",
+    "continue": "0x20"
   }
 }
