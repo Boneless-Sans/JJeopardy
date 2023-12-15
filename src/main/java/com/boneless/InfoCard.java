@@ -162,11 +162,11 @@ public class InfoCard extends JFrame implements KeyListener {
         reveal.setForeground(fontColor);
         reveal.setFont(font);
 
-        panel.add(createHeaderPanel(closeText, createHeaderButton("exit", font)));
+        panel.add(createHeaderPanel(closeText, createHeaderButton("exit", font, true)));
 
         panel.add(titlePanel);
 
-        panel.add(createHeaderPanel(reveal, createHeaderButton("continue", font)));
+        panel.add(createHeaderPanel(reveal, createHeaderButton("continue", font, false)));
 
         return panel;
     }
@@ -177,30 +177,33 @@ public class InfoCard extends JFrame implements KeyListener {
         panel.add(button);
         return panel;
     }
-    private JButton createHeaderButton(String text, Font font){
-        JButton button = new JButton(parseKeyStroke(JsonFile.read("settings.json","keyBinds",text)));
+    private JButton createHeaderButton(String text, Font font, boolean type){
+        String rawKeyBind = JsonFile.read("settings.json","keyBinds", text);
+        String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
+        JButton button = new JButton(keyBind);
         button.setFocusable(false);
         button.setFont(font);
+        button.addActionListener(e -> {
+            if(type && !exit) {
+                if (question.length() > 100) {
+                    movePanel(questionPanel, 150);
+                } else {
+                    movePanel(questionPanel, 100);
+                }
+            }else{
+                dispose();
+            }
+        });
 
         return button;
     }
-    private String parseKeyStroke(String keyStrokeCode){
-        return switch (keyStrokeCode){
-            case "0x1B" -> "Esc";
-            case "0x20" -> "Space";
-            case "\n" -> "Enter";
-            case "0x12" -> "Alt";
-            case "\b" -> "Backspace";
-            default -> keyStrokeCode;
-        };
-    }
     private String parseKeyStrokeInput(String keyStrokeCode){
         return switch (keyStrokeCode){
-            case "0x1B" -> "\u001B";
-            case "0x20" -> " ";
-            case "\n" -> "\n";
-            case "0x12" -> "0x12";
-            default -> "null";
+            case "esc" -> "\u001B";
+            case "space" -> " ";
+            case "enter" -> "\n";
+            case "alt" -> "0x12";
+            default -> keyStrokeCode;
         };
     }
     private void movePanel(JPanel panel, int amount) {

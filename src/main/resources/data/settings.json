@@ -1,7 +1,8 @@
 {
   "keyBinds": {
-    "exit": "0x1B",
-    "continue": "0x20"
+    "exit": "esc",
+    "continue": "space",
+    "fullscreen": "f"
   },
   "general": {
     "play_audio": true

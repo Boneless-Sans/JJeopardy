@@ -183,7 +183,7 @@ public class Launcher {
         titlePanel.setBackground(headerColor);
 
         JLabel numTeams = new JLabel("<html>" + JsonFile.read(game.getFileName(), "data", "title") + "</html>");
-        numTeams.setFont(new Font(fontName, fontType, 40));
+        numTeams.setFont(new Font(fontName, fontType, 30));
         numTeams.setForeground(fontColor);
 
         titlePanel.add(numTeams);
@@ -191,6 +191,20 @@ public class Launcher {
         JPanel mainPanel = new JPanel(new FlowLayout());
         mainPanel.setBackground(backgroundColor);
         mainPanel.setBorder(BorderFactory.createEmptyBorder(100,0,0,0));
+
+        JCheckBox checkBox = new JCheckBox("Fullscreen");
+        checkBox.setFont(font);
+        checkBox.setFocusable(false);
+        checkBox.setBackground(backgroundColor);
+        checkBox.setForeground(textColor);
+        checkBox.setIcon(new IconResize("cross_mark.png", 35,35).getImage());
+        checkBox.addActionListener(e -> {
+            if(checkBox.isSelected()){
+                checkBox.setIcon(new IconResize("check_mark.png", 35,35).getImage());
+            }else{
+                checkBox.setIcon(new IconResize("cross_mark.png",35,35).getImage());
+            }
+        });
 
         JComboBox<String> dropDown = new JComboBox<>(teamDropDown);
         dropDown.setFont(font);
@@ -203,7 +217,7 @@ public class Launcher {
         start.addActionListener(e -> {
             frame.dispose();
             tFrame.dispose();
-            game.initUI(doFullScreen);
+            game.initUI(checkBox.isSelected());
         });
 
         JButton cancel = new JButton("Cancel");
@@ -215,37 +229,28 @@ public class Launcher {
             changeButtonState(true);
         });
 
-        mainPanel.add(createBlankPanel(backgroundColor));
+        String rawKeyBind = JsonFile.read("settings.json","keyBinds", "fullscreen");
+        String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
+        JLabel fullscreenText = new JLabel("Or Press \"" + keyBind + "\" To Enter / Exit Fullscreen");
+        fullscreenText.setFont(new Font(fontName, Font.PLAIN, 15));
+        fullscreenText.setForeground(fontColor);
+
+        mainPanel.add(createBlankPanel(backgroundColor, 40));
         mainPanel.add(dropDown);
         mainPanel.add(start);
         mainPanel.add(cancel);
-        mainPanel.add(createBlankPanel(backgroundColor));
-        mainPanel.add(createCheckBox(backgroundColor, fontColor, font));
+        mainPanel.add(createBlankPanel(backgroundColor, 40));
+        mainPanel.add(createBlankPanel(backgroundColor, 80));
+        mainPanel.add(checkBox);
+        mainPanel.add(createBlankPanel(backgroundColor, 80));
+        mainPanel.add(fullscreenText);
 
         tFrame.add(titlePanel, BorderLayout.NORTH);
         tFrame.add(mainPanel, BorderLayout.CENTER);
         tFrame.setVisible(true);
     }
-    private static JCheckBox createCheckBox(Color backgroundColor, Color textColor, Font font){
-        int size = 35;
-        JCheckBox checkBox = new JCheckBox("Fullscreen");
-        checkBox.setFont(font);
-        checkBox.setFocusable(false);
-        checkBox.setBackground(backgroundColor);
-        checkBox.setForeground(textColor);
-        checkBox.setIcon(new IconResize("check_mark.png", size, size).getImage());
-        checkBox.addActionListener(e -> {
-            if(checkBox.isSelected()){
-                checkBox.setIcon(new IconResize("cross_mark.png", size, size).getImage());
-            }else{
-                checkBox.setIcon(new IconResize("check_mark.png",size, size).getImage());
-            }
-        });
-        return checkBox;
-    }
-    private static JPanel createBlankPanel(Color color){
+    private static JPanel createBlankPanel(Color color, int size){
         JPanel panel = new JPanel();
-        int size = 40;
         panel.setPreferredSize(new Dimension(size, size));
         panel.setBackground(color);
 

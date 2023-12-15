@@ -6,8 +6,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class Game {
+public class Game extends JFrame implements KeyListener {
     private static String fileName = "dev_board.json";
     private static boolean canOpen = true;
     private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
@@ -27,19 +29,20 @@ public class Game {
     }
 
     public void initUI(boolean doFullScreen){
-        JFrame frame = new JFrame();
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            frame.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+            setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
             setDoFullScreen(true);
         }else {
-            frame.setSize(1280, 720);
+            setSize(1280, 720);
             setDoFullScreen(false);
         }
-        frame.setLayout(new BorderLayout());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setUndecorated(true);
-        frame.setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setUndecorated(true);
+        setLocationRelativeTo(null);
+        addKeyListener(this);
+        setFocusable(true);
 
         JPanel title = new JPanel(new FlowLayout());
         JLabel titleText = new JLabel();
@@ -53,10 +56,10 @@ public class Game {
 
         JPanel teams = createTeamsPanel();
 
-        frame.add(title, BorderLayout.NORTH);
-        frame.add(createBoard(getFileName()), BorderLayout.CENTER);
-        frame.add(teams, BorderLayout.SOUTH);
-        frame.setVisible(true);
+        add(title, BorderLayout.NORTH);
+        add(createBoard(getFileName()), BorderLayout.CENTER);
+        add(teams, BorderLayout.SOUTH);
+        setVisible(true);
     }
     private JPanel createBoard(String fileName) {
         JPanel gameBoard = new JPanel();
@@ -71,7 +74,7 @@ public class Game {
         JButton[] rowOne = createRows(fileName, sizeX, sizeY);
 
         for (JButton button : buttons) {
-            button.setFont(new Font(textFont, Font.PLAIN, 20));
+            button.setFont(new Font(textFont, Font.PLAIN, 30));
             button.setFocusable(false);
             button.addActionListener(new ButtonActionListener());
             gameBoard.add(button);
@@ -150,6 +153,45 @@ public class Game {
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue);
     }
+    private String parseKeyStrokeInput(String keyStrokeCode){
+        return switch (keyStrokeCode){
+            case "esc" -> "\u001B";
+            case "space" -> " ";
+            case "enter" -> "\n";
+            case "alt" -> "0x12";
+            case "backspace" -> "\b";
+            default -> keyStrokeCode;
+        };
+    }
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "fullscreen")))){
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            if(doFullScreen){
+                doFullScreen = false;
+                setLocation((screenSize.width / 2) - 1280 / 2, (screenSize.height / 2) - 720 / 2);
+                setSize(1280,720);
+            }else{
+                doFullScreen = true;
+                setLocation(0,0);
+                setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+            }
+        }
+        if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))){
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+
     // ActionListener for the buttons
     private class ButtonActionListener implements ActionListener {
         private int row;

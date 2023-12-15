@@ -26,6 +26,10 @@ public class Settings extends JFrame{
         mainPanel.setPreferredSize(new Dimension(300,300));
         mainPanel.setBackground(Color.WHITE);
 
+        JScrollBar uh = new JScrollBar();
+
+        mainPanel.add(uh);
+
         JButton exit = new JButton("exit");
         exit.addActionListener(e -> {
             changeButtonState(true);
