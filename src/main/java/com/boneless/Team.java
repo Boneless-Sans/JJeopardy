@@ -1,23 +1,15 @@
 package com.boneless;
 
-public class Team {
+import javax.swing.*;
+import java.awt.*;
+
+public class Team{
     private String teamName;
-    private int score;
-
-    public void addToScore(int score){
-        this.score += score;
+    private int points;
+    public Team(String teamName){
+        this.teamName = teamName;
     }
-    public void setTeamName(String name){
-        this.teamName = name;
-    }
-
     public String getTeamName(){
         return teamName;
-    }
-    public int getScore(){
-        return score;
-    }
-    public String toString(){
-        return "Team Name: " + teamName + "\nScore: " + score;
     }
 }

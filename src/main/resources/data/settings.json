@@ -2,5 +2,8 @@
   "keyBinds": {
     "exit": "0x1B",
     "continue": "0x20"
+  },
+  "general": {
+    "play_audio": true
   }
 }

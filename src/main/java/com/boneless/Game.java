@@ -9,21 +9,33 @@ import java.awt.event.ActionListener;
 
 public class Game {
     private static String fileName = "dev_board.json";
-    private JFrame frame;
     private static boolean canOpen = true;
     private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
     private final String fontSize = JsonFile.read(getFileName(), "data", "board_font_size");
+    private int lastCardPoints = 0;
     private final Color buttonColor = stringToColor("button_color");
     private final Color backgroundColor = stringToColor("background_color");
-
-    public boolean playAudio = true;
-
-    public Game(){
-
+    private boolean playAudio = Boolean.parseBoolean(JsonFile.read("settings.json","general","play_audio"));
+    private static boolean doFullScreen;
+    private String[] teams;
+    public Game(String[] teams){
+        this.teams = teams;
     }
-    public void initUI(){
-        frame = new JFrame();
-        frame.setSize(1280,720);
+
+    public static void setDoFullScreen(boolean doFullScreen) {
+        Game.doFullScreen = doFullScreen;
+    }
+
+    public void initUI(boolean doFullScreen){
+        JFrame frame = new JFrame();
+        if(doFullScreen){
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            frame.setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+            setDoFullScreen(true);
+        }else {
+            frame.setSize(1280, 720);
+            setDoFullScreen(false);
+        }
         frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setUndecorated(true);
@@ -77,6 +89,8 @@ public class Game {
 
 
         return team;
+    }
+    public void addTeams(Team teams){
     }
     public JButton[] createTitles(String filename, int sizeX, int sizeY) {
         //it adds left to right, so there will need to be some math to calculate when to add titles and questions
@@ -157,7 +171,8 @@ public class Game {
                         JsonFile.readWithThreeKeys(fileName, "column_" + column, "answers", "row_" + row),
                         fileName,
                         JsonFile.read(fileName, "column_" + column, "title"),
-                        Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "column_" + column, "points", "row_" + row)));
+                        Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "column_" + column, "points", "row_" + row)),
+                        doFullScreen);
             }
         }
     }

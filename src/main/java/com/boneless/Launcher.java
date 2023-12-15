@@ -1,35 +1,52 @@
 package com.boneless;
 
+import com.boneless.util.IconResize;
+import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.plaf.metal.MetalCheckBoxIcon;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.io.File;
+import java.net.URL;
 
 public class Launcher {
-    public static JButton buttonStart;
-    public static JButton buttonLoadData;
-    public static JButton buttonCreateBoard;
-    public static JButton buttonSettings;
-    public static JButton buttonExit;
-    public static JFrame frame;
-    public static ScrollGridPanel backgroundPanel;  // Use ScrollGridPanel as the background panel
+    private static JButton buttonStart;
+    private static JButton buttonLoadData;
+    private static JButton buttonCreateBoard;
+    private static JButton buttonSettings;
+    private static JButton buttonExit;
+    private static JFrame frame;
+    private static String title;
+    private static Game game = new Game(null);
+    private static Color headerColor = new Color(21, 27, 75);
+    private static Color backgroundColor = new Color(42,54,152);
+    private static Color textColor = new Color(255,255,255);
+    private static final String[] teamDropDown= {
+            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "8 Teams", "9 Teams", "10 Teams"
+    };
+    private static GridBagLayout gbc;
 
     public static void main(String[] args) {
+        headerColor = stringToColor(game.getFileName(), "header_color");
+        backgroundColor = stringToColor(game.getFileName(), "background_color");
+        textColor = stringToColor(game.getFileName(), "font_color");
         SystemUI.set();
-        Game game = new Game();
 
         // Create the frame
         frame = new JFrame();
         frame.setUndecorated(true);
         frame.setSize(500, 400);
-        frame.setLayout(new BorderLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Create the background panel (ScrollGridPanel)
-        backgroundPanel = new ScrollGridPanel();
+        // Use ScrollGridPanel as the background panel
+        ScrollGridPanel backgroundPanel = new ScrollGridPanel();
         frame.add(backgroundPanel, BorderLayout.CENTER);
 
         // Create UI elements
@@ -37,7 +54,7 @@ public class Launcher {
         titleText.setFont(new Font("Arial", Font.PLAIN, 30));
 
         JPanel titlePanel = new JPanel(new FlowLayout());
-        titlePanel.setBackground(new Color(0,0,0,0));
+        titlePanel.setOpaque(false);
         titlePanel.add(titleText);
 
         buttonStart = new JButton("Start Game");
@@ -46,66 +63,44 @@ public class Launcher {
         buttonSettings = new JButton("Settings");
         buttonExit = new JButton("Exit");
 
-        buttonStart.setFocusable(false);
-        buttonLoadData.setFocusable(false);
-        buttonCreateBoard.setFocusable(false);
-        buttonSettings.setFocusable(false);
-        buttonExit.setFocusable(false);
-
-        buttonStart.setBackground(Color.lightGray);
-        buttonLoadData.setBackground(Color.lightGray);
-        buttonCreateBoard.setBackground(Color.LIGHT_GRAY);
-        buttonSettings.setBackground(Color.lightGray);
-        buttonExit.setBackground(Color.lightGray);
-
-        buttonStart.setFont(new Font("Arial", Font.PLAIN, 17));
-        buttonLoadData.setFont(new Font("Arial", Font.PLAIN, 17));
-        buttonCreateBoard.setFont(new Font("Arial", Font.PLAIN, 17));
-        buttonSettings.setFont(new Font("Arial", Font.PLAIN, 17));
-        buttonExit.setFont(new Font("Arial", Font.PLAIN, 17));
-
-        // shows file name
-        JPanel fileText = new JPanel();
-        fileText.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-        JLabel currentFile = new JLabel("Current File: " + game.getFileName());
-        currentFile.setFont(new Font("Arial", Font.PLAIN, 15));
+        // Set up buttons
+        setupButton(buttonStart);
+        setupButton(buttonLoadData);
+        setupButton(buttonCreateBoard);
+        setupButton(buttonSettings);
+        setupButton(buttonExit);
 
         buttonStart.addActionListener(e -> {
-            game.initUI();
-            frame.dispose();
+            addTeams();
         });
-        buttonLoadData.addActionListener(e -> {
-            changeButtonState(false);
-            File file = null;
-            JFileChooser chooser = new JFileChooser();
-            chooser.setFileFilter(new FileNameExtensionFilter("JSON File", "json"));
-            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                file = chooser.getSelectedFile();
-                game.setFileName(String.valueOf(file));
-            }
-            System.out.println(file);
-            currentFile.setText("Current File: " + game.getFileName());
-            changeButtonState(true);
+        buttonLoadData.addActionListener(e -> loadBoardFile(game));
 
-        });
         buttonCreateBoard.addActionListener(e -> {
             changeButtonState(false);
             new GameBoardFactory();
         });
+
         buttonSettings.addActionListener(e -> {
             changeButtonState(false);
             new Settings();
         });
+
         buttonExit.addActionListener(e -> System.exit(1));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
-        buttonsPanel.setBackground(new Color(0,0,0,0));
+        buttonsPanel.setOpaque(false);
         buttonsPanel.add(buttonStart);
         buttonsPanel.add(buttonLoadData);
         buttonsPanel.add(buttonCreateBoard);
         buttonsPanel.add(buttonSettings);
         buttonsPanel.add(buttonExit);
+
+        // Show file name
+        JPanel fileText = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        fileText.setOpaque(false);
+
+        JLabel currentFile = new JLabel("Current File: " + game.getFileName());
+        currentFile.setFont(new Font("Arial", Font.PLAIN, 15));
 
         fileText.add(currentFile);
 
@@ -113,22 +108,147 @@ public class Launcher {
         backgroundPanel.setLayout(new BorderLayout());
         backgroundPanel.add(titlePanel, BorderLayout.NORTH);
         backgroundPanel.add(buttonsPanel, BorderLayout.CENTER);
-        backgroundPanel.add(currentFile, BorderLayout.SOUTH);
+        backgroundPanel.add(fileText, BorderLayout.SOUTH);
 
         frame.setVisible(true);
     }
+    private static Color stringToColor(String fileName, String color){
+        String initColor = JsonFile.read(fileName, "data",color);
+        String[] split = initColor.split(",");
+        int red = Integer.parseInt(split[0]);
+        int green = Integer.parseInt(split[1]);
+        int blue = Integer.parseInt(split[2]);
+        return new Color(red,green,blue);
+    }
+    private static void setupButton(JButton button) {
+        button.setFocusable(false);
+        button.setBackground(Color.lightGray);
+        button.setFont(new Font("Arial", Font.PLAIN, 17));
+    }
+    private static void loadBoardFile(Game game) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileFilter(new FileNameExtensionFilter("JSON File", "json"));
 
-    public static void changeButtonState(boolean enable) {
-        if (enable) {
-            buttonStart.setEnabled(true);
-            buttonLoadData.setEnabled(true);
-            buttonExit.setEnabled(true);
-            buttonSettings.setEnabled(true);
-        } else {
-            buttonStart.setEnabled(false);
-            buttonLoadData.setEnabled(false);
-            buttonExit.setEnabled(false);
-            buttonSettings.setEnabled(false);
+        if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            game.setFileName(String.valueOf(file));
+            System.out.println(file);
+            // Update the UI with the new file name
+            updateFileNameLabel(game);
         }
+
+        // Enable buttons after file selection
+        changeButtonState(true);
+    }
+    private static void updateFileNameLabel(Game game) {
+        JLabel currentFile = new JLabel("Current File: " + game.getFileName());
+        currentFile.setFont(new Font("Arial", Font.PLAIN, 15));
+
+        JPanel fileText = (JPanel) ((JPanel) frame.getContentPane().getComponent(0)).getComponent(2);
+        fileText.removeAll();
+        fileText.add(currentFile);
+        fileText.revalidate();
+        fileText.repaint();
+    }
+    public static void changeButtonState(boolean enable) {
+        buttonStart.setEnabled(enable);
+        buttonLoadData.setEnabled(enable);
+        buttonExit.setEnabled(enable);
+        buttonSettings.setEnabled(enable);
+        buttonCreateBoard.setEnabled(enable);
+    }
+    @SuppressWarnings("MagicConstant")
+    private static void addTeams(){
+        frame.setVisible(false);
+        boolean doFullScreen = false;
+        changeButtonState(false);
+        JFrame tFrame = new JFrame();
+        tFrame.setSize(500,400);
+        tFrame.setUndecorated(true);
+        tFrame.setLocationRelativeTo(null);
+        tFrame.setLayout(new BorderLayout());
+        tFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        Color fontColor = stringToColor(game.getFileName(), "header_font_color");
+        String fontName = JsonFile.read(game.getFileName(), "data","font_name");
+        int fontSize = Integer.parseInt(JsonFile.read(game.getFileName(),"data","header_font_size"));
+        int fontType = switch (JsonFile.read(game.getFileName(), "data", "header_font_type")) {
+            case "Font.BOLD" -> 1;
+            case "Font.ITALIC" -> 2;
+            default -> 0;
+        };
+        Font font = new Font(fontName, fontType, fontSize);
+
+        JPanel titlePanel = new JPanel(new FlowLayout());
+        titlePanel.setBackground(headerColor);
+
+        JLabel numTeams = new JLabel("<html>" + JsonFile.read(game.getFileName(), "data", "title") + "</html>");
+        numTeams.setFont(new Font(fontName, fontType, 40));
+        numTeams.setForeground(fontColor);
+
+        titlePanel.add(numTeams);
+
+        JPanel mainPanel = new JPanel(new FlowLayout());
+        mainPanel.setBackground(backgroundColor);
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(100,0,0,0));
+
+        JComboBox<String> dropDown = new JComboBox<>(teamDropDown);
+        dropDown.setFont(font);
+        dropDown.setFocusable(false);
+        dropDown.setPreferredSize(new Dimension(120,34));
+
+        JButton start = new JButton("Start");
+        start.setFont(font);
+        start.setFocusable(false);
+        start.addActionListener(e -> {
+            frame.dispose();
+            tFrame.dispose();
+            game.initUI(doFullScreen);
+        });
+
+        JButton cancel = new JButton("Cancel");
+        cancel.setFont(font);
+        cancel.setFocusable(false);
+        cancel.addActionListener(e -> {
+            tFrame.dispose();
+            frame.setVisible(true);
+            changeButtonState(true);
+        });
+
+        mainPanel.add(createBlankPanel(backgroundColor));
+        mainPanel.add(dropDown);
+        mainPanel.add(start);
+        mainPanel.add(cancel);
+        mainPanel.add(createBlankPanel(backgroundColor));
+        mainPanel.add(createCheckBox(backgroundColor, fontColor, font));
+
+        tFrame.add(titlePanel, BorderLayout.NORTH);
+        tFrame.add(mainPanel, BorderLayout.CENTER);
+        tFrame.setVisible(true);
+    }
+    private static JCheckBox createCheckBox(Color backgroundColor, Color textColor, Font font){
+        int size = 35;
+        JCheckBox checkBox = new JCheckBox("Fullscreen");
+        checkBox.setFont(font);
+        checkBox.setFocusable(false);
+        checkBox.setBackground(backgroundColor);
+        checkBox.setForeground(textColor);
+        checkBox.setIcon(new IconResize("check_mark.png", size, size).getImage());
+        checkBox.addActionListener(e -> {
+            if(checkBox.isSelected()){
+                checkBox.setIcon(new IconResize("cross_mark.png", size, size).getImage());
+            }else{
+                checkBox.setIcon(new IconResize("check_mark.png",size, size).getImage());
+            }
+        });
+        return checkBox;
+    }
+    private static JPanel createBlankPanel(Color color){
+        JPanel panel = new JPanel();
+        int size = 40;
+        panel.setPreferredSize(new Dimension(size, size));
+        panel.setBackground(color);
+
+        return panel;
     }
 }

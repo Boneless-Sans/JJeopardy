@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.security.Key;
 import java.util.Objects;
 
 public class InfoCard extends JFrame implements KeyListener {
@@ -24,16 +23,22 @@ public class InfoCard extends JFrame implements KeyListener {
     private JLabel lineBreakText;
     private String esc = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","exit")));
     private String advance = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","continue")));
-    public InfoCard(String question, String answer, String fileName, String category, int points){
+    public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen){
         this.question = question;
         this.answer = answer;
         this.fileName = fileName;
         setTitle(category + " For " + points);
-        initUI();
+        initUI(doFullScreen);
     }
     @SuppressWarnings("MagicConstant")
-    private void initUI(){
-        setSize(1280,720);
+    private void initUI(boolean doFullScreen){
+        if(doFullScreen){
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+            System.out.println("fullscreen");
+        }else {
+            setSize(1280, 720);
+        }
         setUndecorated(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -84,10 +89,6 @@ public class InfoCard extends JFrame implements KeyListener {
         JLabel questionText = new JLabel("<html><body>" + question + "</body></html>");
 
         questionPanel = createPanel(questionText, gbcQuestion, 0, font, 255);
-        int questionPos = 50;
-        if(questionText.getText().length() > 100){
-            questionPos = 100;
-        }
         questionPanel.setBackground(Color.red);
 
         answerText = new JLabel(answer);
@@ -205,32 +206,29 @@ public class InfoCard extends JFrame implements KeyListener {
     private void movePanel(JPanel panel, int amount) {
         int moveAmount = panel.getY() - amount;
         exit = true;
-        Timer timer = new Timer(1, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (panel.getY() > moveAmount) {
-                    panel.setBounds(panel.getX(), panel.getY() - 10, panel.getWidth(), panel.getHeight()); // Decrease Y position to move up
-                } else {
-                    ((Timer) e.getSource()).stop(); // Stop the timer when the movement is completed
-                    fadeIn(answerText, lineBreakText, 1000, textColor);
-                }
+        Timer timer = new Timer(1, e -> {
+            if (panel.getY() > moveAmount) {
+                panel.setBounds(panel.getX(), panel.getY() - 10, panel.getWidth(), panel.getHeight()); // Decrease Y position to move up
+            } else {
+                ((Timer) e.getSource()).stop(); // Stop the timer when the movement is completed
+                fadeIn(answerText, lineBreakText, textColor);
             }
         });
 
         timer.start();
     }
-    private void fadeIn(JLabel answerLabel, JLabel lineBreak, int fadeTime, Color color) {
+    private void fadeIn(JLabel answerLabel, JLabel lineBreak, Color color) {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
 
         Timer fadeInTimer = new Timer(10, new ActionListener() {
-            private long startTime = System.currentTimeMillis();
+            private final long startTime = System.currentTimeMillis();
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 long currentTime = System.currentTimeMillis();
-                float progress = (float) (currentTime - startTime) / fadeTime;
+                float progress = (float) (currentTime - startTime) / 1000;
 
                 if (progress >= 1f) {
                     progress = 1f;
@@ -262,7 +260,7 @@ public class InfoCard extends JFrame implements KeyListener {
         //System.out.println("Key pressed: " + e.getKeyChar() + " Key expected: " + esc);
         if(String.valueOf(e.getKeyChar()).equals(advance)) {
             if(!exit) {
-                if (question.length() > 100 && !exit) {
+                if (question.length() > 100) {
                     movePanel(questionPanel, 150);
                 } else {
                     movePanel(questionPanel, 100);

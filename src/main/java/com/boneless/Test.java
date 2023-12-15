@@ -8,7 +8,7 @@ public class Test {
     private static JFrame frame;
     public static void main(String[] args){
         //new InfoCard("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "answer 1" ,"dev_board.json", null, 100);
-        new InfoCard("question 1", "answer 1" ,"dev_board.json", "Java", 100);
+        //new InfoCard("question 1", "answer 1" ,"dev_board.json", "Java", 100);
         /*
         frame = new JFrame();
         frame.setSize(500,500);
