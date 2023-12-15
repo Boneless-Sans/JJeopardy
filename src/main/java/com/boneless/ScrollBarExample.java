@@ -1,6 +1,7 @@
 package com.boneless;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ScrollBarExample extends JFrame {
 
@@ -18,10 +19,19 @@ public class ScrollBarExample extends JFrame {
     }
 
     private void addComponents() {
-        JTextArea textArea = new JTextArea("Lorem ipsum dolor sit amet, consectetur adipiscing elit...");
+        //JTextArea textArea = new JTextArea("Lorem ipsum dolor sit amet, consectetur adipiscing elit...");
 
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(20,1,10,10));
         // Create a JScrollPane and add the JTextArea to it
-        JScrollPane scrollPane = new JScrollPane(textArea);
+
+        panel.add(createTemplate("text 1"));
+        panel.add(createTemplate("text 2"));
+        panel.add(createTemplate("text 3"));
+        panel.add(createTemplate("text 4"));
+        panel.add(createTemplate("text 5"));
+
+        JScrollPane scrollPane = new JScrollPane(panel);
 
         // Set the scroll policies (optional)
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -29,6 +39,17 @@ public class ScrollBarExample extends JFrame {
 
         // Add the JScrollPane to the frame
         add(scrollPane);
+    }
+    private JPanel createTemplate(String text){
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(100, 50));
+        panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        panel.setBackground(Color.LIGHT_GRAY);
+
+        JLabel label = new JLabel(text);
+        panel.add(label);
+
+        return panel;
     }
 
     public static void main(String[] args) {

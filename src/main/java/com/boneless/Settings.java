@@ -9,9 +9,11 @@ import static com.boneless.Launcher.*;
 
 public class Settings extends JFrame{
     public Settings(){
-        setSize(500,500);
+        setSize(500,400);
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setUndecorated(true);
+        setLocationRelativeTo(null);
         SystemUI.set();
 
         JPanel title = new JPanel(new FlowLayout());
@@ -22,13 +24,13 @@ public class Settings extends JFrame{
 
         title.add(settingsTitle);
 
-        JPanel mainPanel = new JPanel(new FlowLayout());
-        mainPanel.setPreferredSize(new Dimension(300,300));
-        mainPanel.setBackground(Color.WHITE);
+        //Main body
+        JPanel mainPanel = new JPanel(new GridLayout(5,1,10,10));
+        for(int i = 0;i < 5; i++){
+            mainPanel.add(createKeyBindPanel("text " + i));
+        }
 
-        JScrollBar uh = new JScrollBar();
-
-        mainPanel.add(uh);
+        JScrollPane mainPane = new JScrollPane(mainPanel);
 
         JButton exit = new JButton("exit");
         exit.addActionListener(e -> {
@@ -37,8 +39,19 @@ public class Settings extends JFrame{
         });
 
         add(title, BorderLayout.NORTH);
-        add(mainPanel, BorderLayout.CENTER);
+        add(mainPane, BorderLayout.CENTER);
         add(exit, BorderLayout.SOUTH);
         setVisible(true);
+    }
+    private JPanel createKeyBindPanel(String text){
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.lightGray);
+        panel.setPreferredSize(new Dimension(100,100));
+
+        JLabel label = new JLabel(text);
+
+        panel.add(label);
+
+        return panel;
     }
 }
