@@ -36,18 +36,17 @@ public class Settings extends JFrame implements ActionListener {
         //Main body
         JPanel mainPanel = new JPanel(new GridLayout(0,1,10,10));
 
-        JTextField exitTextField = createTextField("exit");
-        JPanel exitPanel = createTextFieldPanel("Exit",exitTextField);
+        JButton exitKeyBindButton = createKeyBindButton("exit");
+        JPanel exitPanel = createTextFieldPanel("Exit",exitKeyBindButton);
+        exitKeyBindButton.addActionListener(keyBindButtonListener());
 
-        exitTextField.getDocument().addDocumentListener(documentListener(exitTextField));
+        JButton continueKeyBindButton = createKeyBindButton("continue");
+        JPanel continuePanel = createTextFieldPanel("Continue", continueKeyBindButton);
+        continueKeyBindButton.addActionListener(keyBindButtonListener());
 
-        JTextField continueTextField = createTextField("continue");
-        JPanel continuePanel = createTextFieldPanel("Continue", continueTextField);
-        continueTextField.getDocument().addDocumentListener(documentListener(continueTextField));
-
-        JTextField fullscreenTextField = createTextField("fullscreen");
-        JPanel fullscreenPanel = createTextFieldPanel("Fullscreen", fullscreenTextField);
-        fullscreenTextField.getDocument().addDocumentListener(documentListener(fullscreenTextField));
+        JButton fullscreenKeyBindButton = createKeyBindButton("fullscreen");
+        JPanel fullscreenPanel = createTextFieldPanel("Fullscreen", fullscreenKeyBindButton);
+        fullscreenKeyBindButton.addActionListener(keyBindButtonListener());
 
         mainPanel.add(createHeaderText("Key Binds"));
         mainPanel.add(exitPanel);
@@ -115,7 +114,7 @@ public class Settings extends JFrame implements ActionListener {
         panel.add(label);
         return panel;
     }
-    private JPanel createTextFieldPanel(String text, JTextField textField) {
+    private JPanel createTextFieldPanel(String text, JButton button) {
         JPanel panel = new JPanel(new GridLayout(1, 2));
         panel.setBackground(Color.lightGray);
         panel.setPreferredSize(new Dimension(0, 50));
@@ -136,36 +135,35 @@ public class Settings extends JFrame implements ActionListener {
         JPanel keyBindPanel = new JPanel(new GridBagLayout());
         keyBindPanel.setBackground(Color.lightGray);
 
-        keyBindPanel.add(textField, gbc);
+        keyBindPanel.add(button, gbc);
 
         panel.add(labelPanel);
         panel.add(keyBindPanel);
         return panel;
     }
-    private JTextField createTextField(String keyBind){
+    private JButton createKeyBindButton(String keyBind){
         String rawKeyBind = JsonFile.read("settings.json", "keyBinds", keyBind);
         String keyBindText = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
 
-        JTextField keyBindTextField = new JTextField(keyBindText);
-        keyBindTextField.setFont(new Font("Arial", Font.PLAIN, 15));
-        keyBindTextField.setPreferredSize(new Dimension(100, 45));
-        keyBindTextField.addActionListener(this::textFieldAction);
+        JButton keyBindButton = new JButton(keyBindText);
+        keyBindButton.setFont(new Font("Arial", Font.PLAIN, 15));
+        keyBindButton.setPreferredSize(new Dimension(100, 45));
+        keyBindButton.addActionListener(this::textFieldAction);
 
-        return keyBindTextField;
+        return keyBindButton;
     }
-    private DocumentListener documentListener(JTextField textField){
-        return new DocumentListener() {
+    private ActionListener keyBindButtonListener(){
+        return new ActionListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                System.out.println(textField.getText());
-            }
+            public void actionPerformed(ActionEvent e) {
+                JFrame keyBindFrame = new JFrame("Press any key...");
+                keyBindFrame.setUndecorated(true);
+                keyBindFrame.setSize(200,100);
+                keyBindFrame.setLocationRelativeTo(null);
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-            }
+                JButton button = (JButton) e.getSource();
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {
+                keyBindFrame.setVisible(true);
             }
         };
     }
