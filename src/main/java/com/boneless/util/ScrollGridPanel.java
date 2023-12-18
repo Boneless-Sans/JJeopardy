@@ -1,4 +1,4 @@
-package com.boneless;
+package com.boneless.util;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

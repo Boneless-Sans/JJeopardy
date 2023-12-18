@@ -2,18 +2,13 @@ package com.boneless;
 
 import com.boneless.util.IconResize;
 import com.boneless.util.JsonFile;
+import com.boneless.util.ScrollGridPanel;
 import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.metal.MetalCheckBoxIcon;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 import java.io.File;
-import java.net.URL;
 
 public class Launcher {
     private static JButton buttonStart;
@@ -81,7 +76,7 @@ public class Launcher {
             new Settings();
         });
 
-        buttonExit.addActionListener(e -> System.exit(1));
+        buttonExit.addActionListener(e -> System.exit(0));
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         buttonsPanel.setOpaque(false);

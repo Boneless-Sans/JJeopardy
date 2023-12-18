@@ -4,7 +4,10 @@ import com.boneless.util.IconResize;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
+import javax.print.Doc;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,9 +16,7 @@ import static com.boneless.Launcher.*;
 
 public class Settings extends JFrame implements ActionListener {
     private boolean changedSettings = false;
-    private final String[] buttonOptions = {
-            "Yes","No","Save"
-    };
+    private final String[] buttonOptions = {"Yes","No","Save"};
     public Settings(){
         setSize(500,400);
         setLayout(new BorderLayout());
@@ -38,11 +39,15 @@ public class Settings extends JFrame implements ActionListener {
         JTextField exitTextField = createTextField("exit");
         JPanel exitPanel = createTextFieldPanel("Exit",exitTextField);
 
+        exitTextField.getDocument().addDocumentListener(documentListener(exitTextField));
+
         JTextField continueTextField = createTextField("continue");
         JPanel continuePanel = createTextFieldPanel("Continue", continueTextField);
+        continueTextField.getDocument().addDocumentListener(documentListener(continueTextField));
 
         JTextField fullscreenTextField = createTextField("fullscreen");
         JPanel fullscreenPanel = createTextFieldPanel("Fullscreen", fullscreenTextField);
+        fullscreenTextField.getDocument().addDocumentListener(documentListener(fullscreenTextField));
 
         mainPanel.add(createHeaderText("Key Binds"));
         mainPanel.add(exitPanel);
@@ -148,7 +153,22 @@ public class Settings extends JFrame implements ActionListener {
 
         return keyBindTextField;
     }
+    private DocumentListener documentListener(JTextField textField){
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                System.out.println(textField.getText());
+            }
 
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+            }
+        };
+    }
     private void textFieldAction(ActionEvent e) {
         changedSettings = true;
         JTextField textField = (JTextField) e.getSource();
