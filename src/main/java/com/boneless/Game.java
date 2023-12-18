@@ -20,8 +20,7 @@ public class Game extends JFrame implements KeyListener {
     private boolean playAudio = Boolean.parseBoolean(JsonFile.read("settings.json","general","play_audio"));
     private static boolean doFullScreen;
     private String[] teams;
-    public Game(String[] teams){
-        this.teams = teams;
+    public Game(){
     }
 
     public static void setDoFullScreen(boolean doFullScreen) {

@@ -22,36 +22,32 @@ public class Launcher {
     private static JButton buttonSettings;
     private static JButton buttonExit;
     private static JFrame frame;
-    private static String title;
-    private static Game game = new Game(null);
+    private static final Game game = new Game();
     private static Color headerColor = new Color(21, 27, 75);
     private static Color backgroundColor = new Color(42,54,152);
     private static Color textColor = new Color(255,255,255);
     private static final String[] teamDropDown= {
             "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "8 Teams", "9 Teams", "10 Teams"
     };
-    private static GridBagLayout gbc;
-
     public static void main(String[] args) {
         headerColor = stringToColor(game.getFileName(), "header_color");
         backgroundColor = stringToColor(game.getFileName(), "background_color");
         textColor = stringToColor(game.getFileName(), "font_color");
         SystemUI.set();
 
-        // Create the frame
         frame = new JFrame();
         frame.setUndecorated(true);
         frame.setSize(500, 400);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
 
-        // Use ScrollGridPanel as the background panel
         ScrollGridPanel backgroundPanel = new ScrollGridPanel();
         frame.add(backgroundPanel, BorderLayout.CENTER);
 
         // Create UI elements
         JLabel titleText = new JLabel("JJeopardy!");
         titleText.setFont(new Font("Arial", Font.PLAIN, 30));
+        titleText.setForeground(Color.WHITE);
 
         JPanel titlePanel = new JPanel(new FlowLayout());
         titlePanel.setOpaque(false);
@@ -95,16 +91,15 @@ public class Launcher {
         buttonsPanel.add(buttonSettings);
         buttonsPanel.add(buttonExit);
 
-        // Show file name
         JPanel fileText = new JPanel(new FlowLayout(FlowLayout.CENTER));
         fileText.setOpaque(false);
 
         JLabel currentFile = new JLabel("Current File: " + game.getFileName());
         currentFile.setFont(new Font("Arial", Font.PLAIN, 15));
+        currentFile.setForeground(Color.white);
 
         fileText.add(currentFile);
 
-        // Add UI elements on top of the background panel
         backgroundPanel.setLayout(new BorderLayout());
         backgroundPanel.add(titlePanel, BorderLayout.NORTH);
         backgroundPanel.add(buttonsPanel, BorderLayout.CENTER);

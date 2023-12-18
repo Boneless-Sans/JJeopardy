@@ -5,6 +5,6 @@
     "fullscreen": "f"
   },
   "general": {
-    "play_audio": true
+    "play_audio": "true"
   }
 }

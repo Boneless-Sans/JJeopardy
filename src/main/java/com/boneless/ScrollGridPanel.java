@@ -68,6 +68,7 @@ public class ScrollGridPanel extends JPanel {
     public ScrollGridPanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         initializeSquares();
+        setBackground(Color.black);
 
         Timer timer = new Timer(20, new ActionListener() {
             @Override
