@@ -74,8 +74,8 @@ public class Game extends JFrame implements KeyListener {
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(backgroundColor);
-            panel.setBorder(BorderFactory.createEtchedBorder());
+            panel.setBackground(Color.white);
+            panel.setBorder(BorderFactory.createCompoundBorder());
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -91,7 +91,6 @@ public class Game extends JFrame implements KeyListener {
 
         for(JButton button : buttons){
             button.setFont(new Font(textFont,Font.PLAIN,25));
-            button.setBackground(buttonColor);
             gameBoard.add(button);
         }
 
