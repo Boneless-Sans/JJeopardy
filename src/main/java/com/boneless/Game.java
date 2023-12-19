@@ -72,6 +72,7 @@ public class Game extends JFrame implements KeyListener {
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
             panel.setBackground(Color.white);
+            panel.putClientProperty( FlatClientProperties.STYLE, "arc: 8" );
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
