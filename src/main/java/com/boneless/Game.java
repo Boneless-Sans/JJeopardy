@@ -3,6 +3,8 @@ package com.boneless;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
+import javax.swing.border.AbstractBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,6 +27,7 @@ public class Game extends JFrame implements KeyListener {
     }
 
     public void initUI(boolean doFullScreen){
+        //todo use the fucking colors
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
@@ -72,7 +75,7 @@ public class Game extends JFrame implements KeyListener {
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
             panel.setBackground(Color.white);
-            panel.putClientProperty( FlatClientProperties.STYLE, "arc: 8" );
+            panel.setBorder(BorderFactory.createCompoundBorder());
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
