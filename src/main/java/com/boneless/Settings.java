@@ -4,19 +4,22 @@ import com.boneless.util.IconResize;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
-import javax.print.Doc;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import static com.boneless.Launcher.*;
 
-public class Settings extends JFrame implements ActionListener {
+public class Settings extends JFrame{
     private boolean changedSettings = false;
     private final String[] buttonOptions = {"Yes","No","Save"};
+    private static JButton exitKeyBindButton = null;
+    private static JButton continueKeyBindButton = null;
+    private static JButton fullscreenKeyBindButton = null;
+    private JCheckBox playAudio;
     public Settings(){
         setSize(500,400);
         setLayout(new BorderLayout());
@@ -36,25 +39,29 @@ public class Settings extends JFrame implements ActionListener {
         //Main body
         JPanel mainPanel = new JPanel(new GridLayout(0,1,10,10));
 
-        JButton exitKeyBindButton = createKeyBindButton("exit");
-        JPanel exitPanel = createTextFieldPanel("Exit",exitKeyBindButton);
-        exitKeyBindButton.addActionListener(keyBindButtonListener());
+        exitKeyBindButton = createKeyBindButton("exit");
+        JPanel exitPanel = createKeyBindPanel("Exit",exitKeyBindButton);
+        exitKeyBindButton.addActionListener(keyBindButtonListener("Exit"));
 
-        JButton continueKeyBindButton = createKeyBindButton("continue");
-        JPanel continuePanel = createTextFieldPanel("Continue", continueKeyBindButton);
-        continueKeyBindButton.addActionListener(keyBindButtonListener());
+        continueKeyBindButton = createKeyBindButton("continue");
+        JPanel continuePanel = createKeyBindPanel("Continue", continueKeyBindButton);
+        continueKeyBindButton.addActionListener(keyBindButtonListener("Continue"));
 
-        JButton fullscreenKeyBindButton = createKeyBindButton("fullscreen");
-        JPanel fullscreenPanel = createTextFieldPanel("Fullscreen", fullscreenKeyBindButton);
-        fullscreenKeyBindButton.addActionListener(keyBindButtonListener());
+        fullscreenKeyBindButton = createKeyBindButton("fullscreen");
+        JPanel fullscreenPanel = createKeyBindPanel("Fullscreen", fullscreenKeyBindButton);
+        fullscreenKeyBindButton.addActionListener(keyBindButtonListener("Fullscreen"));
 
         mainPanel.add(createHeaderText("Key Binds"));
         mainPanel.add(exitPanel);
         mainPanel.add(continuePanel);
         mainPanel.add(fullscreenPanel);
 
+        playAudio = createCheckbox("play_audio");
+        JPanel playAudioPanel = createCheckboxPanel("Play Audio", playAudio);
+        playAudio.addActionListener(checkBoxToggle(playAudio));
+
         mainPanel.add(createHeaderText("Audio"));
-        mainPanel.add(createCheckboxPanel("Play Audio", "play_audio"));
+        mainPanel.add(playAudioPanel);
 
         JScrollPane mainPane = new JScrollPane(mainPanel);
 
@@ -63,12 +70,13 @@ public class Settings extends JFrame implements ActionListener {
         JButton save = new JButton("Save Settings");
         save.setFocusable(false);
         save.setFont(new Font("Arial", Font.PLAIN, 20));
+        save.addActionListener(e -> save());
 
         JButton exit = new JButton("Close");
         exit.setFocusable(false);
         exit.setFont(new Font("Arial", Font.PLAIN, 20));
         exit.addActionListener(e -> {
-            if(!changedSettings){
+            if(changedSettings){
                 int input = JOptionPane.showOptionDialog(
                         null,
                         "Are you sure you want to exit without saving?",
@@ -82,8 +90,6 @@ public class Settings extends JFrame implements ActionListener {
                     case 0:
                         changeButtonState(true);
                         dispose();
-                        break;
-                    case 1:
                         break;
                     case 2:
                         //TODO implement saving
@@ -106,7 +112,6 @@ public class Settings extends JFrame implements ActionListener {
     private JPanel createHeaderText(String text){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         panel.setPreferredSize(new Dimension(0,0));
-        //panel.setBackground(Color.red);
 
         JLabel label = new JLabel("<html>" + text + "<br>\n-----------------------------</html>");
         label.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -114,7 +119,7 @@ public class Settings extends JFrame implements ActionListener {
         panel.add(label);
         return panel;
     }
-    private JPanel createTextFieldPanel(String text, JButton button) {
+    private JPanel createKeyBindPanel(String text, JButton button) {
         JPanel panel = new JPanel(new GridLayout(1, 2));
         panel.setBackground(Color.lightGray);
         panel.setPreferredSize(new Dimension(0, 50));
@@ -148,52 +153,19 @@ public class Settings extends JFrame implements ActionListener {
         JButton keyBindButton = new JButton(keyBindText);
         keyBindButton.setFont(new Font("Arial", Font.PLAIN, 15));
         keyBindButton.setPreferredSize(new Dimension(100, 45));
-        keyBindButton.addActionListener(this::textFieldAction);
-
+        keyBindButton.setFocusable(false);
         return keyBindButton;
     }
-    private ActionListener keyBindButtonListener(){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFrame keyBindFrame = new JFrame("Press any key...");
-                keyBindFrame.setUndecorated(true);
-                keyBindFrame.setSize(200,100);
-                keyBindFrame.setLocationRelativeTo(null);
+    private ActionListener keyBindButtonListener(String keyBind){
+        return e -> {
+            setKeyBindButtons(false);
 
-                JButton button = (JButton) e.getSource();
+            JButton button = (JButton) e.getSource();
 
-                keyBindFrame.setVisible(true);
-            }
+            new keyBindSet(button, keyBind);
         };
     }
-    private void textFieldAction(ActionEvent e) {
-        changedSettings = true;
-        JTextField textField = (JTextField) e.getSource();
-        String input = textField.getText();
-        System.out.println(input);
-    }
-
-    private int getTextFieldIndex(String keyBindName) {
-        // Map keyBindName to an index for the array
-        // You may use a switch statement, a Map, or any other logic
-        // to determine the index based on the keyBindName
-        int index = 0;
-        switch (keyBindName) {
-            case "exit":
-                index = 0;
-                break;
-            case "continue":
-                index = 1;
-                break;
-            case "fullscreen":
-                index = 2;
-                break;
-            // Add more cases as needed
-        }
-        return index;
-    }
-    private JPanel createCheckboxPanel(String text, String isChecked){
+    private JPanel createCheckboxPanel(String text, JCheckBox checkBox){
         JPanel panel = new JPanel(new GridLayout(1,2));
         panel.setBackground(Color.lightGray);
         panel.setPreferredSize(new Dimension(0,50));
@@ -216,29 +188,136 @@ public class Settings extends JFrame implements ActionListener {
         JPanel keyBindPanel = new JPanel(new GridBagLayout());
         keyBindPanel.setBackground(Color.lightGray);
 
-        JCheckBox checkBox = new JCheckBox();
-        if(Boolean.parseBoolean(JsonFile.read("settings.json","general", isChecked))){
-            checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
-        }else{
-            checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
-        }
-        checkBox.addActionListener(e -> {
-            changedSettings = true;
-            if(checkBox.isSelected()){
-                checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
-            }else{
-                checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
-            }
-        });
-
         keyBindPanel.add(checkBox, gbc);
 
         panel.add(labelPanel);
         panel.add(keyBindPanel);
         return panel;
     }
-    @Override
-    public void actionPerformed(ActionEvent e) {
+    private JCheckBox createCheckbox(String setting){
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setBackground(Color.lightGray);
+        if(Boolean.parseBoolean(JsonFile.read("settings.json","general", setting))){
+            checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
+        }else{
+            checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
+        }
 
+        return checkBox;
+    }
+    private static void setKeyBindButtons(boolean enable){
+        exitKeyBindButton.setEnabled(enable);
+        continueKeyBindButton.setEnabled(enable);
+        fullscreenKeyBindButton.setEnabled(enable);
+    }
+    private ActionListener checkBoxToggle(JCheckBox checkBox){
+        return e -> {
+            changedSettings = true;
+            if(checkBox.isSelected()){
+                checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
+            }else{
+                checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
+            }
+        };
+    }
+    private void save(){
+        //Key Binds
+        JsonFile.writeln("settings.json","keyBinds","exit",exitKeyBindButton.getText());
+        JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());
+        JsonFile.writeln("settings.json","keyBinds","fullscreen",fullscreenKeyBindButton.getText());
+
+        //Check Boxes
+        JsonFile.writeln("settings.json","general","play_audio", String.valueOf(playAudio.isSelected()));
+    }
+    private static class keyBindSet extends JFrame implements KeyListener {
+        private final JLabel keyBindText;
+        public keyBindSet(JButton button, String keyBind){
+            setTitle("Press any key...");
+            setUndecorated(true);
+            setSize(300,200);
+            addKeyListener(this);
+            setLocationRelativeTo(null);
+            setLayout(new BorderLayout());
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.fill = 0;
+
+            JPanel currentKey = new JPanel(new GridBagLayout());
+            currentKey.setBackground(Color.lightGray);
+
+            JLabel currentKeyText = new JLabel("Key bind for \"" + keyBind + "\"");
+            currentKeyText.setFont(new Font("Arial",Font.PLAIN,25));
+
+            currentKey.add(currentKeyText, gbc);
+
+            JPanel keyBindPanel = new JPanel(new GridBagLayout());
+            keyBindPanel.setBackground(Color.gray);
+
+            keyBindText = new JLabel("Press any Key...");
+            keyBindText.setFont(new Font("Arial",Font.PLAIN,25));
+
+            keyBindPanel.add(keyBindText, gbc);
+
+            JPanel buttonsPanel = new JPanel(new FlowLayout());
+            buttonsPanel.setBackground(Color.lightGray);
+
+            JButton cancelButton = new JButton("Cancel");
+            cancelButton.addActionListener(e -> {
+                dispose();
+                setKeyBindButtons(true);
+            });
+            cancelButton.setFocusable(false);
+
+            JButton saveButton = new JButton("Save");
+            saveButton.setFocusable(false);
+            saveButton.addActionListener(s -> {
+                button.setText(keyBindText.getText());
+                dispose();
+                setKeyBindButtons(true);
+            });
+
+            buttonsPanel.add(cancelButton);
+            buttonsPanel.add(saveButton);
+
+            add(currentKey, BorderLayout.NORTH);
+            add(keyBindPanel, BorderLayout.CENTER);
+            add(buttonsPanel, BorderLayout.SOUTH);
+            setVisible(true);
+        }
+        private String toUpperCase(String text){
+            return text.substring(0, 1).toUpperCase() + text.substring(1);
+        }
+        @Override
+        public void keyTyped(KeyEvent e) {
+            switch(e.getKeyChar()){
+                case 8:
+                    keyBindText.setText("Backspace");
+                    break;
+                case 10:
+                    keyBindText.setText("Enter");
+                    break;
+                case 27:
+                    keyBindText.setText("Esc");
+                    break;
+                case 32:
+                    keyBindText.setText("Space");
+                    break;
+                case 127:
+                    keyBindText.setText("Delete");
+                    break;
+                default:
+                    keyBindText.setText(toUpperCase(String.valueOf(e.getKeyChar())));
+            }
+        }
+        @Override
+        public void keyPressed(KeyEvent e) {
+
+        }
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+        }
     }
 }

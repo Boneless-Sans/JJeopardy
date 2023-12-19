@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
 
+@SuppressWarnings("CallToPrintStackTrace")
 class Square {
     private int x;
     private int y;

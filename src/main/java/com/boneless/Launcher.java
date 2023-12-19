@@ -61,10 +61,8 @@ public class Launcher {
         setupButton(buttonSettings);
         setupButton(buttonExit);
 
-        buttonStart.addActionListener(e -> {
-            addTeams();
-        });
-        buttonLoadData.addActionListener(e -> loadBoardFile(game));
+        buttonStart.addActionListener(e -> addTeams());
+        buttonLoadData.addActionListener(e -> loadBoardFile());
 
         buttonCreateBoard.addActionListener(e -> {
             changeButtonState(false);
@@ -115,23 +113,23 @@ public class Launcher {
         button.setBackground(Color.lightGray);
         button.setFont(new Font("Arial", Font.PLAIN, 17));
     }
-    private static void loadBoardFile(Game game) {
+    private static void loadBoardFile() {
         JFileChooser chooser = new JFileChooser();
         chooser.setFileFilter(new FileNameExtensionFilter("JSON File", "json"));
 
         if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
             File file = chooser.getSelectedFile();
-            game.setFileName(String.valueOf(file));
+            Launcher.game.setFileName(String.valueOf(file));
             System.out.println(file);
             // Update the UI with the new file name
-            updateFileNameLabel(game);
+            updateFileNameLabel();
         }
 
         // Enable buttons after file selection
         changeButtonState(true);
     }
-    private static void updateFileNameLabel(Game game) {
-        JLabel currentFile = new JLabel("Current File: " + game.getFileName());
+    private static void updateFileNameLabel() {
+        JLabel currentFile = new JLabel("Current File: " + Launcher.game.getFileName());
         currentFile.setFont(new Font("Arial", Font.PLAIN, 15));
 
         JPanel fileText = (JPanel) ((JPanel) frame.getContentPane().getComponent(0)).getComponent(2);
@@ -150,10 +148,9 @@ public class Launcher {
     @SuppressWarnings("MagicConstant")
     private static void addTeams(){
         frame.setVisible(false);
-        boolean doFullScreen = false;
         changeButtonState(false);
         JFrame tFrame = new JFrame();
-        tFrame.setSize(500,400);
+        tFrame.setSize(450,400);
         tFrame.setUndecorated(true);
         tFrame.setLocationRelativeTo(null);
         tFrame.setLayout(new BorderLayout());

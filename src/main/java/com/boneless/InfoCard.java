@@ -162,11 +162,11 @@ public class InfoCard extends JFrame implements KeyListener {
         reveal.setForeground(fontColor);
         reveal.setFont(font);
 
-        panel.add(createHeaderPanel(closeText, createHeaderButton("exit", font, true)));
+        panel.add(createHeaderPanel(closeText, createHeaderButton("exit", font, false)));
 
         panel.add(titlePanel);
 
-        panel.add(createHeaderPanel(reveal, createHeaderButton("continue", font, false)));
+        panel.add(createHeaderPanel(reveal, createHeaderButton("continue", font, true)));
 
         return panel;
     }
@@ -199,10 +199,10 @@ public class InfoCard extends JFrame implements KeyListener {
     }
     private String parseKeyStrokeInput(String keyStrokeCode){
         return switch (keyStrokeCode){
-            case "esc" -> "\u001B";
-            case "space" -> " ";
-            case "enter" -> "\n";
-            case "alt" -> "0x12";
+            case "Esc" -> "\u001B";
+            case "Space" -> " ";
+            case "Enter" -> "\n";
+            case "Backspace" -> "\b";
             default -> keyStrokeCode;
         };
     }
@@ -260,7 +260,6 @@ public class InfoCard extends JFrame implements KeyListener {
     }
     @Override
     public void keyTyped(KeyEvent e) {
-        //System.out.println("Key pressed: " + e.getKeyChar() + " Key expected: " + esc);
         if(String.valueOf(e.getKeyChar()).equals(advance)) {
             if(!exit) {
                 if (question.length() > 100) {
@@ -271,7 +270,8 @@ public class InfoCard extends JFrame implements KeyListener {
             }else{
                 dispose();
             }
-        }else if(String.valueOf(e.getKeyChar()).equals(esc)){
+        }
+        if(String.valueOf(e.getKeyChar()).equals(esc)){
             dispose();
         }
     }

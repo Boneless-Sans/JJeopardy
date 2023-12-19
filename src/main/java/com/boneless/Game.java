@@ -20,9 +20,6 @@ public class Game extends JFrame implements KeyListener {
     private boolean playAudio = Boolean.parseBoolean(JsonFile.read("settings.json","general","play_audio"));
     private static boolean doFullScreen;
     private String[] teams;
-    public Game(){
-    }
-
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
@@ -69,17 +66,26 @@ public class Game extends JFrame implements KeyListener {
         GridLayout board = new GridLayout(sizeX, sizeY, 5,5);
         gameBoard.setLayout(board);
 
-        JButton[] buttons = createTitles(fileName, sizeX, sizeY);
-        JButton[] rowOne = createRows(fileName, sizeX, sizeY);
+        JLabel[] cats = createTitles(fileName, sizeX, sizeY);
+        JButton[] buttons = createRows(fileName, sizeX, sizeY);
 
-        for (JButton button : buttons) {
-            button.setFont(new Font(textFont, Font.PLAIN, 30));
-            button.setFocusable(false);
-            button.addActionListener(new ButtonActionListener());
-            gameBoard.add(button);
+        for (JLabel label : cats) {
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.setBackground(Color.white);
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.fill = 0;
+
+            label.setFont(new Font(textFont, Font.PLAIN, 30));
+            label.setFocusable(false);
+
+            panel.add(label, gbc);
+            gameBoard.add(panel);
         }
 
-        for(JButton button : rowOne){
+        for(JButton button : buttons){
             button.setFont(new Font(textFont,Font.PLAIN,25));
             gameBoard.add(button);
         }
@@ -94,7 +100,7 @@ public class Game extends JFrame implements KeyListener {
     }
     public void addTeams(Team teams){
     }
-    public JButton[] createTitles(String filename, int sizeX, int sizeY) {
+    public JLabel[] createTitles(String filename, int sizeX, int sizeY) {
         //it adds left to right, so there will need to be some math to calculate when to add titles and questions
 
         String[] titles = new String[sizeX]; // Declare the array of sizeX elements
@@ -103,11 +109,11 @@ public class Game extends JFrame implements KeyListener {
             titles[i-1] = JsonFile.read(filename, "column_" + i, "title"); // Read the title and store it in the array
         }
         //draw each line via their row number
-        JButton[] buttons = new JButton[sizeX];
+        JLabel[] label = new JLabel[sizeX];
         for(int i = 0; i < sizeX; i++){
-            buttons[i] = new JButton(titles[i]);
+            label[i] = new JLabel(titles[i]);
         }
-        return buttons;
+        return label;
     }
     public JButton[] createRows(String filename, int sizeX, int sizeY) {
         String[] rowData = new String[sizeX * sizeY];
@@ -146,6 +152,7 @@ public class Game extends JFrame implements KeyListener {
     }
     private Color stringToColor(String panel){
         String initColor = JsonFile.readTwoKeys(getFileName(), "data", panel);
+        assert initColor != null;
         String[] split = initColor.split(",");
         int red = Integer.parseInt(split[0]);
         int green = Integer.parseInt(split[1]);
@@ -192,7 +199,7 @@ public class Game extends JFrame implements KeyListener {
     }
 
     // ActionListener for the buttons
-    private class ButtonActionListener implements ActionListener {
+    private static class ButtonActionListener implements ActionListener {
         private int row;
         private int column;
         public ButtonActionListener(){

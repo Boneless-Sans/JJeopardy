@@ -1,10 +1,8 @@
 {
+  "general": {"play_audio": "true"},
   "keyBinds": {
-    "exit": "esc",
-    "continue": "space",
-    "fullscreen": "f"
-  },
-  "general": {
-    "play_audio": "true"
+    "exit": "Esc",
+    "fullscreen": "F",
+    "continue": "Space"
   }
 }

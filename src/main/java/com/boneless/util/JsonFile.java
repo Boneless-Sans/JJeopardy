@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class JsonFile {
 
     private static final String DEFAULT_DIRECTORY = "/src/main/resources/data/";
