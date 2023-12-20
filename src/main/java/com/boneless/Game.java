@@ -20,14 +20,14 @@ public class Game extends JFrame implements KeyListener {
     private final Color backgroundColor = stringToColor("background_color");
     private final Color fontColor = stringToColor("font_color");
     private final Color buttonColor = stringToColor("button_color");
-    private boolean playAudio = Boolean.parseBoolean(JsonFile.read("settings.json","general","play_audio"));
     private static boolean doFullScreen;
+    private int teamCount;
     private String[] teams;
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
 
-    public void initUI(boolean doFullScreen){
+    public void initUI(boolean doFullScreen, int teamCount){
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
@@ -36,6 +36,7 @@ public class Game extends JFrame implements KeyListener {
             setSize(1280, 720);
             setDoFullScreen(false);
         }
+        this.teamCount = teamCount;
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -44,11 +45,11 @@ public class Game extends JFrame implements KeyListener {
         setFocusable(true);
 
         JPanel title = new JPanel(new FlowLayout());
+        title.setBackground(headerColor);
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
         titleText.setFont(new Font(textFont, Font.PLAIN, 25));
-        title.setBackground(headerColor);
-        title.setForeground(fontColor);
+        titleText.setForeground(fontColor);
         title.add(titleText);
 
         JPanel gameBoard = new JPanel(new GridLayout());
@@ -97,12 +98,28 @@ public class Game extends JFrame implements KeyListener {
             button.setBackground(buttonColor);
             button.setForeground(fontColor);
             button.setBorderPainted(false);
+            button.setOpaque(true);
             gameBoard.add(button);
         }
 
         return gameBoard;
     }
-    public JLabel[] createTitles(String filename, int sizeX, int sizeY) {
+    private JPanel createTeamsPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(1,0, 10,10));
+
+        for(int i = 0; i < teamCount; i++){
+            panel.add(createTeamPanel(new Team("name")));
+        }
+        return panel;
+    }
+    private JPanel createTeamPanel(Team team){
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.blue);
+        panel.setPreferredSize(new Dimension(50,100));
+        return panel;
+    }
+    private JLabel[] createTitles(String filename, int sizeX, int sizeY) {
         //it adds left to right, so there will need to be some math to calculate when to add titles and questions
 
         String[] titles = new String[sizeX]; // Declare the array of sizeX elements
@@ -214,23 +231,20 @@ public class Game extends JFrame implements KeyListener {
         public void actionPerformed(ActionEvent e) {
             JButton clickedButton = (JButton) e.getSource();
             clickedButton.setEnabled(false);
-            if(canOpen) {
+            if (canOpen) {
                 canOpen = false;
-                new InfoCard(JsonFile.readWithThreeKeys(fileName, "column_" + column, "questions", "row_" + row),
+                new InfoCard(
+                        JsonFile.readWithThreeKeys(fileName, "column_" + column, "questions", "row_" + row),
                         JsonFile.readWithThreeKeys(fileName, "column_" + column, "answers", "row_" + row),
                         fileName,
                         JsonFile.read(fileName, "column_" + column, "title"),
                         Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "column_" + column, "points", "row_" + row)),
                         doFullScreen);
+
+                // Reset the flag to allow opening new InfoCards
+                canOpen = true;
             }
         }
-    }
-    private JPanel createTeamsPanel(){
-        JPanel teams = new JPanel();
-        teams.setPreferredSize(new Dimension(0,100));
-        teams.setBackground(Color.red);
-
-        return teams;
     }
     public void setFileName(String file){
         this.fileName = file;

@@ -88,11 +88,13 @@ public class Settings extends JFrame{
                         buttonOptions[0]);
                 switch(input){
                     case 0:
-                        changeButtonState(true);
                         dispose();
+                        changeButtonState(true);
                         break;
                     case 2:
-                        //TODO implement saving
+                        save();
+                        dispose();
+                        changeButtonState(true);
                         break;
                 }
             }else {
@@ -221,6 +223,7 @@ public class Settings extends JFrame{
         };
     }
     private void save(){
+        changedSettings = false;
         //Key Binds
         JsonFile.writeln("settings.json","keyBinds","exit",exitKeyBindButton.getText());
         JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());

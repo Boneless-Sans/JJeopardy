@@ -1,5 +1,5 @@
 {
-  "general": {"play_audio": "true"},
+  "general": {"play_audio": "false"},
   "keyBinds": {
     "exit": "Esc",
     "fullscreen": "F",
