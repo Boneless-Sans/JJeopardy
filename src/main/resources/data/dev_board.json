@@ -13,7 +13,7 @@
     "header_font_type": "Font.PLAIN",
 
     "background_color": "42,54,152",
-    "button_color": "255,255,255",
+    "button_color": "55,64,152",
     "columns": 6,
     "rows": 5
   },

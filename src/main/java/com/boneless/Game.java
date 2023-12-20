@@ -16,9 +16,10 @@ public class Game extends JFrame implements KeyListener {
     private static boolean canOpen = true;
     private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
     private final String fontSize = JsonFile.read(getFileName(), "data", "board_font_size");
-    private int lastCardPoints = 0;
-    private final Color buttonColor = stringToColor("button_color");
+    private final Color headerColor = stringToColor("header_color");
     private final Color backgroundColor = stringToColor("background_color");
+    private final Color fontColor = stringToColor("font_color");
+    private final Color buttonColor = stringToColor("button_color");
     private boolean playAudio = Boolean.parseBoolean(JsonFile.read("settings.json","general","play_audio"));
     private static boolean doFullScreen;
     private String[] teams;
@@ -27,7 +28,6 @@ public class Game extends JFrame implements KeyListener {
     }
 
     public void initUI(boolean doFullScreen){
-        //todo use the fucking colors
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
@@ -47,6 +47,8 @@ public class Game extends JFrame implements KeyListener {
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
         titleText.setFont(new Font(textFont, Font.PLAIN, 25));
+        title.setBackground(headerColor);
+        title.setForeground(fontColor);
         title.add(titleText);
 
         JPanel gameBoard = new JPanel(new GridLayout());
@@ -68,14 +70,14 @@ public class Game extends JFrame implements KeyListener {
 
         GridLayout board = new GridLayout(sizeX, sizeY, 5,5);
         gameBoard.setLayout(board);
+        gameBoard.setBackground(Color.BLACK);
 
         JLabel[] cats = createTitles(fileName, sizeX, sizeY);
         JButton[] buttons = createRows(fileName, sizeX, sizeY);
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(Color.white);
-            panel.setBorder(BorderFactory.createCompoundBorder());
+            panel.setBackground(backgroundColor);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -84,6 +86,7 @@ public class Game extends JFrame implements KeyListener {
 
             label.setFont(new Font(textFont, Font.PLAIN, 30));
             label.setFocusable(false);
+            label.setForeground(fontColor);
 
             panel.add(label, gbc);
             gameBoard.add(panel);
@@ -91,18 +94,13 @@ public class Game extends JFrame implements KeyListener {
 
         for(JButton button : buttons){
             button.setFont(new Font(textFont,Font.PLAIN,25));
+            button.setBackground(buttonColor);
+            button.setForeground(fontColor);
+            button.setBorderPainted(false);
             gameBoard.add(button);
         }
 
         return gameBoard;
-    }
-    public JPanel createTeams(String teamName){
-        JPanel team = new JPanel(new FlowLayout());
-
-
-        return team;
-    }
-    public void addTeams(Team teams){
     }
     public JLabel[] createTitles(String filename, int sizeX, int sizeY) {
         //it adds left to right, so there will need to be some math to calculate when to add titles and questions
@@ -115,7 +113,7 @@ public class Game extends JFrame implements KeyListener {
         //draw each line via their row number
         JLabel[] label = new JLabel[sizeX];
         for(int i = 0; i < sizeX; i++){
-            label[i] = new JLabel(titles[i]);
+            label[i] = new JLabel( "<html>" + titles[i] + "</html>");
         }
         return label;
     }
@@ -165,11 +163,10 @@ public class Game extends JFrame implements KeyListener {
     }
     private String parseKeyStrokeInput(String keyStrokeCode){
         return switch (keyStrokeCode){
-            case "esc" -> "\u001B";
-            case "space" -> " ";
-            case "enter" -> "\n";
-            case "alt" -> "0x12";
-            case "backspace" -> "\b";
+            case "Esc" -> "\u001B";
+            case "Space" -> " ";
+            case "Enter" -> "\n";
+            case "Backspace" -> "\b";
             default -> keyStrokeCode;
         };
     }
