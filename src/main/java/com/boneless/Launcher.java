@@ -9,6 +9,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
+import java.util.Objects;
 
 public class Launcher {
     private static JButton buttonStart;
@@ -22,7 +23,7 @@ public class Launcher {
     private static Color backgroundColor = new Color(42,54,152);
     private static Color textColor = new Color(255,255,255);
     private static final String[] teamDropDown= {
-            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "8 Teams", "9 Teams", "10 Teams"
+            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams"
     };
     public static void main(String[] args) {
         headerColor = stringToColor(game.getFileName(), "header_color");
@@ -196,7 +197,7 @@ public class Launcher {
         JComboBox<String> dropDown = new JComboBox<>(teamDropDown);
         dropDown.setFont(font);
         dropDown.setFocusable(false);
-        dropDown.setPreferredSize(new Dimension(120,34));
+        dropDown.setPreferredSize(new Dimension(140,34));
 
         JButton start = new JButton("Start");
         start.setFont(font);
@@ -204,7 +205,7 @@ public class Launcher {
         start.addActionListener(e -> {
             frame.dispose();
             tFrame.dispose();
-            game.initUI(checkBox.isSelected());
+            game.initUI(checkBox.isSelected(), dropDown.getSelectedIndex() + 1);
         });
 
         JButton cancel = new JButton("Cancel");

@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.IconResize;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
@@ -22,6 +23,7 @@ public class Game extends JFrame implements KeyListener {
     private final Color buttonColor = stringToColor("button_color");
     private static boolean doFullScreen;
     private int teamCount;
+    private int lastCardPoints;
     private String[] teams;
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
@@ -33,7 +35,7 @@ public class Game extends JFrame implements KeyListener {
             setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
             setDoFullScreen(true);
         }else {
-            setSize(1280, 720);
+            setSize(1600, 900);
             setDoFullScreen(false);
         }
         this.teamCount = teamCount;
@@ -56,7 +58,7 @@ public class Game extends JFrame implements KeyListener {
         gameBoard.setPreferredSize(new Dimension(0,300));
         gameBoard.setBackground(backgroundColor);
 
-        JPanel teams = createTeamsPanel();
+        JScrollPane teams = createTeamsPanel();
 
         add(title, BorderLayout.NORTH);
         add(createBoard(getFileName()), BorderLayout.CENTER);
@@ -99,24 +101,83 @@ public class Game extends JFrame implements KeyListener {
             button.setForeground(fontColor);
             button.setBorderPainted(false);
             button.setOpaque(true);
+            button.setFocusable(false);
             gameBoard.add(button);
         }
 
         return gameBoard;
     }
-    private JPanel createTeamsPanel(){
+    private JScrollPane createTeamsPanel(){
+
         JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,0, 10,10));
+        panel.setLayout(new FlowLayout());
+        panel.setBackground(backgroundColor);
+        panel.setBorder(null);
 
         for(int i = 0; i < teamCount; i++){
-            panel.add(createTeamPanel(new Team("name")));
+            panel.add(createGap(80, backgroundColor));
+            panel.add(createTeamPanel(new Team("Team " + (i + 1))));
         }
-        return panel;
+        panel.add(createGap(80, backgroundColor));
+        JScrollPane pane = new JScrollPane(panel);
+        pane.setPreferredSize(new Dimension(getWidth(),120)); //Height controller
+        pane.setBorder(null);
+        return pane;
     }
     private JPanel createTeamPanel(Team team){
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.setBackground(Color.white);
+        panel.setPreferredSize(new Dimension(150,110)); //Panel height controller
+        panel.setBorder(null);
+
+        JTextField teamName = new JTextField(team.getTeamName());
+        teamName.setPreferredSize(new Dimension(125,25));
+        teamName.setBackground(Color.lightGray);
+        teamName.setBorder(null);
+        teamName.setHorizontalAlignment(JTextField.CENTER);
+
+        JPanel line = new JPanel();
+        line.setBackground(Color.black);
+        line.setPreferredSize(new Dimension(130,1));
+
+        JTextField score = new JTextField(String.valueOf(team.getPoints()));
+        score.setFont(new Font(textFont, Font.PLAIN, 20));
+        score.setHorizontalAlignment(JTextField.CENTER);
+        score.setBorder(null);
+        score.setBackground(backgroundColor);
+        score.setForeground(fontColor);
+        score.setPreferredSize(new Dimension(125,25));
+
+        panel.add(teamName);
+        panel.add(line);
+        panel.add(score);
+        panel.add(createScoreButton("dom.png", true, score));
+        panel.add(createGap(25, null));
+        panel.add(createScoreButton("dom.png", false, score));
+        return panel;
+    }
+    private JButton createScoreButton(String image, boolean add, JTextField score){
+        int buttonSize = 35;
+        JButton button = new JButton(new IconResize("dom.png", buttonSize, buttonSize).getImage());
+        button.setPreferredSize(new Dimension(buttonSize, buttonSize));
+        button.setFocusable(false);
+        button.setFont(new Font(null,Font.PLAIN,0));
+        button.addActionListener(e -> {
+            int currentScore = Integer.parseInt(score.getText());
+            if(add){
+                currentScore += lastCardPoints;
+                score.setText(String.valueOf(currentScore));
+            }else{
+                currentScore -= lastCardPoints;
+                score.setText(String.valueOf(currentScore));
+            }
+        });
+        return button;
+    }
+    private JPanel createGap(int size, Color color){
         JPanel panel = new JPanel();
-        panel.setBackground(Color.blue);
-        panel.setPreferredSize(new Dimension(50,100));
+        panel.setBackground(color);
+        panel.setPreferredSize(new Dimension(size,size));
         return panel;
     }
     private JLabel[] createTitles(String filename, int sizeX, int sizeY) {
@@ -140,7 +201,7 @@ public class Game extends JFrame implements KeyListener {
         for (int row = 1; row <= sizeY; row++) {
             for (int column = 1; column <= sizeX; column++) {
                 // Assuming JsonFile.readWithThreeKeys returns a single string for each column and row
-                String columnData = JsonFile.readWithThreeKeys(filename, "column_" + column, "questions", "row_" + row);
+                String columnData = JsonFile.readWithThreeKeys(filename, "column_" + column, "points", "row_" + row);
 
                 // Calculate the array index for the current row and column
                 int arrayIndex = (row - 1) * sizeX + (column - 1);
@@ -184,7 +245,7 @@ public class Game extends JFrame implements KeyListener {
             case "Space" -> " ";
             case "Enter" -> "\n";
             case "Backspace" -> "\b";
-            default -> keyStrokeCode;
+            default -> keyStrokeCode.toLowerCase();
         };
     }
     @Override
@@ -193,8 +254,8 @@ public class Game extends JFrame implements KeyListener {
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             if(doFullScreen){
                 doFullScreen = false;
-                setLocation((screenSize.width / 2) - 1280 / 2, (screenSize.height / 2) - 720 / 2);
-                setSize(1280,720);
+                setLocation((screenSize.width / 2) - 1600 / 2, (screenSize.height / 2) - 900 / 2);
+                setSize(1600,900);
             }else{
                 doFullScreen = true;
                 setLocation(0,0);
@@ -217,7 +278,7 @@ public class Game extends JFrame implements KeyListener {
     }
 
     // ActionListener for the buttons
-    private static class ButtonActionListener implements ActionListener {
+    private class ButtonActionListener implements ActionListener {
         private int row;
         private int column;
         public ButtonActionListener(){
@@ -231,6 +292,7 @@ public class Game extends JFrame implements KeyListener {
         public void actionPerformed(ActionEvent e) {
             JButton clickedButton = (JButton) e.getSource();
             clickedButton.setEnabled(false);
+            lastCardPoints = Integer.parseInt(clickedButton.getText());
             if (canOpen) {
                 canOpen = false;
                 new InfoCard(

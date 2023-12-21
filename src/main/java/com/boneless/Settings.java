@@ -160,6 +160,7 @@ public class Settings extends JFrame{
     }
     private ActionListener keyBindButtonListener(String keyBind){
         return e -> {
+            changedSettings = true;
             setKeyBindButtons(false);
 
             JButton button = (JButton) e.getSource();

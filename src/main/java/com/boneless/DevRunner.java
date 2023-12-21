@@ -6,6 +6,6 @@ import java.awt.*;
 public class DevRunner extends JFrame{
     public static void main(String[] args) {
         Game game = new Game();
-        game.initUI(false);
+        game.initUI(false, 3);
     }
 }
