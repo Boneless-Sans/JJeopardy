@@ -53,22 +53,20 @@ public class InfoCard extends JFrame implements KeyListener {
         setSize(buttonWidth, buttonHeight);
 
         Timer scaleTimer = new Timer(10, e -> {
-            //todo: somehow, i need to get the distance to the corner on x and y, and move them evenly s o m e h o w
+            //todo: somehow, i need to get the distance to the corner on x and y, and move them evenly s o m e h o w - use percentages?
             int xDistance = mainFrame.getX() - getX();
             int yDistance = mainFrame.getY() - getY();
 
-            if(getX() != xDistance && getY() != yDistance){
-                setLocation(getX() - 1, getY() - 1);
-            }
 
             if (getX() == mainFrame.getX() && getY() == mainFrame.getY()) {
                 ((Timer) e.getSource()).stop();
+                System.out.println("Timer Stopped");
             }
 
-            System.out.println("Card X Location: " + getX() + " Card Y Location: " + getY() +
-                    " Card X Scale: " + getWidth() + " Card Y Scale: " + getHeight() +
-                    "\nBoard X Location: " + mainFrame.getX() + " Board Y Location: " + mainFrame.getY() +
-                    " Board X Scale: " + mainFrame.getWidth() + " Board Y Scale: " + mainFrame.getHeight() + "\n");
+//            System.out.println("Card X Location: " + getX() + " Card Y Location: " + getY() +
+//                    " Card X Scale: " + getWidth() + " Card Y Scale: " + getHeight() +
+//                    "\nBoard X Location: " + mainFrame.getX() + " Board Y Location: " + mainFrame.getY() +
+//                    " Board X Scale: " + mainFrame.getWidth() + " Board Y Scale: " + mainFrame.getHeight() + "\n");
         });
 
         scaleTimer.start();
