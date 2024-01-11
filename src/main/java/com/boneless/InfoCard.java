@@ -54,13 +54,16 @@ public class InfoCard extends JFrame implements KeyListener {
 
         Timer scaleTimer = new Timer(10, e -> {
             //todo: somehow, i need to get the distance to the corner on x and y, and move them evenly s o m e h o w - use percentages?
-            int xDistance = mainFrame.getX() - getX();
-            int yDistance = mainFrame.getY() - getY();
 
+            int currX = getX() - mainFrame.getX();
+            int currY = getY() - mainFrame.getY();
 
-            if (getX() == mainFrame.getX() && getY() == mainFrame.getY()) {
+            setLocation(getX() - 1, getY());
+            System.out.println(currX);
+
+            if (currX == mainFrame.getX()) {
                 ((Timer) e.getSource()).stop();
-                System.out.println("Timer Stopped");
+                System.out.println("-- Timer Stopped --");
             }
 
 //            System.out.println("Card X Location: " + getX() + " Card Y Location: " + getY() +
@@ -309,6 +312,7 @@ public class InfoCard extends JFrame implements KeyListener {
         }
         if(String.valueOf(e.getKeyChar()).equals(esc)){
             dispose();
+            actButton.setEnabled(true);
         }
     }
 
