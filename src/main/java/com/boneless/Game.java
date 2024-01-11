@@ -291,6 +291,7 @@ public class Game extends JFrame implements KeyListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton clickedButton = (JButton) e.getSource();
+            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(clickedButton);
             clickedButton.setEnabled(false);
             lastCardPoints = Integer.parseInt(clickedButton.getText());
             if (canOpen) {
@@ -301,7 +302,9 @@ public class Game extends JFrame implements KeyListener {
                         fileName,
                         JsonFile.read(fileName, "column_" + column, "title"),
                         Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "column_" + column, "points", "row_" + row)),
-                        doFullScreen);
+                        doFullScreen,
+                        clickedButton,
+                        frame);
 
                 // Reset the flag to allow opening new InfoCards
                 canOpen = true;

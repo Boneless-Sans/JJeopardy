@@ -21,12 +21,17 @@ public class InfoCard extends JFrame implements KeyListener {
     private JPanel questionPanel;
     private JLabel answerText;
     private JLabel lineBreakText;
+    private final JButton actButton;
+    private final JFrame mainFrame;
     private String esc = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","exit")));
     private String advance = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","continue")));
-    public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen){
+    public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen, JButton actButton,
+                    JFrame mainFrame){
         this.question = question;
         this.answer = answer;
         this.fileName = fileName;
+        this.actButton = actButton;
+        this.mainFrame = mainFrame;
         setTitle(category + " For " + points);
         initUI(doFullScreen);
     }
@@ -39,10 +44,27 @@ public class InfoCard extends JFrame implements KeyListener {
         }else {
             setSize(1600,900);
         }
-        setUndecorated(true);
+        //spawn info card at the selected button and match size
+        int buttonXPos = actButton.getX();
+        int buttonYPos = actButton.getY();
+        int buttonWidth = actButton.getWidth();
+        int buttonHeight = actButton.getHeight();
+        int frameCenterX = mainFrame.getWidth() / 2;
+        int frameCenterY = mainFrame.getHeight() / 2;
+        setLocation(buttonXPos + 52, buttonYPos + 46);
+        setSize(buttonWidth, buttonHeight);
+
+        Timer scaleTimer = new Timer(5, e -> {
+            if(mainFrame.getX() != getX() && mainFrame.getY() != getY()){
+                setLocation(getX() - 1, getY() - 1);
+                setSize(getWidth() + 2, getHeight() + 2);
+            }
+        });
+        scaleTimer.start();
+
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        setUndecorated(true);
         addKeyListener(this);
         SystemUI.set();
         if(Objects.equals(esc, "null")){
@@ -51,6 +73,8 @@ public class InfoCard extends JFrame implements KeyListener {
         if(Objects.equals(advance, "null")){
             advance = JsonFile.read("settings.json","keyBinds","continue");
         }
+
+        //scale the infoCard up and move it to stay centered??
 
         GridBagConstraints gbcQuestion = new GridBagConstraints();
         gbcQuestion.gridx = 0;
