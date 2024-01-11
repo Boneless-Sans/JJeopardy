@@ -53,38 +53,22 @@ public class InfoCard extends JFrame implements KeyListener {
         setSize(buttonWidth, buttonHeight);
 
         Timer scaleTimer = new Timer(10, e -> {
-            int duration = 100;  // Adjust this value to control the duration of the animation
-            int currentTime = ((Timer) e.getSource()).getDelay() * ((Timer) e.getSource()).getInitialDelay();
+            //todo: somehow, i need to get the distance to the corner on x and y, and move them evenly s o m e h o w
+            int xDistance = mainFrame.getX() - getX();
+            int yDistance = mainFrame.getY() - getY();
 
-            double t = (double) currentTime / duration;
-            t = (t > 1.0) ? 1.0 : t;  // Ensure that t is within [0, 1]
+            if(getX() != xDistance && getY() != yDistance){
+                setLocation(getX() - 1, getY() - 1);
+            }
 
-            int deltaX = mainFrame.getX() - getX();
-            int deltaY = mainFrame.getY() - getY();
-
-            int finalWidth = getWidth() + (int) (2 * Math.abs(deltaX));
-            int finalHeight = getHeight() + (int) (2 * Math.abs(deltaY));
-
-            int newWidth = getWidth() + (int) (2 * Math.abs(deltaX) * t);
-            int newHeight = getHeight() + (int) (2 * Math.abs(deltaY) * t);
-
-            int newX = (int) (getX() + deltaX * t + 0.5 * (finalWidth - newWidth));
-            int newY = (int) (getY() + deltaY * t + 0.5 * (finalHeight - newHeight));
-
-            setSize(newWidth, newHeight);
-            setLocation(newX, newY);
+            if (getX() == mainFrame.getX() && getY() == mainFrame.getY()) {
+                ((Timer) e.getSource()).stop();
+            }
 
             System.out.println("Card X Location: " + getX() + " Card Y Location: " + getY() +
                     " Card X Scale: " + getWidth() + " Card Y Scale: " + getHeight() +
                     "\nBoard X Location: " + mainFrame.getX() + " Board Y Location: " + mainFrame.getY() +
-                    " Board X Scale: " + mainFrame.getWidth() + " Board Y Scale: " + mainFrame.getHeight() +
-                    "\nFinal Width: " + finalWidth + " Final Height: " + finalHeight + "\n");
-
-            if (t >= 1.0) {
-                setSize(finalWidth, finalHeight);  // Ensure final size exactly at the end of the animation
-                setLocation(mainFrame.getX(), mainFrame.getY());  // Ensure final location exactly at the end of the animation
-                ((Timer) e.getSource()).stop(); // Stop the timer when scaling is completed
-            }
+                    " Board X Scale: " + mainFrame.getWidth() + " Board Y Scale: " + mainFrame.getHeight() + "\n");
         });
 
         scaleTimer.start();
