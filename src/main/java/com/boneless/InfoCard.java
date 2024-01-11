@@ -49,23 +49,52 @@ public class InfoCard extends JFrame implements KeyListener {
         int buttonYPos = actButton.getY();
         int buttonWidth = actButton.getWidth();
         int buttonHeight = actButton.getHeight();
-        int frameCenterX = mainFrame.getWidth() / 2;
-        int frameCenterY = mainFrame.getHeight() / 2;
         setLocation(buttonXPos + 52, buttonYPos + 46);
         setSize(buttonWidth, buttonHeight);
 
-        Timer scaleTimer = new Timer(5, e -> {
-            if(mainFrame.getX() != getX() && mainFrame.getY() != getY()){
-                setLocation(getX() - 1, getY() - 1);
-                setSize(getWidth() + 2, getHeight() + 2);
+        Timer scaleTimer = new Timer(10, e -> {
+            int duration = 100;  // Adjust this value to control the duration of the animation
+            int currentTime = ((Timer) e.getSource()).getDelay() * ((Timer) e.getSource()).getInitialDelay();
+
+            double t = (double) currentTime / duration;
+            t = (t > 1.0) ? 1.0 : t;  // Ensure that t is within [0, 1]
+
+            int deltaX = mainFrame.getX() - getX();
+            int deltaY = mainFrame.getY() - getY();
+
+            int finalWidth = getWidth() + (int) (2 * Math.abs(deltaX));
+            int finalHeight = getHeight() + (int) (2 * Math.abs(deltaY));
+
+            int newWidth = getWidth() + (int) (2 * Math.abs(deltaX) * t);
+            int newHeight = getHeight() + (int) (2 * Math.abs(deltaY) * t);
+
+            int newX = (int) (getX() + deltaX * t + 0.5 * (finalWidth - newWidth));
+            int newY = (int) (getY() + deltaY * t + 0.5 * (finalHeight - newHeight));
+
+            setSize(newWidth, newHeight);
+            setLocation(newX, newY);
+
+            System.out.println("Card X Location: " + getX() + " Card Y Location: " + getY() +
+                    " Card X Scale: " + getWidth() + " Card Y Scale: " + getHeight() +
+                    "\nBoard X Location: " + mainFrame.getX() + " Board Y Location: " + mainFrame.getY() +
+                    " Board X Scale: " + mainFrame.getWidth() + " Board Y Scale: " + mainFrame.getHeight() +
+                    "\nFinal Width: " + finalWidth + " Final Height: " + finalHeight + "\n");
+
+            if (t >= 1.0) {
+                setSize(finalWidth, finalHeight);  // Ensure final size exactly at the end of the animation
+                setLocation(mainFrame.getX(), mainFrame.getY());  // Ensure final location exactly at the end of the animation
+                ((Timer) e.getSource()).stop(); // Stop the timer when scaling is completed
             }
         });
+
         scaleTimer.start();
+
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
         setUndecorated(true);
         addKeyListener(this);
+        //setAlwaysOnTop(true);
         SystemUI.set();
         if(Objects.equals(esc, "null")){
             esc = JsonFile.read("settings.json","keyBinds","exit");
@@ -266,8 +295,9 @@ public class InfoCard extends JFrame implements KeyListener {
                 float alpha = progress;
 
                 // Set the text color with adjusted alpha
-                answerLabel.setForeground(new Color(r, g, b, Math.round(alpha * 255)));
-                lineBreak.setForeground(new Color(r, g, b, Math.round(alpha * 255)));
+                Color fg = new Color(r, g, b, Math.round(alpha * 255));
+                answerLabel.setForeground(fg);
+                lineBreak.setForeground(fg);
             }
         });
 

@@ -2,6 +2,7 @@
   <configuration default="false" name="Dev" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.boneless.DevRunner" />
     <module name="Jeopardy.main" />
+    <option name="PROGRAM_PARAMETERS" value="-Xmx1024M -Xms1024M" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
