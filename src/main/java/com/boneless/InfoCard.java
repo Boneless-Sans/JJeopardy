@@ -22,16 +22,13 @@ public class InfoCard extends JFrame implements KeyListener {
     private JLabel answerText;
     private JLabel lineBreakText;
     private final JButton actButton;
-    private final JFrame mainFrame;
     private String esc = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","exit")));
     private String advance = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","continue")));
-    public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen, JButton actButton,
-                    JFrame mainFrame){
+    public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen, JButton actButton){
         this.question = question;
         this.answer = answer;
         this.fileName = fileName;
         this.actButton = actButton;
-        this.mainFrame = mainFrame;
         setTitle(category + " For " + points);
         initUI(doFullScreen);
     }
@@ -44,42 +41,13 @@ public class InfoCard extends JFrame implements KeyListener {
         }else {
             setSize(1600,900);
         }
-        //spawn info card at the selected button and match size
-        int buttonXPos = actButton.getX();
-        int buttonYPos = actButton.getY();
-        int buttonWidth = actButton.getWidth();
-        int buttonHeight = actButton.getHeight();
-        setLocation(buttonXPos + 52, buttonYPos + 46);
-        setSize(buttonWidth, buttonHeight);
-
-        Timer scaleTimer = new Timer(10, e -> {
-            //todo: somehow, i need to get the distance to the corner on x and y, and move them evenly s o m e h o w - use percentages?
-
-            int currX = getX() - mainFrame.getX();
-            int currY = getY() - mainFrame.getY();
-
-            setLocation(getX() - 1, getY());
-            System.out.println(currX);
-
-            if (currX == mainFrame.getX()) {
-                ((Timer) e.getSource()).stop();
-                System.out.println("-- Timer Stopped --");
-            }
-
-//            System.out.println("Card X Location: " + getX() + " Card Y Location: " + getY() +
-//                    " Card X Scale: " + getWidth() + " Card Y Scale: " + getHeight() +
-//                    "\nBoard X Location: " + mainFrame.getX() + " Board Y Location: " + mainFrame.getY() +
-//                    " Board X Scale: " + mainFrame.getWidth() + " Board Y Scale: " + mainFrame.getHeight() + "\n");
-        });
-
-        scaleTimer.start();
 
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
         setUndecorated(true);
         addKeyListener(this);
-        //setAlwaysOnTop(true);
+        setLocationRelativeTo(null);
         SystemUI.set();
         if(Objects.equals(esc, "null")){
             esc = JsonFile.read("settings.json","keyBinds","exit");

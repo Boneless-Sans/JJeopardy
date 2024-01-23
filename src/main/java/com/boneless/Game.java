@@ -303,8 +303,7 @@ public class Game extends JFrame implements KeyListener {
                         JsonFile.read(fileName, "column_" + column, "title"),
                         Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "column_" + column, "points", "row_" + row)),
                         doFullScreen,
-                        clickedButton,
-                        frame);
+                        clickedButton);
 
                 // Reset the flag to allow opening new InfoCards
                 canOpen = true;

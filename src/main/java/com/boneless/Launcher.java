@@ -26,6 +26,9 @@ public class Launcher {
             "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams"
     };
     public static void main(String[] args) {
+        initUI();
+    }
+    public static void initUI(){
         headerColor = stringToColor(game.getFileName(), "header_color");
         backgroundColor = stringToColor(game.getFileName(), "background_color");
         textColor = stringToColor(game.getFileName(), "font_color");
@@ -68,6 +71,7 @@ public class Launcher {
         buttonCreateBoard.addActionListener(e -> {
             changeButtonState(false);
             new GameBoardFactory();
+            frame.dispose();
         });
 
         buttonSettings.addActionListener(e -> {
