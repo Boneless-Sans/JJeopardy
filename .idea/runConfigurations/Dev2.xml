@@ -1,9 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Dev 2" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.boneless.Test" />
-    <module name="Jeopardy.main" />
-    <method v="2">
-      <option name="Make" enabled="true" />
-    </method>
-  </configuration>
-</component>

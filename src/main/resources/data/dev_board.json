@@ -1,15 +1,12 @@
 {
   "data": {
     "title": "Test",
-    "board_font_name": 20,
-    "card_font_size": 60,
+
     "font_name": "Arial",
-    "font_type": "Font.PLAIN",
     "font_color": "255,255,255",
 
     "header_color": "21,27,75",
     "header_font_color": "255,255,255",
-    "header_font_size": 20,
     "header_font_type": "Font.PLAIN",
 
     "background_color": "42,54,152",

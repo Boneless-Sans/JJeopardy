@@ -84,7 +84,7 @@ public class InfoCard extends JFrame implements KeyListener {
         mainPanel.setBackground(backgroundColor);
 
         String fontName = JsonFile.read(fileName, "data", "font_name");
-        int fontSize = Integer.parseInt(JsonFile.read(fileName, "data", "card_font_size"));
+        int fontSize = getWidth() / 2;
         int fontType = switch (JsonFile.read(fileName, "data", "font_size")) {
             case "Font.BOLD" -> 1;
             case "Font.ITALIC" -> 2;
@@ -138,7 +138,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         Color fontColor = stringToColor(fileName, "header_font_color");
         String fontName = JsonFile.read(fileName, "data","font_name");
-        int fontSize = Integer.parseInt(JsonFile.read(fileName,"data","header_font_size"));
+        int fontSize = panel.getHeight() / 15;
         int fontType = switch (JsonFile.read(fileName, "data", "header_font_type")) {
             case "Font.BOLD" -> 1;
             case "Font.ITALIC" -> 2;
