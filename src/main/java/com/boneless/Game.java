@@ -15,16 +15,13 @@ import java.awt.event.KeyListener;
 public class Game extends JFrame implements KeyListener {
     private static String fileName = "dev_board.json";
     private static boolean canOpen = true;
-    private final String textFont = JsonFile.read(getFileName(), "data", "font_name");
-    private final String fontSize = JsonFile.read(getFileName(), "data", "board_font_size");
-    private final Color headerColor = stringToColor("header_color");
-    private final Color backgroundColor = stringToColor("background_color");
-    private final Color fontColor = stringToColor("font_color");
-    private final Color buttonColor = stringToColor("button_color");
     private static boolean doFullScreen;
     private int teamCount;
     private int lastCardPoints;
     private String[] teams;
+    private final Color headerColor = parseColor("header_color");
+    private final Color backgroundColor = parseColor("background_color");
+    private Font cardFont;
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
@@ -39,6 +36,7 @@ public class Game extends JFrame implements KeyListener {
             setDoFullScreen(false);
         }
         this.teamCount = teamCount;
+
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -46,12 +44,15 @@ public class Game extends JFrame implements KeyListener {
         addKeyListener(this);
         setFocusable(true);
 
+        String fontName = JsonFile.read(fileName,"data","text_font");
+        cardFont = new Font(fontName, parseFontType("text"),getHeight() / 2);
+
         JPanel title = new JPanel(new FlowLayout());
         title.setBackground(headerColor);
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
-        titleText.setFont(new Font(textFont, Font.PLAIN, 25));
-        titleText.setForeground(fontColor);
+        titleText.setFont(cardFont);
+        titleText.setForeground(parseColor("text"));
         title.add(titleText);
 
         JPanel gameBoard = new JPanel(new GridLayout());
@@ -64,6 +65,26 @@ public class Game extends JFrame implements KeyListener {
         add(createBoard(getFileName()), BorderLayout.CENTER);
         add(teams, BorderLayout.SOUTH);
         setVisible(true);
+    }
+    @SuppressWarnings("MagicConstant")
+    private Font parseFont(JComponent parent, String type){
+        String fontName = JsonFile.read(fileName,"data",type + "_font");
+        return new Font(fontName, parseFontType(type + "_font_type"),parent.getHeight() / 2);
+    }
+    private int parseFontType(String fontType){
+        return switch (JsonFile.read(fileName,"data",fontType)) {
+            case "Font.BOLD" -> 1;
+            case "Font.ITALIC" -> 2;
+            default -> 0;
+        };
+    }
+    private Color parseColor(String color){
+        String initColor = JsonFile.read(fileName, "data",color);
+        String[] split = initColor.split(",");
+        int red = Integer.parseInt(split[0]);
+        int green = Integer.parseInt(split[1]);
+        int blue = Integer.parseInt(split[2]);
+        return new Color(red,green,blue);
     }
     private JPanel createBoard(String fileName) {
         JPanel gameBoard = new JPanel();
@@ -80,25 +101,25 @@ public class Game extends JFrame implements KeyListener {
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(backgroundColor);
+            panel.setBackground();
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.fill = 0;
 
-            label.setFont(new Font(textFont, Font.PLAIN, 30));
+            label.setFont();
             label.setFocusable(false);
-            label.setForeground(fontColor);
+            label.setForeground();
 
             panel.add(label, gbc);
             gameBoard.add(panel);
         }
 
         for(JButton button : buttons){
-            button.setFont(new Font(textFont,Font.PLAIN,25));
-            button.setBackground(buttonColor);
-            button.setForeground(fontColor);
+            button.setFont();
+            button.setBackground();
+            button.setForeground();
             button.setBorderPainted(false);
             button.setOpaque(true);
             button.setFocusable(false);
@@ -111,7 +132,7 @@ public class Game extends JFrame implements KeyListener {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-        panel.setBackground(backgroundColor);
+        panel.setBackground();
         panel.setBorder(null);
 
         for(int i = 0; i < teamCount; i++){
@@ -141,7 +162,7 @@ public class Game extends JFrame implements KeyListener {
         line.setPreferredSize(new Dimension(130,1));
 
         JTextField score = new JTextField(String.valueOf(team.getPoints()));
-        score.setFont(new Font(textFont, Font.PLAIN, 20));
+        score.setFont();
         score.setHorizontalAlignment(JTextField.CENTER);
         score.setBorder(null);
         score.setBackground(backgroundColor);
@@ -161,7 +182,7 @@ public class Game extends JFrame implements KeyListener {
         JButton button = new JButton(new IconResize("dom.png", buttonSize, buttonSize).getImage());
         button.setPreferredSize(new Dimension(buttonSize, buttonSize));
         button.setFocusable(false);
-        button.setFont(new Font(null,Font.PLAIN,0));
+        button.setFont();
         button.addActionListener(e -> {
             int currentScore = Integer.parseInt(score.getText());
             if(add){
@@ -229,15 +250,6 @@ public class Game extends JFrame implements KeyListener {
             }
         }
         return buttons;
-    }
-    private Color stringToColor(String panel){
-        String initColor = JsonFile.readTwoKeys(getFileName(), "data", panel);
-        assert initColor != null;
-        String[] split = initColor.split(",");
-        int red = Integer.parseInt(split[0]);
-        int green = Integer.parseInt(split[1]);
-        int blue = Integer.parseInt(split[2]);
-        return new Color(red,green,blue);
     }
     private String parseKeyStrokeInput(String keyStrokeCode){
         return switch (keyStrokeCode){

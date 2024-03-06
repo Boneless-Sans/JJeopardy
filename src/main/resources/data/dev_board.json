@@ -2,15 +2,28 @@
   "data": {
     "title": "Test",
 
-    "font_name": "Arial",
-    "font_color": "255,255,255",
+    "header_font": "Arial",
+    "header_font_type": "plain",
+    "header_font_color": "",
 
-    "header_color": "21,27,75",
-    "header_font_color": "255,255,255",
-    "header_font_type": "Font.PLAIN",
+    "header_background_color": "21,27,75",
+
+    "header_button_font": "Arial",
+    "header_button_font_type": "",
+    "header_button_font_color": "",
+
+    "header_button_color": "255,255,255",
+
+    "text_font": "Arial",
+    "text_font_type": "",
+    "text_color": "255,255,255",
 
     "background_color": "42,54,152",
-    "button_color": "55,64,152",
+
+    "board_button_font": "Arial",
+    "board_button_font_type": "",
+    "board_button_color": "",
+
     "columns": 6,
     "rows": 5
   },

@@ -16,23 +16,60 @@ public class InfoCard extends JFrame implements KeyListener {
     private final String answer;
     private final String fileName;
     private boolean exit = false;
-    private Color headerColor = new Color(21, 27, 75);
-    private Color textColor = new Color(255,255,255);
     private JPanel questionPanel;
     private JLabel answerText;
     private JLabel lineBreakText;
     private final JButton actButton;
     private String esc = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","exit")));
     private String advance = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","continue")));
+    //font values
+    //header background
+    private final Color headerFontColor;
+    //main card text
+    private final Color textFontColor;
+    //background
+    private final Color headerBackgroundColor;
+    private final Color backgroundColor;
+
     public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen, JButton actButton){
         this.question = question;
         this.answer = answer;
         this.fileName = fileName;
         this.actButton = actButton;
+        //setup fonts
+        //header
+        headerFontColor = parseColor("header_color");
+        headerBackgroundColor = parseColor("header_background_color");
+        //header buttons
+        Color headerButtonFontColor = parseColor("header_button_font_color");
+        Color headerButtonColor = parseColor("header_background_color");
+        //main body
+        textFontColor = parseColor("text_color");
+        backgroundColor = parseColor("background_color");
+
         setTitle(category + " For " + points);
         initUI(doFullScreen);
     }
     @SuppressWarnings("MagicConstant")
+    private Font parseFont(JComponent parent, String type){
+        String fontName = JsonFile.read(fileName,"data",type + "_font");
+        return new Font(fontName, parseFontType(type + "_font_type"),parent.getHeight() / 2);
+    }
+    private int parseFontType(String fontType){
+        return switch (JsonFile.read(fileName,"data",fontType)) {
+            case "Font.BOLD" -> 1;
+            case "Font.ITALIC" -> 2;
+            default -> 0;
+        };
+    }
+    private Color parseColor(String color){
+        String initColor = JsonFile.read(fileName, "data",color);
+        String[] split = initColor.split(",");
+        int red = Integer.parseInt(split[0]);
+        int green = Integer.parseInt(split[1]);
+        int blue = Integer.parseInt(split[2]);
+        return new Color(red,green,blue);
+    }
     private void initUI(boolean doFullScreen){
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -76,43 +113,31 @@ public class InfoCard extends JFrame implements KeyListener {
         gbcAnswer.weightx = 1.0;
         gbcAnswer.weighty = 1.0;
 
-        headerColor = stringToColor(fileName, "header_color");
-        Color backgroundColor = stringToColor(fileName, "background_color");
-        textColor = stringToColor(fileName, "font_color");
-
         JPanel mainPanel = new JPanel(null);
         mainPanel.setBackground(backgroundColor);
 
-        String fontName = JsonFile.read(fileName, "data", "font_name");
-        int fontSize = getWidth() / 2;
-        int fontType = switch (JsonFile.read(fileName, "data", "font_size")) {
-            case "Font.BOLD" -> 1;
-            case "Font.ITALIC" -> 2;
-            default -> 0;
-        };
-        Font font = new Font(fontName, fontType, fontSize);
 
         JLabel questionText = new JLabel("<html><body>" + question + "</body></html>");
 
-        questionPanel = createPanel(questionText, gbcQuestion, 0, font, 255);
+        questionPanel = createPanel(questionText, gbcQuestion, 0, 255);
         questionPanel.setBackground(Color.red);
 
         answerText = new JLabel(answer);
-        JPanel answerPanel = createPanel(answerText, gbcAnswer, - 100, font, 0);
+        JPanel answerPanel = createPanel(answerText, gbcAnswer, - 100, 0);
 
 
         lineBreakText = new JLabel("---------------------------------------------------------");
-        lineBreakText.setFont(new Font(JsonFile.read(fileName, "data", "font_name"), Font.ITALIC, 2));
+        lineBreakText.setFont(parseFont(mainPanel,"text"));
 
         mainPanel.add(questionPanel);
-        mainPanel.add(createPanel(lineBreakText, gbcAnswer, 0, font, 0));
+        mainPanel.add(createPanel(lineBreakText, gbcAnswer, 0, 0));
         mainPanel.add(answerPanel);
 
         add(headerPanel(), BorderLayout.NORTH);
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
-    private JPanel createPanel(JLabel label, GridBagConstraints gbc, int posMod, Font font, int alpha) {
+    private JPanel createPanel(JLabel label, GridBagConstraints gbc, int posMod, int alpha) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(false);
@@ -120,12 +145,13 @@ public class InfoCard extends JFrame implements KeyListener {
         int x = (getWidth() - 1200) / 2;
         int y = (getHeight() - 400) / 2;
 
+
         panel.setBounds(x, y - posMod, 1200, 400);
         //panel.setOpaque(false);
         panel.setBackground(Color.red);
 
-        label.setFont(font);
-        label.setForeground(new Color(textColor.getRed(),textColor.getGreen(),textColor.getBlue(),alpha));
+        label.setFont(parseFont(panel,"text"));
+        label.setForeground(textFontColor);
 
         panel.add(label, gbc);
 
@@ -134,25 +160,15 @@ public class InfoCard extends JFrame implements KeyListener {
     @SuppressWarnings("MagicConstant")
     private JPanel headerPanel(){
         JPanel panel = new JPanel(new GridLayout());
-        panel.setBackground(headerColor);
-
-        Color fontColor = stringToColor(fileName, "header_font_color");
-        String fontName = JsonFile.read(fileName, "data","font_name");
-        int fontSize = panel.getHeight() / 15;
-        int fontType = switch (JsonFile.read(fileName, "data", "header_font_type")) {
-            case "Font.BOLD" -> 1;
-            case "Font.ITALIC" -> 2;
-            default -> 0;
-        };
-        Font font = new Font(fontName, fontType, fontSize);
+        panel.setBackground(headerBackgroundColor);
 
         JLabel closeText = new JLabel("Continue");
-        closeText.setForeground(fontColor);
-        closeText.setFont(font);
+        closeText.setForeground(headerFontColor);
+        closeText.setFont(parseFont(panel,"header"));
 
         JLabel title = new JLabel(getTitle());
-        title.setForeground(fontColor);
-        title.setFont(new Font(fontName, Font.BOLD, fontSize));
+        title.setForeground(headerFontColor);
+        title.setFont(parseFont(panel,"header"));
 
         JPanel titlePanel = new JPanel(new GridBagLayout());
         titlePanel.setOpaque(false);
@@ -165,14 +181,14 @@ public class InfoCard extends JFrame implements KeyListener {
         titlePanel.add(title, gbc);
 
         JLabel reveal = new JLabel("Reveal Correct Answer");
-        reveal.setForeground(fontColor);
-        reveal.setFont(font);
+        reveal.setForeground(headerFontColor);
+        reveal.setFont(parseFont(panel,"header"));
 
-        panel.add(createHeaderPanel(closeText, createHeaderButton("exit", font, false)));
+        panel.add(createHeaderPanel(closeText, createHeaderButton("exit", false)));
 
         panel.add(titlePanel);
 
-        panel.add(createHeaderPanel(reveal, createHeaderButton("continue", font, true)));
+        panel.add(createHeaderPanel(reveal, createHeaderButton("continue", true)));
 
         return panel;
     }
@@ -183,12 +199,12 @@ public class InfoCard extends JFrame implements KeyListener {
         panel.add(button);
         return panel;
     }
-    private JButton createHeaderButton(String text, Font font, boolean type){
+    private JButton createHeaderButton(String text, boolean type){
         String rawKeyBind = JsonFile.read("settings.json","keyBinds", text);
         String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
         JButton button = new JButton(keyBind);
         button.setFocusable(false);
-        button.setFont(font);
+        button.setFont(parseFont(button,"header_button"));
         button.addActionListener(e -> {
             if(type && !exit) {
                 if (question.length() > 100) {
@@ -220,7 +236,7 @@ public class InfoCard extends JFrame implements KeyListener {
                 panel.setBounds(panel.getX(), panel.getY() - 10, panel.getWidth(), panel.getHeight()); // Decrease Y position to move up
             } else {
                 ((Timer) e.getSource()).stop(); // Stop the timer when the movement is completed
-                fadeIn(answerText, lineBreakText, textColor);
+                fadeIn(answerText, lineBreakText, textFontColor);
             }
         });
 
@@ -255,15 +271,6 @@ public class InfoCard extends JFrame implements KeyListener {
         });
 
         fadeInTimer.start();
-    }
-
-    private Color stringToColor(String fileName, String color){
-        String initColor = JsonFile.read(fileName, "data",color);
-        String[] split = initColor.split(",");
-        int red = Integer.parseInt(split[0]);
-        int green = Integer.parseInt(split[1]);
-        int blue = Integer.parseInt(split[2]);
-        return new Color(red,green,blue);
     }
     @Override
     public void keyTyped(KeyEvent e) {
