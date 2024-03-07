@@ -22,6 +22,8 @@ public class Game extends JFrame implements KeyListener {
     private final Color headerColor = parseColor("header_color");
     private final Color backgroundColor = parseColor("background_color");
     private Font cardFont;
+    private final Color buttonColor = parseColor("board_button_color");
+    private final Color cardTextColor = parseColor("");
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
@@ -101,24 +103,24 @@ public class Game extends JFrame implements KeyListener {
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground();
+            panel.setBackground(backgroundColor);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.fill = 0;
 
-            label.setFont();
+            label.setFont(cardFont);
             label.setFocusable(false);
-            label.setForeground();
+            label.setForeground(buttonColor);
 
             panel.add(label, gbc);
             gameBoard.add(panel);
         }
 
         for(JButton button : buttons){
-            button.setFont();
-            button.setBackground();
+            button.setFont(cardFont);
+            button.setBackground(backgroundColor);
             button.setForeground();
             button.setBorderPainted(false);
             button.setOpaque(true);
