@@ -38,13 +38,13 @@ public class InfoCard extends JFrame implements KeyListener {
         this.actButton = actButton;
         //setup fonts
         //header
-        headerFontColor = parseColor("header_color");
+        headerFontColor = parseColor("header_background_color");
         headerBackgroundColor = parseColor("header_background_color");
         //header buttons
         Color headerButtonFontColor = parseColor("header_button_font_color");
         Color headerButtonColor = parseColor("header_background_color");
         //main body
-        textFontColor = parseColor("text_color");
+        textFontColor = parseColor("text_font_color");
         backgroundColor = parseColor("background_color");
 
         setTitle(category + " For " + points);

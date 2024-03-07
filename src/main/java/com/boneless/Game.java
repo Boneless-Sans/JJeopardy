@@ -19,11 +19,11 @@ public class Game extends JFrame implements KeyListener {
     private int teamCount;
     private int lastCardPoints;
     private String[] teams;
-    private final Color headerColor = parseColor("header_color");
+    private final Color headerColor = parseColor("header_background_color");
     private final Color backgroundColor = parseColor("background_color");
     private Font cardFont;
     private final Color buttonColor = parseColor("board_button_color");
-    private final Color cardTextColor = parseColor("");
+    private final Color cardTextColor = parseColor("board_button_font_color");
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
@@ -47,14 +47,14 @@ public class Game extends JFrame implements KeyListener {
         setFocusable(true);
 
         String fontName = JsonFile.read(fileName,"data","text_font");
-        cardFont = new Font(fontName, parseFontType("text"),getHeight() / 2);
+        cardFont = new Font(fontName, parseFontType("text"),12);
 
         JPanel title = new JPanel(new FlowLayout());
         title.setBackground(headerColor);
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
         titleText.setFont(cardFont);
-        titleText.setForeground(parseColor("text"));
+        titleText.setForeground(cardTextColor);
         title.add(titleText);
 
         JPanel gameBoard = new JPanel(new GridLayout());
@@ -121,7 +121,7 @@ public class Game extends JFrame implements KeyListener {
         for(JButton button : buttons){
             button.setFont(cardFont);
             button.setBackground(backgroundColor);
-            button.setForeground();
+            button.setForeground(cardTextColor);
             button.setBorderPainted(false);
             button.setOpaque(true);
             button.setFocusable(false);
@@ -134,7 +134,7 @@ public class Game extends JFrame implements KeyListener {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-        panel.setBackground();
+        panel.setBackground(cardTextColor);
         panel.setBorder(null);
 
         for(int i = 0; i < teamCount; i++){
@@ -164,11 +164,11 @@ public class Game extends JFrame implements KeyListener {
         line.setPreferredSize(new Dimension(130,1));
 
         JTextField score = new JTextField(String.valueOf(team.getPoints()));
-        score.setFont();
+        score.setFont(cardFont);
         score.setHorizontalAlignment(JTextField.CENTER);
         score.setBorder(null);
         score.setBackground(backgroundColor);
-        score.setForeground(fontColor);
+        score.setForeground(cardTextColor);
         score.setPreferredSize(new Dimension(125,25));
 
         panel.add(teamName);
@@ -184,7 +184,7 @@ public class Game extends JFrame implements KeyListener {
         JButton button = new JButton(new IconResize("dom.png", buttonSize, buttonSize).getImage());
         button.setPreferredSize(new Dimension(buttonSize, buttonSize));
         button.setFocusable(false);
-        button.setFont();
+        button.setFont(cardFont);
         button.addActionListener(e -> {
             int currentScore = Integer.parseInt(score.getText());
             if(add){
