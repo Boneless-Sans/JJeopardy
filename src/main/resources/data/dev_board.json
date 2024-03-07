@@ -22,9 +22,31 @@
 
     "board_button_font": "Arial",
     "board_button_font_type": "plain",
-    "board_button_font_color": "255,255,255",
+    "board_button_font_color": "255,0,255",
+
+    "board_grate_color": "0,0,0",
 
     "board_button_color": "255,255,255",
+
+    "header_panel_font_color": "255,255,255",
+
+    "header_title_font": "Arial",
+    "header_title_font_type": "plain",
+    "header_title_font_color": "255,255,0",
+
+    "team_font": "Arial",
+    "team_font_type": "plain",
+    "team_font_color": "0,0,0",
+
+    "team_name_font": "Arial",
+    "team_name_font_type": "plain",
+    "team_name_font_color": "255,255,255",
+    "team_text_field_color": "255,255,255",
+    "team_line_color": "0,0,0",
+
+    "team_panel_color": "0,0,200",
+
+    "footer_background_color": "255,100,0",
 
     "columns": 6,
     "rows": 5

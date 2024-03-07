@@ -19,11 +19,6 @@ public class Game extends JFrame implements KeyListener {
     private int teamCount;
     private int lastCardPoints;
     private String[] teams;
-    private final Color headerColor = parseColor("header_background_color");
-    private final Color backgroundColor = parseColor("background_color");
-    private Font cardFont;
-    private final Color buttonColor = parseColor("board_button_color");
-    private final Color cardTextColor = parseColor("board_button_font_color");
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
@@ -46,20 +41,20 @@ public class Game extends JFrame implements KeyListener {
         addKeyListener(this);
         setFocusable(true);
 
-        String fontName = JsonFile.read(fileName,"data","text_font");
-        cardFont = new Font(fontName, parseFontType("text"),12);
-
         JPanel title = new JPanel(new FlowLayout());
-        title.setBackground(headerColor);
+        title.setBackground(parseColor("header_background_color")); //board header
+
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
-        titleText.setFont(cardFont);
-        titleText.setForeground(cardTextColor);
+        titleText.setFont(parseFont(title,25,"header_title"));
+        titleText.setForeground(parseColor("header_title_font_color")); //Header Title Font Color
         title.add(titleText);
+
+        System.out.println(calcFontSize(title, 25));
 
         JPanel gameBoard = new JPanel(new GridLayout());
         gameBoard.setPreferredSize(new Dimension(0,300));
-        gameBoard.setBackground(backgroundColor);
+        gameBoard.setBackground(parseColor("background_color"));
 
         JScrollPane teams = createTeamsPanel();
 
@@ -68,10 +63,14 @@ public class Game extends JFrame implements KeyListener {
         add(teams, BorderLayout.SOUTH);
         setVisible(true);
     }
-    @SuppressWarnings("MagicConstant")
-    private Font parseFont(JComponent parent, String type){
+    private Font parseFont(JComponent parent, int scaleFactor, String type){
         String fontName = JsonFile.read(fileName,"data",type + "_font");
-        return new Font(fontName, parseFontType(type + "_font_type"),parent.getHeight() / 2);
+        int fontType = parseFontType(type);
+        int fontSize = calcFontSize(parent, scaleFactor);
+        return new Font(fontName,fontType,fontSize);
+    }
+    private int calcFontSize(JComponent parent, int scaleFactor){
+        return (parent.getHeight() + 1) * scaleFactor;
     }
     private int parseFontType(String fontType){
         return switch (JsonFile.read(fileName,"data",fontType)) {
@@ -96,32 +95,32 @@ public class Game extends JFrame implements KeyListener {
 
         GridLayout board = new GridLayout(sizeX, sizeY, 5,5);
         gameBoard.setLayout(board);
-        gameBoard.setBackground(Color.BLACK);
+        gameBoard.setBackground(parseColor("board_grate_color"));
 
         JLabel[] cats = createTitles(fileName, sizeX, sizeY);
         JButton[] buttons = createRows(fileName, sizeX, sizeY);
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(backgroundColor);
+            panel.setBackground(parseColor("header_background_color"));
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.fill = 0;
 
-            label.setFont(cardFont);
+            label.setFont(parseFont(panel,2,"header_panel"));
             label.setFocusable(false);
-            label.setForeground(buttonColor);
+            label.setForeground(parseColor("header_panel_font_color"));
 
             panel.add(label, gbc);
             gameBoard.add(panel);
         }
 
-        for(JButton button : buttons){
-            button.setFont(cardFont);
-            button.setBackground(backgroundColor);
-            button.setForeground(cardTextColor);
+        for(JButton button : buttons){ //main board buttons
+            button.setFont(parseFont(button, 1,"board_button"));
+            button.setBackground(parseColor("board_button_color"));
+            button.setForeground(parseColor("board_button_font_color"));
             button.setBorderPainted(false);
             button.setOpaque(true);
             button.setFocusable(false);
@@ -134,14 +133,14 @@ public class Game extends JFrame implements KeyListener {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-        panel.setBackground(cardTextColor);
+        panel.setBackground(parseColor("footer_background_color"));
         panel.setBorder(null);
 
         for(int i = 0; i < teamCount; i++){
-            panel.add(createGap(80, backgroundColor));
+            panel.add(createGap(80, parseColor("footer_background_color")));
             panel.add(createTeamPanel(new Team("Team " + (i + 1))));
         }
-        panel.add(createGap(80, backgroundColor));
+        panel.add(createGap(80, parseColor("footer_background_color")));
         JScrollPane pane = new JScrollPane(panel);
         pane.setPreferredSize(new Dimension(getWidth(),120)); //Height controller
         pane.setBorder(null);
@@ -149,26 +148,26 @@ public class Game extends JFrame implements KeyListener {
     }
     private JPanel createTeamPanel(Team team){
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(Color.white);
+        panel.setBackground(parseColor("team_panel_color"));
         panel.setPreferredSize(new Dimension(150,110)); //Panel height controller
         panel.setBorder(null);
 
         JTextField teamName = new JTextField(team.getTeamName());
         teamName.setPreferredSize(new Dimension(125,25));
-        teamName.setBackground(Color.lightGray);
+        teamName.setBackground(parseColor("team_text_field_color"));
         teamName.setBorder(null);
         teamName.setHorizontalAlignment(JTextField.CENTER);
 
         JPanel line = new JPanel();
-        line.setBackground(Color.black);
+        line.setBackground(parseColor("team_line_color"));
         line.setPreferredSize(new Dimension(130,1));
 
         JTextField score = new JTextField(String.valueOf(team.getPoints()));
-        score.setFont(cardFont);
+        score.setFont(parseFont(panel,25,"team_font"));
         score.setHorizontalAlignment(JTextField.CENTER);
         score.setBorder(null);
-        score.setBackground(backgroundColor);
-        score.setForeground(cardTextColor);
+        score.setBackground(parseColor("team_text_field_color"));
+        score.setForeground(parseColor("team_name_font_color"));
         score.setPreferredSize(new Dimension(125,25));
 
         panel.add(teamName);
@@ -184,7 +183,7 @@ public class Game extends JFrame implements KeyListener {
         JButton button = new JButton(new IconResize("dom.png", buttonSize, buttonSize).getImage());
         button.setPreferredSize(new Dimension(buttonSize, buttonSize));
         button.setFocusable(false);
-        button.setFont(cardFont);
+        button.setFont(parseFont(button,1,"team_panel_color")); //?
         button.addActionListener(e -> {
             int currentScore = Integer.parseInt(score.getText());
             if(add){
@@ -295,9 +294,6 @@ public class Game extends JFrame implements KeyListener {
     private class ButtonActionListener implements ActionListener {
         private int row;
         private int column;
-        public ButtonActionListener(){
-            //
-        }
         public ButtonActionListener(int row, int column) {
             this.row = row;
             this.column = column;
@@ -305,7 +301,6 @@ public class Game extends JFrame implements KeyListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             JButton clickedButton = (JButton) e.getSource();
-            JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(clickedButton);
             clickedButton.setEnabled(false);
             lastCardPoints = Integer.parseInt(clickedButton.getText());
             if (canOpen) {
