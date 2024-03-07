@@ -42,15 +42,13 @@ public class Game extends JFrame implements KeyListener {
         setFocusable(true);
 
         JPanel title = new JPanel(new FlowLayout());
-        title.setBackground(parseColor("header_background_color")); //board header
+        title.setBackground(parseColor("header_title_background")); //board header
 
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
         titleText.setFont(parseFont(title,25,"header_title"));
         titleText.setForeground(parseColor("header_title_font_color")); //Header Title Font Color
         title.add(titleText);
-
-        System.out.println(calcFontSize(title, 25));
 
         JPanel gameBoard = new JPanel(new GridLayout());
         gameBoard.setPreferredSize(new Dimension(0,300));
@@ -69,15 +67,16 @@ public class Game extends JFrame implements KeyListener {
         int fontSize = calcFontSize(parent, scaleFactor);
         return new Font(fontName,fontType,fontSize);
     }
-    private int calcFontSize(JComponent parent, int scaleFactor){
-        return (parent.getHeight() + 1) * scaleFactor;
-    }
     private int parseFontType(String fontType){
         return switch (JsonFile.read(fileName,"data",fontType)) {
-            case "Font.BOLD" -> 1;
-            case "Font.ITALIC" -> 2;
-            default -> 0;
+            case "plain" -> 0;
+            case "bold" -> 1;
+            case "italic" -> 2;
+            default -> 99;
         };
+    }
+    private int calcFontSize(JComponent obj, int a){
+        return 25;
     }
     private Color parseColor(String color){
         String initColor = JsonFile.read(fileName, "data",color);
@@ -102,14 +101,15 @@ public class Game extends JFrame implements KeyListener {
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(parseColor("header_background_color"));
+            panel.setBackground(parseColor("header_panel_color"));
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.fill = 0;
 
-            label.setFont(parseFont(panel,2,"header_panel"));
+            //label.setFont(parseFont(panel,2,"header_panel"));
+            label.setFont(testFont(panel,label,"header_panel"));
             label.setFocusable(false);
             label.setForeground(parseColor("header_panel_font_color"));
 
@@ -118,7 +118,8 @@ public class Game extends JFrame implements KeyListener {
         }
 
         for(JButton button : buttons){ //main board buttons
-            button.setFont(parseFont(button, 1,"board_button"));
+            //button.setFont(parseFont(button, 25,"board_button"));
+            button.setFont(testFont(button, button, "board_button"));
             button.setBackground(parseColor("board_button_color"));
             button.setForeground(parseColor("board_button_font_color"));
             button.setBorderPainted(false);
@@ -128,6 +129,24 @@ public class Game extends JFrame implements KeyListener {
         }
 
         return gameBoard;
+    }
+    private Font testFont(JComponent parent, JComponent item, String type){
+        String fontName = JsonFile.read(fileName,"data",type + "_font");
+        int fontType = parseFontType(type);
+
+        int frameHeight = parent.getHeight();
+        int textLength;
+        if(item instanceof JButton){
+            ((JButton) item).getText().length();
+        } else if (item instanceof JLabel) {
+            ((JLabel) item).getText().length();
+        }
+        int fontSize = 25;
+        if(textLength < 5){
+            fontSize = 30;
+        }
+        //System.out.println(frameHeight + " " + textLength);
+        return new Font(fontName,fontType, fontSize);
     }
     private JScrollPane createTeamsPanel(){
 
@@ -154,7 +173,7 @@ public class Game extends JFrame implements KeyListener {
 
         JTextField teamName = new JTextField(team.getTeamName());
         teamName.setPreferredSize(new Dimension(125,25));
-        teamName.setBackground(parseColor("team_text_field_color"));
+        teamName.setBackground(parseColor("team_name_field_color"));
         teamName.setBorder(null);
         teamName.setHorizontalAlignment(JTextField.CENTER);
 
@@ -166,7 +185,7 @@ public class Game extends JFrame implements KeyListener {
         score.setFont(parseFont(panel,25,"team_font"));
         score.setHorizontalAlignment(JTextField.CENTER);
         score.setBorder(null);
-        score.setBackground(parseColor("team_text_field_color"));
+        score.setBackground(parseColor("team_score_background_color"));
         score.setForeground(parseColor("team_name_font_color"));
         score.setPreferredSize(new Dimension(125,25));
 
