@@ -117,7 +117,7 @@ public class InfoCard extends JFrame implements KeyListener {
         mainPanel.setBackground(backgroundColor);
 
 
-        JLabel questionText = new JLabel("<html><body>" + question + "</body></html>");
+        JLabel questionText = new JLabel(question);
 
         questionPanel = createPanel(questionText, gbcQuestion, 0, 255);
         questionPanel.setBackground(Color.red);
@@ -126,7 +126,7 @@ public class InfoCard extends JFrame implements KeyListener {
         JPanel answerPanel = createPanel(answerText, gbcAnswer, - 100, 0);
 
 
-        lineBreakText = new JLabel("---------------------------------------------------------");
+        lineBreakText = new JLabel("--------------------------------------------------------------------------------------------------");
         lineBreakText.setFont(parseFont(mainPanel,"text"));
 
         mainPanel.add(questionPanel);
@@ -137,6 +137,24 @@ public class InfoCard extends JFrame implements KeyListener {
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
+    private Font testFont(JComponent parent, JComponent item, String type) {
+        // Assuming JsonFile.read() reads font data from a file
+        String fontName = JsonFile.read(fileName, "data", type + "_font");
+        int fontType = parseFontType(type);
+        int textLength;
+
+        if(item instanceof JLabel){
+            textLength = ((JLabel) item).getText().length();
+        }else if(item instanceof JButton){
+            textLength = ((JButton) item).getText().length();
+        }else{
+            System.err.println("Unknown Type: " + item.getName());
+            textLength = 0;
+        }
+        textLength = (textLength <= 20) ? 100 : 60;
+
+        return new Font(fontName, fontType, textLength);
+    }
     private JPanel createPanel(JLabel label, GridBagConstraints gbc, int posMod, int alpha) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -145,19 +163,19 @@ public class InfoCard extends JFrame implements KeyListener {
         int x = (getWidth() - 1200) / 2;
         int y = (getHeight() - 400) / 2;
 
-
         panel.setBounds(x, y - posMod, 1200, 400);
-        //panel.setOpaque(false);
         panel.setBackground(Color.red);
 
-        label.setFont(parseFont(panel,"text"));
+        // Set the maximum width of the label to the width of the panel
+        label.setMaximumSize(new Dimension(panel.getWidth(), Integer.MAX_VALUE));
+        label.setFont(testFont(panel, label, "text"));
         label.setForeground(textFontColor);
 
         panel.add(label, gbc);
 
         return panel;
     }
-    @SuppressWarnings("MagicConstant")
+
     private JPanel headerPanel(){
         JPanel panel = new JPanel(new GridLayout());
         panel.setBackground(headerBackgroundColor);

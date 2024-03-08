@@ -118,7 +118,6 @@ public class Game extends JFrame implements KeyListener {
         }
 
         for(JButton button : buttons){ //main board buttons
-            //button.setFont(parseFont(button, 25,"board_button"));
             button.setFont(testFont(button, button, "board_button"));
             button.setBackground(parseColor("board_button_color"));
             button.setForeground(parseColor("board_button_font_color"));
