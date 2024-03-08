@@ -132,12 +132,26 @@ public class Game extends JFrame implements KeyListener {
     }
     private Font testFont(JComponent parent, JComponent item, String type) {
         // Assuming JsonFile.read() reads font data from a file
-        String fontName = JsonFile.read(fileName,"data",type + "_font");
+        String fontName = JsonFile.read(fileName, "data", type + "_font");
         int fontType = parseFontType(type);
 
-        int fontSize = Math.max(Math.min((parent.getWidth() * parent.getHeight()) / 5000, 30), 35); // Adjust this formula as needed
+        // Calculate font size based on panel dimensions and text length
+        int panelWidth = parent.getWidth();
+        int panelHeight = parent.getHeight();
+        int textLength = 0;
+
+        if (item instanceof JButton) {
+            textLength = ((JButton) item).getText().length();
+        } else if (item instanceof JLabel) {
+            textLength = ((JLabel) item).getText().length();
+        }
+
+        // Adjust this formula as needed
+        int fontSize = (int) Math.min(Math.min((double) panelWidth / textLength, (double) panelHeight), 30);
+
         return new Font(fontName, fontType, fontSize);
     }
+
     private JScrollPane createTeamsPanel(){
 
         JPanel panel = new JPanel();
