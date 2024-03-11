@@ -6,7 +6,7 @@
     "header_font_type": "plain",
     "header_font_color": "",
 
-    "header_background_color": "40,50,140",
+    "header_background_color": "43,58,150",
 
     "header_button_font": "Arial",
     "header_button_font_type": "plain",
@@ -18,7 +18,7 @@
     "text_font_type": "plain",
     "text_font_color": "255,255,255",
 
-    "background_color": "255,58,150",
+    "background_color": "40,50,140",
 
     "board_button_font": "Arial",
     "board_button_font_type": "plain",

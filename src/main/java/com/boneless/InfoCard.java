@@ -50,11 +50,6 @@ public class InfoCard extends JFrame implements KeyListener {
         setTitle(category + " For " + points);
         initUI(doFullScreen);
     }
-    @SuppressWarnings("MagicConstant")
-    private Font parseFont(JComponent parent, String type){
-        String fontName = JsonFile.read(fileName,"data",type + "_font");
-        return new Font(fontName, parseFontType(type + "_font_type"),parent.getHeight() / 2);
-    }
     private int parseFontType(String fontType){
         return switch (JsonFile.read(fileName,"data",fontType)) {
             case "Font.BOLD" -> 1;
@@ -95,24 +90,6 @@ public class InfoCard extends JFrame implements KeyListener {
 
         //scale the infoCard up and move it to stay centered??
 
-        GridBagConstraints gbcQuestion = new GridBagConstraints();
-        gbcQuestion.gridx = 0;
-        gbcQuestion.gridy = 0;
-        if(question.length() > 50){
-            gbcQuestion.fill = GridBagConstraints.BOTH;
-        }else{
-            gbcQuestion.fill = GridBagConstraints.CENTER;
-        }
-        gbcQuestion.weightx = 1.0;
-        gbcQuestion.weighty = 1.0;
-
-        GridBagConstraints gbcAnswer = new GridBagConstraints();
-        gbcAnswer.gridx = 0;
-        gbcAnswer.gridy = 0;
-        gbcAnswer.fill = GridBagConstraints.CENTER;
-        gbcAnswer.weightx = 1.0;
-        gbcAnswer.weighty = 1.0;
-
         JPanel mainPanel = new JPanel(null);
         mainPanel.setBackground(backgroundColor);
 
@@ -130,20 +107,21 @@ public class InfoCard extends JFrame implements KeyListener {
         questionText.setText(calcLineBreak(questionText.getText(), questionText.getFont().getSize(), questionPanel.getWidth()));
 
         answerText = new JLabel(answer);
-        JPanel answerPanel = createPanel(answerText, gbcAnswer, - 100);
+        JPanel answerPanel = createPanel(answerText, - 100);
 
 
-        lineBreakText = new JLabel("----------------------------------------------------------------------------------------------------");
-        lineBreakText.setFont(parseFont(mainPanel,"text"));
+        lineBreakText = new JLabel("------------------------------------------------------------"); //60 chars :3
+        lineBreakText.setFont(testFont(mainPanel,lineBreakText,"text"));
 
-        mainPanel.add(questionPanel);
-        mainPanel.add(createPanel(lineBreakText, gbcAnswer, 0));
+        mainPanel.add(questionText);
+        mainPanel.add(createPanel(lineBreakText, 0));
         mainPanel.add(answerPanel);
 
         add(headerPanel(), BorderLayout.NORTH);
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
+    @SuppressWarnings("MagicConstant")
     private Font testFont(JComponent parent, JComponent item, String type) {
         // Assuming JsonFile.read() reads font data from a file
         String fontName = JsonFile.read(fileName, "data", type + "_font");
@@ -154,7 +132,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         return new Font(fontName, fontType, textLength);
     }
-    private JPanel createPanel(JComponent label, GridBagConstraints gbc, int posMod) {
+    private JPanel createPanel(JComponent label, int posMod) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(false);
@@ -172,7 +150,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth());
 
-        panel.add(label, gbc);
+        panel.add(label);
 
         return panel;
     }
@@ -205,6 +183,12 @@ public class InfoCard extends JFrame implements KeyListener {
             currentLineLength += wordWidth + fontSize;
         }
         return builder.toString().trim();
+    }
+    //todo: remove parseFont in favor of new font system
+    @SuppressWarnings("MagicConstant")
+    private Font parseFont(JComponent parent, String type){
+        String fontName = JsonFile.read(fileName,"data",type + "_font");
+        return new Font(fontName, parseFontType(type + "_font_type"),parent.getHeight() / 2);
     }
     private JPanel headerPanel(){
         JPanel panel = new JPanel(new GridLayout());
