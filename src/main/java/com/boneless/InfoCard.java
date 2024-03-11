@@ -117,20 +117,27 @@ public class InfoCard extends JFrame implements KeyListener {
         mainPanel.setBackground(backgroundColor);
 
 
-        JLabel questionText = new JLabel(question);
+        JTextArea questionText = new JTextArea(question);
 
-        questionPanel = createPanel(questionText, gbcQuestion, 0, 255);
+        //questionPanel = createPanel(new JLabel(questionText.getText()), gbcQuestion, 0); //alpha 255
+        questionPanel = new JPanel();
+
+        int x = (getWidth() - 1200) / 2;
+        int y = (getHeight() - 400) / 2;
+        questionPanel.setBounds(x, y, 1200, 400);
+        questionPanel.setOpaque(false);
         questionPanel.setBackground(Color.red);
+        questionText.setText(calcLineBreak(questionText.getText(), questionText.getFont().getSize(), questionPanel.getWidth()));
 
         answerText = new JLabel(answer);
-        JPanel answerPanel = createPanel(answerText, gbcAnswer, - 100, 0);
+        JPanel answerPanel = createPanel(answerText, gbcAnswer, - 100);
 
 
-        lineBreakText = new JLabel("--------------------------------------------------------------------------------------------------");
+        lineBreakText = new JLabel("----------------------------------------------------------------------------------------------------");
         lineBreakText.setFont(parseFont(mainPanel,"text"));
 
         mainPanel.add(questionPanel);
-        mainPanel.add(createPanel(lineBreakText, gbcAnswer, 0, 0));
+        mainPanel.add(createPanel(lineBreakText, gbcAnswer, 0));
         mainPanel.add(answerPanel);
 
         add(headerPanel(), BorderLayout.NORTH);
@@ -141,21 +148,13 @@ public class InfoCard extends JFrame implements KeyListener {
         // Assuming JsonFile.read() reads font data from a file
         String fontName = JsonFile.read(fileName, "data", type + "_font");
         int fontType = parseFontType(type);
-        int textLength;
+        int textLength = (Objects.equals(getJComponentType(item), "label")) ? ((JLabel) item).getText().length() : ((JButton) item).getText().length();
 
-        if(item instanceof JLabel){
-            textLength = ((JLabel) item).getText().length();
-        }else if(item instanceof JButton){
-            textLength = ((JButton) item).getText().length();
-        }else{
-            System.err.println("Unknown Type: " + item.getName());
-            textLength = 0;
-        }
         textLength = (textLength <= 20) ? 100 : 60;
 
         return new Font(fontName, fontType, textLength);
     }
-    private JPanel createPanel(JLabel label, GridBagConstraints gbc, int posMod, int alpha) {
+    private JPanel createPanel(JComponent label, GridBagConstraints gbc, int posMod) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(false);
@@ -171,11 +170,42 @@ public class InfoCard extends JFrame implements KeyListener {
         label.setFont(testFont(panel, label, "text"));
         label.setForeground(textFontColor);
 
+        calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth());
+
         panel.add(label, gbc);
 
         return panel;
     }
+    private String getJComponentType(JComponent object){
+        if(object instanceof JLabel){
+            return "label";
+        }else if(object instanceof JTextArea){
+            return "text";
+        }else if(object instanceof JButton){
+            return "button";
+        }else{
+            System.err.println("Invalid JComponent Type!");
+            return null;
+        }
+    }
+    private String calcLineBreak(String text, int fontSize, int parentWidth){
+        //get length, and font size, and do some math with the width of the parent panel
+        StringBuilder builder = new StringBuilder();
+        int currentLineLength = 0;
+        String[] wordArray = text.split(" ");
 
+        for(String word: wordArray){
+            int wordWidth = word.length() * fontSize;
+
+            if(currentLineLength + wordWidth > parentWidth){
+                builder.append("\n");
+                currentLineLength = 0;
+            }
+            builder.append(word).append(" ");
+            currentLineLength += wordWidth + fontSize;
+        }
+        return builder.toString().trim();
+    }
     private JPanel headerPanel(){
         JPanel panel = new JPanel(new GridLayout());
         panel.setBackground(headerBackgroundColor);
