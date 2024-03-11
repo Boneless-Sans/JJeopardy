@@ -93,27 +93,19 @@ public class InfoCard extends JFrame implements KeyListener {
         JPanel mainPanel = new JPanel(null);
         mainPanel.setBackground(backgroundColor);
 
-
-        JTextArea questionText = new JTextArea(question);
+        //JTextArea questionText = new JTextArea(question);
+        JLabel questionText = new JLabel(question);
 
         //questionPanel = createPanel(new JLabel(questionText.getText()), gbcQuestion, 0); //alpha 255
-        questionPanel = new JPanel();
-
-        int x = (getWidth() - 1200) / 2;
-        int y = (getHeight() - 400) / 2;
-        questionPanel.setBounds(x, y, 1200, 400);
-        questionPanel.setOpaque(false);
-        questionPanel.setBackground(Color.red);
-        questionText.setText(calcLineBreak(questionText.getText(), questionText.getFont().getSize(), questionPanel.getWidth()));
+        questionPanel = createPanel(questionText, 0);
 
         answerText = new JLabel(answer);
-        JPanel answerPanel = createPanel(answerText, - 100);
-
+        JPanel answerPanel = createPanel(answerText, -100);
 
         lineBreakText = new JLabel("------------------------------------------------------------"); //60 chars :3
         lineBreakText.setFont(testFont(mainPanel,lineBreakText,"text"));
 
-        mainPanel.add(questionText);
+        mainPanel.add(questionPanel);
         mainPanel.add(createPanel(lineBreakText, 0));
         mainPanel.add(answerPanel);
 
@@ -130,7 +122,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         textLength = (textLength <= 20) ? 100 : 60;
 
-        return new Font(fontName, fontType, textLength);
+        return new Font(fontName, fontType, (int)(((parent.getHeight() + item.getHeight()) + ((parent.getWidth() + item.getWidth())))));
     }
     private JPanel createPanel(JComponent label, int posMod) {
         JPanel panel = new JPanel();
@@ -148,8 +140,7 @@ public class InfoCard extends JFrame implements KeyListener {
         label.setFont(testFont(panel, label, "text"));
         label.setForeground(textFontColor);
 
-        calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth());
-
+        System.out.println(calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth()));
         panel.add(label);
 
         return panel;
