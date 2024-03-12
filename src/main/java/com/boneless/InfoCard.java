@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.FontUtility;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
@@ -137,7 +138,8 @@ public class InfoCard extends JFrame implements KeyListener {
 
         // Set the maximum width of the label to the width of the panel
         label.setMaximumSize(new Dimension(panel.getWidth(), Integer.MAX_VALUE));
-        label.setFont(testFont(panel, label, "text"));
+        //label.setFont(testFont(panel, label, "text"));
+        label.setFont(FontUtility.getScaledFont());
         label.setForeground(textFontColor);
 
         System.out.println(calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth()));
