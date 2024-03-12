@@ -28,6 +28,7 @@ public class Game extends JFrame implements KeyListener {
             -Color *
             -Font Methods *
         -add a saving feature with hashmaps <JButton, Boolean> !!MARKED FOR DELETION!!
+        -port to javaFX
      */
     public void initUI(boolean doFullScreen, int teamCount){
         if(doFullScreen){
@@ -119,7 +120,7 @@ public class Game extends JFrame implements KeyListener {
         for(JButton button : buttons){ //main board buttons
             button.setFont(testFont(button, button, "board_button"));
             button.setBackground(parseColor("board_button_color"));
-            //button.setForeground(parseColor("board_button_font_color")); //fixme <- Color wont set here
+            //button.setForeground(parseColor("board_button_font_color")); //fixme: Color wont set here
             //button.setBorderPainted(false);
             button.setFocusable(false);
 

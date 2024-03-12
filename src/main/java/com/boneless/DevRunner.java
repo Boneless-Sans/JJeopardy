@@ -20,7 +20,7 @@ public class DevRunner extends JFrame{
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        JTextField text = new JTextField("this is some really really long text, like you would not BELIEVE how long this text is");
+        JTextField text = new JTextField("<html>this is some really really long text, like you would not BELIEVE how long this text is</html>");
         text.setFocusable(false);
         text.setBorder(null);
         text.setCursor(Cursor.getDefaultCursor());
