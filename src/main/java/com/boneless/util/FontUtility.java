@@ -19,6 +19,8 @@ public class FontUtility {
         }
     }
 
+
+
     private static Font getScaledFontForButton(String text, int fontStyle, JButton button) {
         Font currentFont = new Font(Font.SANS_SERIF, fontStyle, MIN_FONT_SIZE); // Start with the minimum font size
         FontMetrics fontMetrics = button.getFontMetrics(currentFont);
@@ -28,22 +30,7 @@ public class FontUtility {
         if (fontMetrics.stringWidth(text) <= maxWidth && fontMetrics.getHeight() <= maxHeight) {
             return currentFont;
         } else {
-            StringBuilder builder = new StringBuilder("<html>");
-            int start = 0;
-            int end = 0;
-            int lineWidth = 0;
-
-            while (end < text.length()) {
-                lineWidth = fontMetrics.stringWidth(text.substring(start, end + 1));
-                if (lineWidth > maxWidth) {
-                    builder.append(text, start, end).append("<br>");
-                    start = end;
-                }
-                end++;
-            }
-            builder.append(text.substring(start));
-
-            return currentFont.deriveFont(Font.PLAIN);
+            return getScaledFontWithLineBreaks(text, fontStyle, maxWidth, maxHeight, fontMetrics);
         }
     }
 
@@ -56,22 +43,30 @@ public class FontUtility {
         if (fontMetrics.stringWidth(text) <= maxWidth && fontMetrics.getHeight() <= maxHeight) {
             return currentFont;
         } else {
-            StringBuilder builder = new StringBuilder("<html>");
-            int start = 0;
-            int end = 0;
-            int lineWidth = 0;
-
-            while (end < text.length()) {
-                lineWidth = fontMetrics.stringWidth(text.substring(start, end + 1));
-                if (lineWidth > maxWidth) {
-                    builder.append(text, start, end).append("<br>");
-                    start = end;
-                }
-                end++;
-            }
-            builder.append(text.substring(start));
-
-            return currentFont.deriveFont(Font.PLAIN);
+            return getScaledFontWithLineBreaks(text, fontStyle, maxWidth, maxHeight, fontMetrics);
         }
+    }
+
+    private static Font getScaledFontWithLineBreaks(String text, int fontStyle, int maxWidth, int maxHeight, FontMetrics fontMetrics) {
+        int fontSize = MIN_FONT_SIZE;
+        Font currentFont = new Font(Font.SANS_SERIF, fontStyle, fontSize);
+        StringBuilder builder = new StringBuilder("<html>");
+        int start = 0;
+        int end = 0;
+        int lineWidth = 0;
+        int lineHeight = fontMetrics.getHeight();
+
+        while (end < text.length()) {
+            lineWidth = fontMetrics.stringWidth(text.substring(start, end + 1));
+            if (lineWidth > maxWidth || lineHeight > maxHeight) {
+                builder.append(text, start, end).append("<br>");
+                start = end;
+                lineHeight = fontMetrics.getHeight();
+            }
+            end++;
+        }
+        builder.append(text.substring(start));
+
+        return currentFont.deriveFont(Font.PLAIN);
     }
 }

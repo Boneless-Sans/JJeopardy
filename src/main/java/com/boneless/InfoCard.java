@@ -82,10 +82,10 @@ public class InfoCard extends JFrame implements KeyListener {
         addKeyListener(this);
         setLocationRelativeTo(null);
         SystemUI.set();
-        if(Objects.equals(esc, "null")){
+        if(Objects.equals(esc, null)){
             esc = JsonFile.read("settings.json","keyBinds","exit");
         }
-        if(Objects.equals(advance, "null")){
+        if(Objects.equals(advance, null)){
             advance = JsonFile.read("settings.json","keyBinds","continue");
         }
 
@@ -96,6 +96,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         //JTextArea questionText = new JTextArea(question);
         JLabel questionText = new JLabel(question);
+        //questionText.set
 
         //questionPanel = createPanel(new JLabel(questionText.getText()), gbcQuestion, 0); //alpha 255
         questionPanel = createPanel(questionText, 0);

@@ -22,7 +22,13 @@ public class Game extends JFrame implements KeyListener {
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
-    //todo: add saving with hashmaps <JButton, Boolean>
+    /*
+    todo:
+        -remove any and all calls to any sort of font system and replace with new FontUtility system to do all heavy lifting
+            -Color *
+            -Font Methods *
+        -add a saving feature with hashmaps <JButton, Boolean> !!MARKED FOR DELETION!!
+     */
     public void initUI(boolean doFullScreen, int teamCount){
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -67,14 +73,7 @@ public class Game extends JFrame implements KeyListener {
         int fontSize = calcFontSize(parent, scaleFactor);
         return new Font(fontName,fontType,fontSize);
     }
-    private int parseFontType(String fontType){
-        return switch (JsonFile.read(fileName,"data",fontType)) {
-            case "plain" -> 0;
-            case "bold" -> 1;
-            case "italic" -> 2;
-            default -> 99;
-        };
-    }
+
     private int calcFontSize(JComponent obj, int a){
         return 25;
     }
@@ -128,6 +127,14 @@ public class Game extends JFrame implements KeyListener {
         }
 
         return gameBoard;
+    }
+    private int parseFontType(String fontType){
+        return switch (JsonFile.read(fileName,"data",fontType)) {
+            case "plain" -> 0;
+            case "bold" -> 1;
+            case "italic" -> 2;
+            default -> 99;
+        };
     }
     private Font testFont(JComponent parent, JComponent item, String type) {
         // Assuming JsonFile.read() reads font data from a file
@@ -347,5 +354,18 @@ public class Game extends JFrame implements KeyListener {
 
     public String getFileName(){
         return fileName;
+    }
+    public static class Team{
+        private final String teamName;
+        private int points;
+        public Team(String teamName){
+            this.teamName = teamName;
+        }
+        public String getTeamName(){
+            return teamName;
+        }
+        public int getPoints(){
+            return points;
+        }
     }
 }
