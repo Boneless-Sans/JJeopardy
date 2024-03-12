@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.FontUtility;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
@@ -124,7 +125,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         return new Font(fontName, fontType, (int)(((parent.getHeight() + item.getHeight()) + ((parent.getWidth() + item.getWidth())))));
     }
-    private JPanel createPanel(JComponent label, int posMod) {
+    private JPanel createPanel(JLabel label, int posMod) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         panel.setOpaque(false);
@@ -137,10 +138,11 @@ public class InfoCard extends JFrame implements KeyListener {
 
         // Set the maximum width of the label to the width of the panel
         label.setMaximumSize(new Dimension(panel.getWidth(), Integer.MAX_VALUE));
-        label.setFont(testFont(panel, label, "text"));
+        label.setFont(new Font(Font.DIALOG, Font.PLAIN, 50));
+        //label.setFont(FontUtility.getScaledFont(label.getText(), Font.PLAIN, panel));
         label.setForeground(textFontColor);
 
-        System.out.println(calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth()));
+        //System.out.println(calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth()));
         panel.add(label);
 
         return panel;

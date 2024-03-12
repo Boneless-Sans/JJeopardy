@@ -22,7 +22,7 @@ public class Game extends JFrame implements KeyListener {
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
-
+    //todo: add saving with hashmaps <JButton, Boolean>
     public void initUI(boolean doFullScreen, int teamCount){
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -111,7 +111,7 @@ public class Game extends JFrame implements KeyListener {
             //label.setFont(parseFont(panel,2,"header_panel"));
             label.setFont(testFont(panel,label,"header_panel"));
             label.setFocusable(false);
-            label.setForeground(parseColor("header_panel_font_color"));
+            //label.setForeground(parseColor("header_panel_font_color"));
 
             panel.add(label, gbc);
             gameBoard.add(panel);
@@ -120,10 +120,10 @@ public class Game extends JFrame implements KeyListener {
         for(JButton button : buttons){ //main board buttons
             button.setFont(testFont(button, button, "board_button"));
             button.setBackground(parseColor("board_button_color"));
-            button.setForeground(parseColor("board_button_font_color"));
-            button.setBorderPainted(false);
-            button.setOpaque(true);
+            //button.setForeground(parseColor("board_button_font_color")); //fixme <- Color wont set here
+            //button.setBorderPainted(false);
             button.setFocusable(false);
+
             gameBoard.add(button);
         }
 
@@ -189,7 +189,7 @@ public class Game extends JFrame implements KeyListener {
         score.setHorizontalAlignment(JTextField.CENTER);
         score.setBorder(null);
         score.setBackground(parseColor("team_score_background_color"));
-        score.setForeground(parseColor("team_name_font_color"));
+        //score.setForeground(parseColor("team_name_font_color"));
         score.setPreferredSize(new Dimension(125,25));
 
         panel.add(teamName);
