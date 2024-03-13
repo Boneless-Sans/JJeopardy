@@ -23,12 +23,10 @@ public class Game extends JFrame implements KeyListener {
         Game.doFullScreen = doFullScreen;
     }
     /*
-    todo:
-        -remove any and all calls to any sort of font system and replace with new FontUtility system to do all heavy lifting
-            -Color *
-            -Font Methods *
-        -add a saving feature with hashmaps <JButton, Boolean> !!MARKED FOR DELETION!!
-        -port to javaFX
+    todo: ✓
+        x-remove any and all calls to any sort of font system and replace with new FontUtility system to do all heavy lifting
+            x-Color
+            ✓-Font Methods
      */
     public void initUI(boolean doFullScreen, int teamCount){
         if(doFullScreen){
@@ -307,6 +305,10 @@ public class Game extends JFrame implements KeyListener {
         }
         if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))){
             System.exit(0);
+        }
+        if(e.getKeyChar() == 'r'){
+            DevRunner.main(null);
+            dispose();
         }
     }
 

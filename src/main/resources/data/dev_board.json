@@ -14,7 +14,7 @@
 
     "header_button_color": "255,255,255",
 
-    "text_font": "Arial",
+    "text_font": "Comic Sans MS",
     "text_font_type": "plain",
     "text_font_color": "255,255,255",
 
@@ -38,7 +38,7 @@
 
     "team_font": "Arial",
     "team_font_type": "plain",
-    "team_font_color": "0,0,0",
+    "team_font_color": "255,255,255",
 
     "team_name_font": "Arial",
     "team_name_font_type": "plain",
@@ -68,7 +68,7 @@
       "row_5": 1000
     },
     "questions": {
-      "row_1": "this is a lot of text, like it should really push what this \"engine\" can do",
+      "row_1": "this is a lot of text, like it should really push what this \"engine\" can do. im think its fucking working, lets fucking go",
       "row_2": "c1 Question 2",
       "row_3": "c1 Question 3",
       "row_4": "c1 Question 4",

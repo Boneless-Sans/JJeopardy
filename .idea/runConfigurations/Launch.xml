@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Launch" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.boneless.Launcher" />
-    <module name="Jeopardy.main" />
+    <module name="JJeopardy.main" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

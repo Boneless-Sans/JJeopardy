@@ -1,6 +1,5 @@
 package com.boneless;
 
-import com.boneless.util.FontUtility;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
@@ -17,21 +16,20 @@ public class InfoCard extends JFrame implements KeyListener {
     private final String answer;
     private final String fileName;
     private boolean exit = false;
-    private JPanel questionPanel;
+    private JLabel questionText;
     private JLabel answerText;
     private JLabel lineBreakText;
     private final JButton actButton;
     private String esc = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","exit")));
     private String advance = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","continue")));
-    //font values
-    //header background
+
     private final Color headerFontColor;
     //main card text
     private final Color textFontColor;
     //background
     private final Color headerBackgroundColor;
     private final Color backgroundColor;
-
+    //todo: fix text fading
     public InfoCard(String question, String answer, String fileName, String category, int points, boolean doFullScreen, JButton actButton){
         this.question = question;
         this.answer = answer;
@@ -41,9 +39,6 @@ public class InfoCard extends JFrame implements KeyListener {
         //header
         headerFontColor = parseColor("header_background_color");
         headerBackgroundColor = parseColor("header_background_color");
-        //header buttons
-        Color headerButtonFontColor = parseColor("header_button_font_color");
-        Color headerButtonColor = parseColor("header_background_color");
         //main body
         textFontColor = parseColor("text_font_color");
         backgroundColor = parseColor("background_color");
@@ -75,7 +70,6 @@ public class InfoCard extends JFrame implements KeyListener {
             setSize(1600,900);
         }
 
-
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
         setUndecorated(true);
@@ -89,96 +83,35 @@ public class InfoCard extends JFrame implements KeyListener {
             advance = JsonFile.read("settings.json","keyBinds","continue");
         }
 
-        //scale the infoCard up and move it to stay centered??
-
         JPanel mainPanel = new JPanel(null);
         mainPanel.setBackground(backgroundColor);
 
-        //JTextArea questionText = new JTextArea(question);
-        JLabel questionText = new JLabel(question);
-        //questionText.set
+        questionText = createLabel(question, 0);
 
-        //questionPanel = createPanel(new JLabel(questionText.getText()), gbcQuestion, 0); //alpha 255
-        questionPanel = createPanel(questionText, 0);
+        answerText = createLabel(answer, -100);
 
-        answerText = new JLabel(answer);
-        JPanel answerPanel = createPanel(answerText, -100);
-
-        lineBreakText = new JLabel("------------------------------------------------------------"); //60 chars :3
-        lineBreakText.setFont(testFont(mainPanel,lineBreakText,"text"));
-
-        mainPanel.add(questionPanel);
-        mainPanel.add(createPanel(lineBreakText, 0));
-        mainPanel.add(answerPanel);
+        mainPanel.add(questionText);
+        mainPanel.add(createLabel("------------------------------------------------------------", 0)); //60 chars :3
+        mainPanel.add(answerText);
 
         add(headerPanel(), BorderLayout.NORTH);
         add(mainPanel, BorderLayout.CENTER);
         setVisible(true);
     }
-    @SuppressWarnings("MagicConstant")
-    private Font testFont(JComponent parent, JComponent item, String type) {
-        // Assuming JsonFile.read() reads font data from a file
-        String fontName = JsonFile.read(fileName, "data", type + "_font");
-        int fontType = parseFontType(type);
-        int textLength = (Objects.equals(getJComponentType(item), "label")) ? ((JLabel) item).getText().length() : ((JButton) item).getText().length();
-
-        textLength = (textLength <= 20) ? 100 : 60;
-
-        return new Font(fontName, fontType, (int)(((parent.getHeight() + item.getHeight()) + ((parent.getWidth() + item.getWidth())))));
-    }
-    private JPanel createPanel(JLabel label, int posMod) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.setOpaque(false);
+    private JLabel createLabel(String text, int posMod) {
+        String color = JsonFile.read(fileName, "data", "text_font_color");
+        JLabel label = new JLabel("<html><center><body style=color:rgb(" + color + ")>" + text + "</center></html>", JLabel.CENTER);
 
         int x = (getWidth() - 1200) / 2;
         int y = (getHeight() - 400) / 2;
 
-        panel.setBounds(x, y - posMod, 1200, 400);
-        panel.setBackground(Color.red);
+        label.setFont(new Font(Font.DIALOG, Font.PLAIN, 60)); //set font size 60
+        label.setForeground(parseColor("text_font_color"));
+        label.setOpaque(false);
+        label.setBounds(x,y - posMod, 1200,400);
 
-        // Set the maximum width of the label to the width of the panel
-        label.setMaximumSize(new Dimension(panel.getWidth(), Integer.MAX_VALUE));
-        label.setFont(new Font(Font.DIALOG, Font.PLAIN, 50));
-        //label.setFont(FontUtility.getScaledFont(label.getText(), Font.PLAIN, panel));
-        label.setForeground(textFontColor);
-
-        //System.out.println(calcLineBreak(Objects.equals(getJComponentType(label), "label") ? ((JLabel) label).getText() : ((JTextArea) label).getText(), label.getFont().getSize(), panel.getWidth()));
-        panel.add(label);
-
-        return panel;
+        return label;
     }
-    private String getJComponentType(JComponent object){
-        if(object instanceof JLabel){
-            return "label";
-        }else if(object instanceof JTextArea){
-            return "text";
-        }else if(object instanceof JButton){
-            return "button";
-        }else{
-            System.err.println("Invalid JComponent Type!");
-            return null;
-        }
-    }
-    private String calcLineBreak(String text, int fontSize, int parentWidth){
-        //get length, and font size, and do some math with the width of the parent panel
-        StringBuilder builder = new StringBuilder();
-        int currentLineLength = 0;
-        String[] wordArray = text.split(" ");
-
-        for(String word: wordArray){
-            int wordWidth = word.length() * fontSize;
-
-            if(currentLineLength + wordWidth > parentWidth){
-                builder.append("\n");
-                currentLineLength = 0;
-            }
-            builder.append(word).append(" ");
-            currentLineLength += wordWidth + fontSize;
-        }
-        return builder.toString().trim();
-    }
-    //todo: remove parseFont in favor of new font system
     @SuppressWarnings("MagicConstant")
     private Font parseFont(JComponent parent, String type){
         String fontName = JsonFile.read(fileName,"data",type + "_font");
@@ -234,9 +167,9 @@ public class InfoCard extends JFrame implements KeyListener {
         button.addActionListener(e -> {
             if(type && !exit) {
                 if (question.length() > 100) {
-                    movePanel(questionPanel, 150);
+                    movePanel(questionText, 150);
                 } else {
-                    movePanel(questionPanel, 100);
+                    movePanel(questionText, 100);
                 }
             }else{
                 dispose();
@@ -254,7 +187,7 @@ public class InfoCard extends JFrame implements KeyListener {
             default -> keyStrokeCode;
         };
     }
-    private void movePanel(JPanel panel, int amount) {
+    private void movePanel(JLabel panel, int amount) {
         int moveAmount = panel.getY() - amount;
         exit = true;
         Timer timer = new Timer(1, e -> {
@@ -303,9 +236,9 @@ public class InfoCard extends JFrame implements KeyListener {
         if(String.valueOf(e.getKeyChar()).equals(advance)) {
             if(!exit) {
                 if (question.length() > 100) {
-                    movePanel(questionPanel, 150);
+                    movePanel(questionText, 150);
                 } else {
-                    movePanel(questionPanel, 100);
+                    movePanel(questionText, 100);
                 }
             }else{
                 dispose();
@@ -316,14 +249,8 @@ public class InfoCard extends JFrame implements KeyListener {
             actButton.setEnabled(true);
         }
     }
-
     @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
+    public void keyPressed(KeyEvent e) {}
     @Override
-    public void keyReleased(KeyEvent e) {
-
-    }
+    public void keyReleased(KeyEvent e) {}
 }
