@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class DevRunner extends JFrame{
     public static void main(String[] args) {
-        boolean launch = true;
+        boolean launch = false;
         if(launch) {
-            Game game = new Game();
-            game.initUI(false, 3);
+            //Game game = new Game();
+            //game.initUI(false, 3);
         }else {
             new DevRunner();
         }
@@ -20,11 +20,7 @@ public class DevRunner extends JFrame{
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        JTextField text = new JTextField("<html>this is some really really long text, like you would not BELIEVE how long this text is</html>");
-        text.setFocusable(false);
-        text.setBorder(null);
-        text.setCursor(Cursor.getDefaultCursor());
-        text.setHorizontalAlignment(0);
+        JLabel text = new JLabel("<html><body style=color:rgb(0,0,0); opacity:150;>" + "this is text" + "</body></html>");
 
         add(text);
         setVisible(true);

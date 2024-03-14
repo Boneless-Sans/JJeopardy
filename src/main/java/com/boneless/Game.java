@@ -26,7 +26,7 @@ public class Game extends JFrame implements KeyListener {
     todo: ✓
         x-remove any and all calls to any sort of font system and replace with new FontUtility system to do all heavy lifting
             x-Color
-            ✓-Font Methods
+            x-Font Methods
      */
     public void initUI(boolean doFullScreen, int teamCount){
         if(doFullScreen){
@@ -47,7 +47,7 @@ public class Game extends JFrame implements KeyListener {
         setFocusable(true);
 
         JPanel title = new JPanel(new FlowLayout());
-        title.setBackground(parseColor("header_title_background")); //board header
+        title.setBackground(parseColor(null)); //board header
 
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
@@ -77,7 +77,7 @@ public class Game extends JFrame implements KeyListener {
         return 25;
     }
     private Color parseColor(String color){
-        String initColor = JsonFile.read(fileName, "data",color);
+        String initColor = JsonFile.read(fileName, "data",color + "_color");
         String[] split = initColor.split(",");
         int red = Integer.parseInt(split[0]);
         int green = Integer.parseInt(split[1]);
