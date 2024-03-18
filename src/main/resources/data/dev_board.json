@@ -3,16 +3,24 @@
     "title": "Test",
 
     "info_background": "43,58,150",
-
     "info_text_font": "arial",
     "info_text_type": "plain",
     "info_text_color": "255,255,255",
 
-    "info_header_background": "33, 48, 140",
-    "info_header_text_font": "Arial",
+    "info_header_background": "33,48,140",
+    "info_header_text_font": "arial",
     "info_header_text_type": "plain",
     "info_header_text_color": "255,255,255",
 
+    "info_header_button_color": "255,255,255",
+    "info_header_button_font": "arial",
+    "info_header_button_type": "plain",
+    "info_header_button_font_color": "0,0,0",
+
+    "header_background_color": "33,48,140",
+    "header_text_font": "arial",
+    "header_text_type": "plain",
+    "header_text_color": "255,255,255",
 
     "columns": 6,
     "rows": 5

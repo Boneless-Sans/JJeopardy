@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class DevRunner extends JFrame{
     public static void main(String[] args) {
-        boolean launch = false;
+        boolean launch = true;
         if(launch) {
-            //Game game = new Game();
-            //game.initUI(false, 3);
+            Game game = new Game();
+            game.initUI(false, 3);
         }else {
             new DevRunner();
         }

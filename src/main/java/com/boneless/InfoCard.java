@@ -99,27 +99,26 @@ public class InfoCard extends JFrame implements KeyListener {
         return label;
     }
     @SuppressWarnings("MagicConstant")
-    private Font parseFont(JPanel parent, String textType){
-        String fontName = JsonFile.read(fileName,"data", textType);
-        int fontType = switch (JsonFile.read(fileName,"data",textType + "_font")){
+    private Font parseFont(String textType){
+        String fontName = JsonFile.read(fileName,"data", textType + "_font");
+        int fontType = switch (JsonFile.read(fileName,"data",textType + "_type")){
             case "italic" -> 1;
             case "bold" -> 2;
             default -> 0;
         };
-        int fontSize = Math.abs((parent.getHeight() / 2));
-        return new Font(fontName, fontType, fontSize);
+        return new Font(fontName, fontType, 60);
     }
     private JPanel headerPanel(){
         JPanel panel = new JPanel(new GridLayout());
         panel.setBackground(parseColor("info_header_background"));
 
         JLabel closeText = new JLabel("Continue");
-        closeText.setForeground(parseColor("info_header_text_font"));
-        closeText.setFont();
+        closeText.setForeground(parseColor("info_header_text_color"));
+        closeText.setFont(parseFont("info_header_text"));
 
         JLabel title = new JLabel(getTitle());
         title.setForeground(parseColor("info_header_text_color"));
-        title.setFont();
+        title.setFont(parseFont("info_header_text"));
 
         JPanel titlePanel = new JPanel(new GridBagLayout());
         titlePanel.setOpaque(false);
@@ -133,7 +132,7 @@ public class InfoCard extends JFrame implements KeyListener {
 
         JLabel reveal = new JLabel("Reveal Correct Answer");
         reveal.setForeground(parseColor("info_header_text_color"));
-        reveal.setFont();
+        reveal.setFont(parseFont("info_header_text"));
 
         panel.add(createHeaderPanel(closeText, createHeaderButton("exit", false)));
 
@@ -155,7 +154,7 @@ public class InfoCard extends JFrame implements KeyListener {
         String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
         JButton button = new JButton(keyBind);
         button.setFocusable(false);
-        button.setFont();
+        button.setFont(parseFont("info_header_button"));
         button.addActionListener(e -> {
             if(type && !exit) {
                 if (question.length() > 100) {
@@ -187,7 +186,7 @@ public class InfoCard extends JFrame implements KeyListener {
                 panel.setBounds(panel.getX(), panel.getY() - 10, panel.getWidth(), panel.getHeight()); // Decrease Y position to move up
             } else {
                 ((Timer) e.getSource()).stop(); // Stop the timer when the movement is completed
-                fadeIn(answerText, lineBreakText); //todo: remake fade in to work with new HTML code
+                fadeIn(answerText, null); //todo: remake fade in to work with new HTML code
             }
         });
 
@@ -213,7 +212,7 @@ public class InfoCard extends JFrame implements KeyListener {
                 // Set the text color with adjusted alpha
                 Color fg = new Color(255, 255, 255, Math.round(alpha * 255));
                 answerLabel.setForeground(fg);
-                lineBreak.setForeground(fg);
+                //lineBreak.setForeground(fg);
             }
         });
 

@@ -40,24 +40,24 @@ public class Game extends JFrame implements KeyListener {
         this.teamCount = teamCount;
 
         setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
         setLocationRelativeTo(null);
         addKeyListener(this);
         setFocusable(true);
 
         JPanel title = new JPanel(new FlowLayout());
-        title.setBackground(parseColor(null)); //board header
+        title.setBackground(Color.pink); //board header
 
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
         titleText.setFont(parseFont(title,25,"header_title"));
-        titleText.setForeground(parseColor("header_title_font_color")); //Header Title Font Color
+        titleText.setForeground(Color.red); //Header Title Font Color
         title.add(titleText);
 
         JPanel gameBoard = new JPanel(new GridLayout());
         gameBoard.setPreferredSize(new Dimension(0,300));
-        gameBoard.setBackground(parseColor("background_color"));
+        gameBoard.setBackground(Color.yellow);
 
         JScrollPane teams = createTeamsPanel();
 
@@ -92,14 +92,14 @@ public class Game extends JFrame implements KeyListener {
 
         GridLayout board = new GridLayout(sizeX, sizeY, 5,5);
         gameBoard.setLayout(board);
-        gameBoard.setBackground(parseColor("board_grate_color"));
+        gameBoard.setBackground(Color.blue);
 
         JLabel[] cats = createTitles(fileName, sizeX, sizeY);
         JButton[] buttons = createRows(fileName, sizeX, sizeY);
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(parseColor("header_panel_color"));
+            panel.setBackground(Color.green);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -117,7 +117,7 @@ public class Game extends JFrame implements KeyListener {
 
         for(JButton button : buttons){ //main board buttons
             button.setFont(testFont(button, button, "board_button"));
-            button.setBackground(parseColor("board_button_color"));
+            button.setBackground(Color.cyan);
             //button.setForeground(parseColor("board_button_font_color")); //fixme: Color wont set here
             //button.setBorderPainted(false);
             button.setFocusable(false);
@@ -161,14 +161,14 @@ public class Game extends JFrame implements KeyListener {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-        panel.setBackground(parseColor("footer_background_color"));
+        panel.setBackground(Color.magenta);
         panel.setBorder(null);
 
         for(int i = 0; i < teamCount; i++){
-            panel.add(createGap(80, parseColor("footer_background_color")));
+            panel.add(createGap(80, Color.blue));
             panel.add(createTeamPanel(new Team("Team " + (i + 1))));
         }
-        panel.add(createGap(80, parseColor("footer_background_color")));
+        panel.add(createGap(80, Color.red));
         JScrollPane pane = new JScrollPane(panel);
         pane.setPreferredSize(new Dimension(getWidth(),120)); //Height controller
         pane.setBorder(null);
@@ -176,25 +176,25 @@ public class Game extends JFrame implements KeyListener {
     }
     private JPanel createTeamPanel(Team team){
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(parseColor("team_panel_color"));
+        panel.setBackground(Color.orange);
         panel.setPreferredSize(new Dimension(150,110)); //Panel height controller
         panel.setBorder(null);
 
         JTextField teamName = new JTextField(team.getTeamName());
         teamName.setPreferredSize(new Dimension(125,25));
-        teamName.setBackground(parseColor("team_name_field_color"));
+        teamName.setBackground(Color.GRAY);
         teamName.setBorder(null);
         teamName.setHorizontalAlignment(JTextField.CENTER);
 
         JPanel line = new JPanel();
-        line.setBackground(parseColor("team_line_color"));
+        line.setBackground(Color.pink);
         line.setPreferredSize(new Dimension(130,1));
 
         JTextField score = new JTextField(String.valueOf(team.getPoints()));
         score.setFont(parseFont(panel,25,"team_font"));
         score.setHorizontalAlignment(JTextField.CENTER);
         score.setBorder(null);
-        score.setBackground(parseColor("team_score_background_color"));
+        score.setBackground(Color.cyan);
         //score.setForeground(parseColor("team_name_font_color"));
         score.setPreferredSize(new Dimension(125,25));
 
