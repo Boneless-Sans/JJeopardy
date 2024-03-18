@@ -2,6 +2,16 @@
   "data": {
     "title": "Test",
 
+    "info_background": "43,58,150",
+
+    "info_text_font": "arial",
+    "info_text_type": "plain",
+    "info_text_color": "255,255,255",
+
+    "info_header_background": "33, 48, 140",
+    "info_header_text_font": "Arial",
+    "info_header_text_type": "plain",
+    "info_header_text_color": "255,255,255",
 
 
     "columns": 6,

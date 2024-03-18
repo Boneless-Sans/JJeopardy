@@ -18,7 +18,6 @@ public class InfoCard extends JFrame implements KeyListener {
     private boolean exit = false;
     private JLabel questionText;
     private JLabel answerText;
-    private JLabel lineBreakText;
     private final JButton actButton;
     private String esc = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","exit")));
     private String advance = String.valueOf(parseKeyStrokeInput(JsonFile.read("settings.json","keyBinds","continue")));
@@ -70,8 +69,8 @@ public class InfoCard extends JFrame implements KeyListener {
             advance = JsonFile.read("settings.json","keyBinds","continue");
         }
 
-        JPanel mainPanel = new JPanel(null);
-        mainPanel.setBackground(null);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setBackground(parseColor("info_background"));
 
         questionText = createLabel(question, 0);
 
@@ -93,28 +92,34 @@ public class InfoCard extends JFrame implements KeyListener {
         int y = (getHeight() - 400) / 2;
 
         label.setFont(new Font(Font.DIALOG, Font.PLAIN, 60)); //set font size 60
-        label.setForeground(parseColor("text_font_color"));
+        label.setForeground(parseColor("info_text_color"));
         label.setOpaque(false);
         label.setBounds(x,y - posMod, 1200,400);
 
         return label;
     }
     @SuppressWarnings("MagicConstant")
-    private Font parseFont(JComponent parent, String type){
-        String fontName = JsonFile.read(fileName,"data",type + "_font");
-        return new Font(fontName, parseFontType(type + "_font_type"),parent.getHeight() / 2);
+    private Font parseFont(JPanel parent, String textType){
+        String fontName = JsonFile.read(fileName,"data", textType);
+        int fontType = switch (JsonFile.read(fileName,"data",textType + "_font")){
+            case "italic" -> 1;
+            case "bold" -> 2;
+            default -> 0;
+        };
+        int fontSize = Math.abs((parent.getHeight() / 2));
+        return new Font(fontName, fontType, fontSize);
     }
     private JPanel headerPanel(){
         JPanel panel = new JPanel(new GridLayout());
-        panel.setBackground(null);
+        panel.setBackground(parseColor("info_header_background"));
 
         JLabel closeText = new JLabel("Continue");
-        closeText.setForeground(null);
-        closeText.setFont(parseFont(panel,"header"));
+        closeText.setForeground(parseColor("info_header_text_font"));
+        closeText.setFont();
 
         JLabel title = new JLabel(getTitle());
-        title.setForeground(null);
-        title.setFont(parseFont(panel,"header"));
+        title.setForeground(parseColor("info_header_text_color"));
+        title.setFont();
 
         JPanel titlePanel = new JPanel(new GridBagLayout());
         titlePanel.setOpaque(false);
@@ -127,8 +132,8 @@ public class InfoCard extends JFrame implements KeyListener {
         titlePanel.add(title, gbc);
 
         JLabel reveal = new JLabel("Reveal Correct Answer");
-        reveal.setForeground(null);
-        reveal.setFont(parseFont(panel,"header"));
+        reveal.setForeground(parseColor("info_header_text_color"));
+        reveal.setFont();
 
         panel.add(createHeaderPanel(closeText, createHeaderButton("exit", false)));
 
@@ -150,7 +155,7 @@ public class InfoCard extends JFrame implements KeyListener {
         String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
         JButton button = new JButton(keyBind);
         button.setFocusable(false);
-        button.setFont(parseFont(button,"header_button"));
+        button.setFont();
         button.addActionListener(e -> {
             if(type && !exit) {
                 if (question.length() > 100) {
@@ -182,7 +187,7 @@ public class InfoCard extends JFrame implements KeyListener {
                 panel.setBounds(panel.getX(), panel.getY() - 10, panel.getWidth(), panel.getHeight()); // Decrease Y position to move up
             } else {
                 ((Timer) e.getSource()).stop(); // Stop the timer when the movement is completed
-                fadeIn(answerText, lineBreakText);
+                fadeIn(answerText, lineBreakText); //todo: remake fade in to work with new HTML code
             }
         });
 
@@ -207,7 +212,6 @@ public class InfoCard extends JFrame implements KeyListener {
 
                 // Set the text color with adjusted alpha
                 Color fg = new Color(255, 255, 255, Math.round(alpha * 255));
-                String newColor = fg.getRed() + "," + fg.getGreen() + "," + fg.getBlue();
                 answerLabel.setForeground(fg);
                 lineBreak.setForeground(fg);
             }
