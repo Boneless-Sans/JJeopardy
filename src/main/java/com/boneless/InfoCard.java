@@ -32,13 +32,6 @@ public class InfoCard extends JFrame implements KeyListener {
         setTitle(category + " For " + points);
         initUI(doFullScreen);
     }
-    private int parseFontType(String fontType){
-        return switch (JsonFile.read(fileName,"data",fontType)) {
-            case "Font.BOLD" -> 1;
-            case "Font.ITALIC" -> 2;
-            default -> 0;
-        };
-    }
     private Color parseColor(String color){
         String initColor = JsonFile.read(fileName, "data",color);
         String[] split = initColor.split(",");

@@ -23,7 +23,23 @@
     "header_text_color": "255,255,255",
 
     "board_background_color": "20,30,70",
-    "categories_color": "40,50,145",
+
+    "categories_background_color": "40,50,145",
+    "categories_text_font": "arial",
+    "categories_text_type": "plain",
+    "categories_text_color": "255,255,255",
+
+    "board_button_background_color": "43,58,150",
+    "board_button_font": "arial",
+    "board_button_type": "plain",
+    "board_button_color": "0,0,0",
+
+    "team_background_color": "255,255,255",
+    "team_font": "arial",
+    "team_type": "plain",
+    "team_color": "0,0,0",
+
+    "team_line_color": "0,0,0",
 
     "columns": 6,
     "rows": 5
