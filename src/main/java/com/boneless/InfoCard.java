@@ -51,9 +51,10 @@ public class InfoCard extends JFrame implements KeyListener {
         if(doFullScreen){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
-            System.out.println("fullscreen");
-        }else {
-            setSize(1600,900);
+            System.out.println("Fullscreen");
+        }
+        else{
+            setSize(Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT);
         }
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);

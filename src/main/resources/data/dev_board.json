@@ -17,10 +17,13 @@
     "info_header_button_type": "plain",
     "info_header_button_font_color": "0,0,0",
 
-    "header_background_color": "33,48,140",
+    "header_background_color": "23,28,90",
     "header_text_font": "arial",
     "header_text_type": "plain",
     "header_text_color": "255,255,255",
+
+    "board_background_color": "20,30,70",
+    "categories_color": "40,50,145",
 
     "columns": 6,
     "rows": 5
@@ -35,7 +38,7 @@
       "row_5": 1000
     },
     "questions": {
-      "row_1": "this is a lot of text, like it should really push what this \"engine\" can do. im think its fucking working, lets fucking go",
+      "row_1": "this is a lot of text, like it should really push what this \"engine\" can do. this is some really ",
       "row_2": "c1 Question 2",
       "row_3": "c1 Question 3",
       "row_4": "c1 Question 4",

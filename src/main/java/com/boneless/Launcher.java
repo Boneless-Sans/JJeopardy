@@ -29,9 +29,9 @@ public class Launcher {
         initUI();
     }
     public static void initUI(){
-        headerColor = stringToColor(game.getFileName(), "header_color");
-        backgroundColor = stringToColor(game.getFileName(), "background_color");
-        textColor = stringToColor(game.getFileName(), "font_color");
+        //headerColor = stringToColor(game.getFileName(), "header_color");
+        //backgroundColor = stringToColor(game.getFileName(), "background_color");
+        //textColor = stringToColor(game.getFileName(), "font_color");
         SystemUI.set();
 
         frame = new JFrame();
@@ -161,22 +161,23 @@ public class Launcher {
         tFrame.setLayout(new BorderLayout());
         tFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        Color fontColor = stringToColor(game.getFileName(), "header_font_color");
-        String fontName = JsonFile.read(game.getFileName(), "data","font_name");
-        int fontSize = Integer.parseInt(JsonFile.read(game.getFileName(),"data","header_font_size"));
+        //Color fontColor = stringToColor(game.getFileName(), "header_font_color");
+        //String fontName = JsonFile.read(game.getFileName(), "data","font_name");
+        //int fontSize = Integer.parseInt(JsonFile.read(game.getFileName(),"data","header_font_size"));
         int fontType = switch (JsonFile.read(game.getFileName(), "data", "header_font_type")) {
             case "Font.BOLD" -> 1;
             case "Font.ITALIC" -> 2;
             default -> 0;
         };
-        Font font = new Font(fontName, fontType, fontSize);
+        //Font font = new Font(fontName, fontType, fontSize);
+        Font font = new Font(null, fontType, 20);
 
         JPanel titlePanel = new JPanel(new FlowLayout());
         titlePanel.setBackground(headerColor);
 
         JLabel numTeams = new JLabel("<html>" + JsonFile.read(game.getFileName(), "data", "title") + "</html>");
-        numTeams.setFont(new Font(fontName, fontType, 30));
-        numTeams.setForeground(fontColor);
+        numTeams.setFont(new Font(null, fontType, 30));
+        numTeams.setForeground(null);
 
         titlePanel.add(numTeams);
 
@@ -224,8 +225,10 @@ public class Launcher {
         String rawKeyBind = JsonFile.read("settings.json","keyBinds", "fullscreen");
         String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
         JLabel fullscreenText = new JLabel("Or Press \"" + keyBind + "\" To Enter / Exit Fullscreen");
-        fullscreenText.setFont(new Font(fontName, Font.PLAIN, 15));
-        fullscreenText.setForeground(fontColor);
+        //fullscreenText.setFont(new Font(fontName, Font.PLAIN, 15));
+        fullscreenText.setFont(new Font(null, Font.PLAIN, 15));
+        //fullscreenText.setForeground(fontColor);
+        fullscreenText.setForeground(null);
 
         mainPanel.add(createBlankPanel(backgroundColor, 40));
         mainPanel.add(dropDown);

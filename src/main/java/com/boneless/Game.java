@@ -4,8 +4,6 @@ import com.boneless.util.IconResize;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
-import javax.swing.border.AbstractBorder;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +16,8 @@ public class Game extends JFrame implements KeyListener {
     private static boolean doFullScreen;
     private int teamCount;
     private int lastCardPoints;
-    private String[] teams;
+    public static final int WINDOW_HEIGHT = doFullScreen ? Toolkit.getDefaultToolkit().getScreenSize().height : 1080;
+    public static final int WINDOW_WIDTH = doFullScreen ? Toolkit.getDefaultToolkit().getScreenSize().height : 1920;
     public static void setDoFullScreen(boolean doFullScreen) {
         Game.doFullScreen = doFullScreen;
     }
@@ -34,7 +33,7 @@ public class Game extends JFrame implements KeyListener {
             setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
             setDoFullScreen(true);
         }else {
-            setSize(1600, 900);
+            setSize(Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT);
             setDoFullScreen(false);
         }
         this.teamCount = teamCount;
@@ -47,17 +46,18 @@ public class Game extends JFrame implements KeyListener {
         setFocusable(true);
 
         JPanel title = new JPanel(new FlowLayout());
-        title.setBackground(Color.pink); //board header
+        title.setBackground(parseColor("header_background")); //board header
 
         JLabel titleText = new JLabel();
         titleText.setText(JsonFile.read(getFileName(), "data", "title"));
         titleText.setFont(parseFont(title,25,"header_title"));
-        titleText.setForeground(Color.red); //Header Title Font Color
+        titleText.setForeground(parseColor("header_text")); //Header Title Font Color
         title.add(titleText);
+
+
 
         JPanel gameBoard = new JPanel(new GridLayout());
         gameBoard.setPreferredSize(new Dimension(0,300));
-        gameBoard.setBackground(Color.yellow);
 
         JScrollPane teams = createTeamsPanel();
 
@@ -92,14 +92,14 @@ public class Game extends JFrame implements KeyListener {
 
         GridLayout board = new GridLayout(sizeX, sizeY, 5,5);
         gameBoard.setLayout(board);
-        gameBoard.setBackground(Color.blue);
+        gameBoard.setBackground(parseColor("board_background")); //button grid background
 
         JLabel[] cats = createTitles(fileName, sizeX, sizeY);
         JButton[] buttons = createRows(fileName, sizeX, sizeY);
 
         for (JLabel label : cats) {
             JPanel panel = new JPanel(new GridBagLayout());
-            panel.setBackground(Color.green);
+            panel.setBackground(parseColor("categories")); //cat panels
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
@@ -117,7 +117,7 @@ public class Game extends JFrame implements KeyListener {
 
         for(JButton button : buttons){ //main board buttons
             button.setFont(testFont(button, button, "board_button"));
-            button.setBackground(Color.cyan);
+            button.setBackground(parseColor("board_button")); //button color
             //button.setForeground(parseColor("board_button_font_color")); //fixme: Color wont set here
             //button.setBorderPainted(false);
             button.setFocusable(false);
