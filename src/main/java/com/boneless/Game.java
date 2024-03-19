@@ -128,14 +128,14 @@ public class Game extends JFrame implements KeyListener {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-        panel.setBackground(Color.magenta);
+        panel.setBackground(parseColor("team_background"));
         panel.setBorder(null);
 
         for(int i = 0; i < teamCount; i++){
-            panel.add(createGap(80, Color.blue));
+            panel.add(createGap(80, parseColor("categories_background")));
             panel.add(createTeamPanel(new Team("Team " + (i + 1))));
         }
-        panel.add(createGap(80, Color.red));
+        panel.add(createGap(80, parseColor("categories_background")));
         JScrollPane pane = new JScrollPane(panel);
         pane.setPreferredSize(new Dimension(getWidth(),120)); //Height controller
         pane.setBorder(null);
@@ -143,7 +143,7 @@ public class Game extends JFrame implements KeyListener {
     }
     private JPanel createTeamPanel(Team team){
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(Color.orange);
+        panel.setBackground(parseColor("categories_background"));
         panel.setPreferredSize(new Dimension(150,110)); //Panel height controller
         panel.setBorder(null);
 
