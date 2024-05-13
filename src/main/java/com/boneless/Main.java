@@ -1,6 +1,8 @@
 package com.boneless;
 
+import com.boneless.util.JsonFile;
 import com.boneless.util.KeyBindManager;
+import com.boneless.util.ScrollGridPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +11,10 @@ import java.awt.event.KeyListener;
 
 public class Main extends JFrame implements KeyListener {
     //link to GDoc https://docs.google.com/document/d/1IFx3SDvnhjzMkc3hN28-G_46JCnie7hxkWVV7ez0ENA/edit?usp=sharing
-    private static final int RESX = Toolkit.getDefaultToolkit().getScreenSize().width;
-    private static final int RESY = Toolkit.getDefaultToolkit().getScreenSize().height;
+    private final int RESX = Toolkit.getDefaultToolkit().getScreenSize().width;
+    private final int RESY = Toolkit.getDefaultToolkit().getScreenSize().height;
+    private final String FILENAME = "devBoard.json";
+    //private final Font mainFont;
     public static void main(String[] args) {
         new Main(args);
     }
@@ -18,22 +22,38 @@ public class Main extends JFrame implements KeyListener {
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        addKeyListener(this);
         init();
         setVisible(true);
     }
     private void init(){
-        //todo: manage screens via adding and removing jPanels from the main frame, removes the needs to manage separate windows and also removes the annoying data transfer
-        add(headPanel(), BorderLayout.NORTH);
-        add(mainBoard(), BorderLayout.CENTER);
-        add(teamPanel(), BorderLayout.SOUTH);
+        //todo: manage screens via adding and removing jPanels from the main frame
+
+        //Menu panel
+        add(menuPanel());
+
+        //Main board panel
+        //JPanel boardPanel = boardPanel();
     }
-    private Font mainFont(){
-        return new Font("Arial", Font.PLAIN, 15);
-    }
-    //panel to contain controls and any other header text
-    private JPanel headPanel(){
+    //Menu Panel
+    private JPanel menuPanel(){
         JPanel panel = new JPanel();
 
+        panel.add(new ScrollGridPanel());
+        return panel;
+    }
+    //Main board panel
+    private JPanel boardPanel(){
+        JPanel panel = new JPanel();
+        panel.add(headPanel(), BorderLayout.NORTH);
+        panel.add(mainBoard(), BorderLayout.CENTER);
+        panel.add(teamPanel(), BorderLayout.SOUTH);
+        return panel;
+    }
+    //board header panel
+    private JPanel headPanel(){
+        JPanel panel = new JPanel();
+        panel.setBackground(Color.blue);
 
         return panel;
     }
@@ -42,9 +62,9 @@ public class Main extends JFrame implements KeyListener {
         JPanel panel = new JPanel();
 
         //setup values from json
-        int boardX = 5;
-        int boardY = 4;
-        panel.setLayout(new GridLayout(boardX, boardY,0,0));
+        int boardX = Integer.parseInt(JsonFile.read(FILENAME, "data", "categories"));
+        int boardY = Integer.parseInt(JsonFile.read(FILENAME, "data", "rows"));;
+        panel.setLayout(new GridLayout(boardY, boardX,0,0));
 
         for(int i = 0; i < boardX * boardY;i++){
             Color color = switch (i % 6){
@@ -75,7 +95,7 @@ public class Main extends JFrame implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println(KeyBindManager.getKeyBindFor(e.toString()));
+        System.out.println("keypressed");
     }
     @Override
     public void keyPressed(KeyEvent e) {}
