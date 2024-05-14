@@ -2,57 +2,65 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 class GradientSquare {
     private int x;
     private int y;
-    private int size;
-    private Color color1; // Starting color of the gradient
-    private Color color2; // Ending color of the gradient
+    private final int size;
+    private final BufferedImage image;
 
     public GradientSquare(int x, int y, int size, Color color1, Color color2) {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.color1 = color1;
-        this.color2 = color2;
+        this.image = createGradientImage(size, color1, color2);
     }
 
-    public void move(int speedX, int speedY) {
+    private BufferedImage createGradientImage(int size, Color color1, Color color2) {
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        GradientPaint gradient = new GradientPaint(0, 0, color1, size, size, color2);
+        g2d.setPaint(gradient);
+        g2d.fillRect(0, 0, size, size);
+        g2d.dispose();
+        return image;
+    }
+
+    public void move(int speedX, int speedY, int width, int height) {
         x += speedX;
         y += speedY;
 
-        // Check if square is beyond the right edge
-        if (x > ScrollGridPanel.WIDTH) {
+        if (x > width) {
             x = -size;
         }
 
-        // Check if square is beyond the bottom edge
-        if (y > ScrollGridPanel.HEIGHT) {
+        if (y > height) {
             y = -size;
         }
     }
 
-    public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        GradientPaint gradient = new GradientPaint(x, y, color1, x + size, y + size, color2);
-        g2d.setPaint(gradient);
-        g2d.fillRect(x, y, size, size);
+    public void draw(Graphics2D g2d) {
+        g2d.drawImage(image, x, y, null);
     }
 }
 
 public class ScrollGridPanel extends JPanel {
-
     public static final int WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
     public static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final double SCROLL_SPEED_X = 1;
     public static final double SCROLL_SPEED_Y = 1;
-    private final ArrayList<GradientSquare> squareList = new ArrayList<>();
+    private final List<GradientSquare> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
+    private static Color color1 = Color.blue;
+    private static Color color2 = Color.gray;
+    private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+    private ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
     public ScrollGridPanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -68,44 +76,77 @@ public class ScrollGridPanel extends JPanel {
     }
 
     private void initializeSquares() {
-        int squareCount = (HEIGHT / SQUARE_SIZE) * (WIDTH / SQUARE_SIZE) * 2; // Double the number of squares to handle wraparound
+        int columns = (WIDTH / (SQUARE_SIZE + GAP)) + 2; // Adding buffer columns
+        int rows = (HEIGHT / (SQUARE_SIZE + GAP)) + 2; // Adding buffer rows
 
-        for (int i = 0; i < squareCount; i++) {
-            int x = (i % (WIDTH / SQUARE_SIZE)) * (SQUARE_SIZE + GAP);
-            int y = (i / (WIDTH / SQUARE_SIZE)) * (SQUARE_SIZE + GAP);
-            squareList.add(new GradientSquare(x, y, SQUARE_SIZE, Color.BLUE, Color.RED));
+        for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
+            for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {
+                squareList.add(new GradientSquare(x, y, SQUARE_SIZE, color1, color2));
+            }
         }
     }
 
     private void moveSquares() {
-        for (GradientSquare square : squareList) {
-            square.move((int) SCROLL_SPEED_X, (int) SCROLL_SPEED_Y);
+        List<List<GradientSquare>> clusters = createClusters();
+
+        for (List<GradientSquare> cluster : clusters) {
+            executor.submit(() -> {
+                for (GradientSquare square : cluster) {
+                    square.move((int) SCROLL_SPEED_X, (int) SCROLL_SPEED_Y, WIDTH, HEIGHT);
+                }
+            });
         }
+
+        // Wait for all tasks to complete
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+            // Wait for all threads to finish
+        }
+
+        executor = Executors.newFixedThreadPool(NUM_THREADS); // Reinitialize the executor for the next call
     }
 
-    private void drawSquares(Graphics g) {
-        for (GradientSquare square : squareList) {
-            square.draw(g);
+    private List<List<GradientSquare>> createClusters() {
+        int clusterSize = (int) Math.ceil((double) squareList.size() / NUM_THREADS);
+        List<List<GradientSquare>> clusters = new ArrayList<>();
+
+        for (int i = 0; i < squareList.size(); i += clusterSize) {
+            clusters.add(new ArrayList<>(squareList.subList(i, Math.min(i + clusterSize, squareList.size()))));
         }
+
+        return clusters;
+    }
+
+    private void drawSquares(Graphics2D g2d) {
+        List<List<GradientSquare>> clusters = createClusters();
+
+        for (List<GradientSquare> cluster : clusters) {
+            executor.submit(() -> {
+                for (GradientSquare square : cluster) {
+                    synchronized (g2d) {
+                        square.draw(g2d);
+                    }
+                }
+            });
+        }
+
+        // Wait for all tasks to complete
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+            // Wait for all threads to finish
+        }
+
+        executor = Executors.newFixedThreadPool(NUM_THREADS); // Reinitialize the executor for the next call
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawSquares(g);
+        Graphics2D g2d = (Graphics2D) g;
+        drawSquares(g2d);
     }
 
     public static JPanel createScrollGridPanel() {
         return new ScrollGridPanel();
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame();
-            frame.setSize(WIDTH, HEIGHT);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.add(createScrollGridPanel());
-            frame.setVisible(true);
-        });
     }
 }
