@@ -8,6 +8,7 @@ public class Team extends JPanel {
     private int score = 0;
     private String name;
     public Team(){
+        teamCount++;
     }
     public int getScore(){
         return score;

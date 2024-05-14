@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.security.Key;
 import java.util.Objects;
 
 public class Main extends JFrame implements KeyListener {
@@ -17,10 +18,10 @@ public class Main extends JFrame implements KeyListener {
     private final int RESY = Toolkit.getDefaultToolkit().getScreenSize().height;
     private final String FILENAME = "devBoard.json";
     public static void main(String[] args) {
+        //isDev = args[0].contains("dev");
         new Main(args);
     }
     public Main(String[] args){
-        isDev = args[0].contains("dev");
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -104,9 +105,7 @@ public class Main extends JFrame implements KeyListener {
     }
     @Override
     public void keyTyped(KeyEvent e) {
-        switch (Objects.requireNonNull(KeyBindManager.getKeyBindFor(String.valueOf(e).toLowerCase()))){
-            case "esc" -> System.exit(0);
-        }
+        KeyBindManager.getKeyBindFor(e);
     }
     @Override
     public void keyPressed(KeyEvent e) {}
