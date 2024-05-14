@@ -2,6 +2,9 @@
   "data" : {
     "board_name": "Dev Board",
     "categories": 5,
-    "rows": 4
+    "rows": 4,
+
+    "font": "Arial",
+    "font_color": "black"
   }
 }

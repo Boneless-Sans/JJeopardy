@@ -8,17 +8,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Objects;
 
 public class Main extends JFrame implements KeyListener {
     //link to GDoc https://docs.google.com/document/d/1IFx3SDvnhjzMkc3hN28-G_46JCnie7hxkWVV7ez0ENA/edit?usp=sharing
+    public static boolean isDev;
     private final int RESX = Toolkit.getDefaultToolkit().getScreenSize().width;
     private final int RESY = Toolkit.getDefaultToolkit().getScreenSize().height;
     private final String FILENAME = "devBoard.json";
-    //private final Font mainFont;
     public static void main(String[] args) {
         new Main(args);
     }
     public Main(String[] args){
+        isDev = args[0].contains("dev");
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -27,13 +29,13 @@ public class Main extends JFrame implements KeyListener {
         setVisible(true);
     }
     private void init(){
-        //todo: manage screens via adding and removing jPanels from the main frame
+        //todo: manage screens via adding and removing jPanels from the main frame 
 
-        //Menu panel
-        add(menuPanel());
-
-        //Main board panel
-        //JPanel boardPanel = boardPanel();
+        if(!isDev) {
+            add(menuPanel());
+        } else {
+            add(boardPanel());
+        }
     }
     //Menu Panel
     private JPanel menuPanel(){
@@ -44,7 +46,7 @@ public class Main extends JFrame implements KeyListener {
     }
     //Main board panel
     private JPanel boardPanel(){
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new BorderLayout());
         panel.add(headPanel(), BorderLayout.NORTH);
         panel.add(mainBoard(), BorderLayout.CENTER);
         panel.add(teamPanel(), BorderLayout.SOUTH);
@@ -83,7 +85,8 @@ public class Main extends JFrame implements KeyListener {
     }
     private JButton createBoardButton(int points, String question, String answer, Color backgroundColor){
         JButton button = new JButton(String.valueOf(points));
-        button.setBackground(backgroundColor);
+        button.setForeground(backgroundColor);
+        button.setFocusable(false);
         return button;
     }
     //panel to contain team panels
@@ -92,10 +95,18 @@ public class Main extends JFrame implements KeyListener {
 
         return panel;
     }
-
+    private Font generateFont(int fontSize){
+        return new Font(
+                JsonFile.read(FILENAME, "data","font"),
+                Font.PLAIN,
+                fontSize
+        );
+    }
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println("keypressed");
+        switch (Objects.requireNonNull(KeyBindManager.getKeyBindFor(String.valueOf(e).toLowerCase()))){
+            case "esc" -> System.exit(0);
+        }
     }
     @Override
     public void keyPressed(KeyEvent e) {}

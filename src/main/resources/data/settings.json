@@ -1,5 +1,7 @@
 {
   "key_binds": {
-    "exit": "esc"
+    "exit": "esc",
+    "fullscreen": "f",
+    "continue": "space"
   }
 }

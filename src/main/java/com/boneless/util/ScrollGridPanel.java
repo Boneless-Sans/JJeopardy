@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 @SuppressWarnings("CallToPrintStackTrace")
 class Square {
@@ -59,7 +60,7 @@ public class ScrollGridPanel extends JPanel {
     public static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final double SCROLL_SPEED_X = 1;
     public static final double SCROLL_SPEED_Y = 1;
-    private List<Square> squareList = new ArrayList<>();
+    private ArrayList<Square> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
 

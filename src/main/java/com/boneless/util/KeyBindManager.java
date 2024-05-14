@@ -1,11 +1,13 @@
 package com.boneless.util;
 
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class KeyBindManager {
     private KeyBindManager(){}
 
-    public String parseKeyStrokeInput(String keyStrokeCode){
+    public static String parseKeyStrokeInput(String keyStrokeCode){
         return switch (keyStrokeCode){
             case "Esc" -> "\u001B";
             case "Space" -> " ";
@@ -17,7 +19,5 @@ public class KeyBindManager {
     //take key input and return what the bind is too via string
     public static String getKeyBindFor(String keyInput){
 
-        System.out.println(keyInput);
-        return null;
     }
 }
