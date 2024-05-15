@@ -1,43 +1,37 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import com.boneless.util.KeyBindManager;
+import com.boneless.util.Print;
 import com.boneless.util.ScrollGridPanel;
+import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.security.Key;
-import java.util.Objects;
 
-public class Main extends JFrame implements KeyListener {
+public class Main extends JFrame {
     //link to GDoc https://docs.google.com/document/d/1IFx3SDvnhjzMkc3hN28-G_46JCnie7hxkWVV7ez0ENA/edit?usp=sharing
     public static boolean isDev = false;
-    private final int RESX = Toolkit.getDefaultToolkit().getScreenSize().width;
-    private final int RESY = Toolkit.getDefaultToolkit().getScreenSize().height;
-    private final String FILENAME = "devBoard.json";
+    private String fileName = "devBoard.json";
     public static void main(String[] args) {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");
         }
-        new Main(args);
+        new Main();
     }
-    public Main(String[] args){
+    public Main(){
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        addKeyListener(this);
         init();
         setVisible(true);
     }
     private void init(){
         //todo: manage screens via adding and removing jPanels from the main frame 
-
+        SystemUI.set();
         if(!isDev) {
             add(menuPanel());
         } else {
-            add(boardPanel());
+            add(new GameBoard(fileName));
         }
     }
     //Menu Panel
@@ -47,73 +41,66 @@ public class Main extends JFrame implements KeyListener {
 
         //todo: add Start, File Chooser, Settings, Creator, Exit Buttons, title, and current file
 
+        //title text, pretty self-explanatory
+        JLabel title = new JLabel("Jeopardy!");
+        title.setFont(generateFont(25));
 
+        //button setup
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setOpaque(false);
+
+        buttonsPanel.add(createMenuButton("Start Game", 0));
+        buttonsPanel.add(createMenuButton("Choose Board File", 1));
+        buttonsPanel.add(createMenuButton("Board Creator -fuck me-", 2));
+        buttonsPanel.add(createMenuButton("Settings", 3));
+
+        buttonsPanel.add(createMenuButton("Exit", 4));
+
+        panel.add(title, BorderLayout.NORTH);
+        panel.add(buttonsPanel, BorderLayout.CENTER);
         return panel;
     }
-    //Main board panel
-    private JPanel boardPanel(){
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(headPanel(), BorderLayout.NORTH);
-        panel.add(mainBoard(), BorderLayout.CENTER);
-        panel.add(teamPanel(), BorderLayout.SOUTH);
-        return panel;
-    }
-    //board header panel
-    private JPanel headPanel(){
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.blue);
-
-        return panel;
-    }
-    //panel to contain the main board grid
-    private JPanel mainBoard(){
-        JPanel panel = new JPanel();
-
-        //setup values from json
-        int boardX = Integer.parseInt(JsonFile.read(FILENAME, "data", "categories"));
-        int boardY = Integer.parseInt(JsonFile.read(FILENAME, "data", "rows"));;
-        panel.setLayout(new GridLayout(boardY, boardX,0,0));
-
-        for(int i = 0; i < boardX * boardY;i++){
-            Color color = switch (i % 6){
-                case 0 -> Color.red;
-                case 1 -> Color.orange;
-                case 2 -> Color.yellow;
-                case 3 -> Color.green;
-                case 4 -> Color.blue;
-                case 5 -> Color.magenta;
-                default -> Color.cyan;
-            };
-            panel.add(createBoardButton(0, "question", "answer", color));
-        }
-
-        return panel;
-    }
-    private JButton createBoardButton(int points, String question, String answer, Color backgroundColor){
-        JButton button = new JButton(String.valueOf(points));
-        button.setForeground(backgroundColor);
+    private JButton createMenuButton(String text, int UUID){
+        JButton button = new JButton(text);
         button.setFocusable(false);
-        return button;
-    }
-    //panel to contain team panels
-    private JPanel teamPanel(){
-        JPanel panel = new JPanel();
+        button.setFont(generateFont(15));
+        button.addActionListener(e -> {
+            switch (UUID){ //perhaps not the best way of doing this, but it works for now
+                case 0: { //start
+                    //
+                    break;
+                }
+                case 1: { //board file
+                    JFileChooser chooser = new JFileChooser();
+                    Print.print(chooser.showOpenDialog(null));
 
-        return panel;
+                    break;
+                }
+                case 2: { //board creator
+                    //
+                    break;
+                }
+                case 3: { //settings
+                    //
+                    break;
+                }
+                case 4: { //exit
+                    System.exit(0);
+                    break;
+                }
+            }
+        });
+
+        return button;
     }
     private Font generateFont(int fontSize){
         return new Font(
-                JsonFile.read(FILENAME, "data","font"),
+                JsonFile.read(fileName, "data","font"),
                 Font.PLAIN,
                 fontSize
         );
     }
-    @Override
-    public void keyTyped(KeyEvent e) {
-        KeyBindManager.getKeyBindFor(e);
+    private void setFile(String fileName){
+        this.fileName = fileName;
     }
-    @Override
-    public void keyPressed(KeyEvent e) {}
-    @Override
-    public void keyReleased(KeyEvent e) {}
 }
