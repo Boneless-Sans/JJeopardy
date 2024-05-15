@@ -38,7 +38,7 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -get font color         | X
 
     fixme list:
-        -Tile overlap in main menu
+        -Tile overlap in main menu | X
  */
 public class Main extends JFrame {
     public static boolean isDev = false;
