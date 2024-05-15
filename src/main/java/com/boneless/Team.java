@@ -9,6 +9,8 @@ public class Team extends JPanel {
     private String name;
     public Team(){
         teamCount++;
+
+        setPreferredSize(new Dimension(0,0));
     }
     public int getScore(){
         return score;

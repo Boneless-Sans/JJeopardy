@@ -57,8 +57,8 @@ public class ScrollGridPanel extends JPanel {
     private final List<GradientSquare> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
-    private Color color1 = Color.blue;
-    private Color color2 = Color.orange;
+    private Color color1 = new Color(0,0,150);
+    private Color color2 = new Color(20,20,255);
     private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
     private ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
@@ -80,9 +80,6 @@ public class ScrollGridPanel extends JPanel {
     }
 
     private void initializeSquares() {
-        int columns = (WIDTH / (SQUARE_SIZE + GAP)) + 2; // Adding buffer columns
-        int rows = (HEIGHT / (SQUARE_SIZE + GAP)) + 2; // Adding buffer rows
-
         for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
             for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {
                 squareList.add(new GradientSquare(x, y, SQUARE_SIZE, color1, color2));
@@ -101,16 +98,15 @@ public class ScrollGridPanel extends JPanel {
             });
         }
 
-        // Wait for all tasks to complete
+        //while loops for waiting for other threads to finish
         executor.shutdown();
-        while (!executor.isTerminated()) {
-            // Wait for all threads to finish
+        while (true) { //required for thread sync
+            if (executor.isTerminated()) break;
         }
 
-        executor = Executors.newFixedThreadPool(NUM_THREADS); // Reinitialize the executor for the next call
+        executor = Executors.newFixedThreadPool(NUM_THREADS); //setup execute for next call
     }
-
-    private List<List<GradientSquare>> createClusters() {
+    private List<List<GradientSquare>> createClusters() { //setup clusters for thread distro
         int clusterSize = (int) Math.ceil((double) squareList.size() / NUM_THREADS);
         List<List<GradientSquare>> clusters = new ArrayList<>();
 
@@ -120,7 +116,6 @@ public class ScrollGridPanel extends JPanel {
 
         return clusters;
     }
-
     private void drawSquares(Graphics2D g2d) {
         List<List<GradientSquare>> clusters = createClusters();
 
@@ -134,23 +129,17 @@ public class ScrollGridPanel extends JPanel {
             });
         }
 
-        // Wait for all tasks to complete
         executor.shutdown();
-        while (!executor.isTerminated()) {
-            // Wait for all threads to finish
+        while (true) { //required for thread sync
+            if (executor.isTerminated()) break;
         }
 
-        executor = Executors.newFixedThreadPool(NUM_THREADS); // Reinitialize the executor for the next call
+        executor = Executors.newFixedThreadPool(NUM_THREADS); //same as last one
     }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         drawSquares(g2d);
-    }
-
-    public static JPanel createScrollGridPanel() {
-        return new ScrollGridPanel();
     }
 }
