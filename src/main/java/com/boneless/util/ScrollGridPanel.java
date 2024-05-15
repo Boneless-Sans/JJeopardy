@@ -57,8 +57,8 @@ public class ScrollGridPanel extends JPanel {
     private final List<GradientSquare> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
-    private static Color color1 = Color.blue;
-    private static Color color2 = Color.gray;
+    private Color color1 = Color.blue;
+    private Color color2 = Color.orange;
     private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
     private ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
@@ -73,6 +73,10 @@ public class ScrollGridPanel extends JPanel {
         });
 
         timer.start();
+    }
+    public void changeColors(Color color1, Color color2){
+        this.color1 = color1;
+        this.color2 = color2;
     }
 
     private void initializeSquares() {

@@ -13,12 +13,14 @@ import java.util.Objects;
 
 public class Main extends JFrame implements KeyListener {
     //link to GDoc https://docs.google.com/document/d/1IFx3SDvnhjzMkc3hN28-G_46JCnie7hxkWVV7ez0ENA/edit?usp=sharing
-    public static boolean isDev;
+    public static boolean isDev = false;
     private final int RESX = Toolkit.getDefaultToolkit().getScreenSize().width;
     private final int RESY = Toolkit.getDefaultToolkit().getScreenSize().height;
     private final String FILENAME = "devBoard.json";
     public static void main(String[] args) {
-        //isDev = args[0].contains("dev");
+        if(args != null && args.length > 0){
+            isDev = args[0].contains("dev");
+        }
         new Main(args);
     }
     public Main(String[] args){
@@ -40,9 +42,12 @@ public class Main extends JFrame implements KeyListener {
     }
     //Menu Panel
     private JPanel menuPanel(){
-        JPanel panel = new JPanel();
+        ScrollGridPanel panel = new ScrollGridPanel();
+        panel.setLayout(new BorderLayout());
 
-        panel.add(new ScrollGridPanel());
+        //todo: add Start, File Chooser, Settings, Creator, Exit Buttons, title, and current file
+
+
         return panel;
     }
     //Main board panel
