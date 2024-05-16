@@ -1,7 +1,8 @@
 {
-  "key_binds": {
-    "exit": "esc",
-    "full_screen": "f",
-    "continue": "space"
+  "general": {"play_audio": "false"},
+  "keyBinds": {
+    "exit": "W",
+    "fullscreen": "S",
+    "continue": "Esc"
   }
 }

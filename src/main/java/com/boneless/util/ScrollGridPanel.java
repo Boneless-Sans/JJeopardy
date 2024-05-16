@@ -77,6 +77,7 @@ public class ScrollGridPanel extends JPanel {
     public void removeSelf(){
         removeAll();
         squareList.clear();
+        repaint();
     }
     public void changeColors(Color color1, Color color2){
         this.color1 = color1;

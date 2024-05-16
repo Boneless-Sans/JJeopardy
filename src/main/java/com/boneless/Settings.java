@@ -1,6 +1,5 @@
 package com.boneless;
 
-import com.boneless.util.IconResize;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
@@ -12,13 +11,14 @@ import java.awt.event.KeyListener;
 
 import static com.boneless.Main.changeButtonsState;
 
+@SuppressWarnings("ExtractMethodRecommender") //shut the fuck up
 public class Settings extends JPanel{
     private boolean changedSettings = false;
     private final String[] buttonOptions = {"Yes","No","Save"};
     private static JButton exitKeyBindButton = null;
     private static JButton continueKeyBindButton = null;
     private static JButton fullscreenKeyBindButton = null;
-    private JCheckBox playAudio;
+    private final JButton playAudio;
     public Settings(){
         setLayout(new BorderLayout());
         SystemUI.set();
@@ -163,7 +163,8 @@ public class Settings extends JPanel{
             new keyBindSet(button, keyBind);
         };
     }
-    private JPanel createCheckboxPanel(String text, JCheckBox checkBox){
+    @SuppressWarnings("SameParameterValue")
+    private JPanel createCheckboxPanel(String text, JButton checkBox){
         JPanel panel = new JPanel(new GridLayout(1,2));
         panel.setBackground(Color.lightGray);
         panel.setPreferredSize(new Dimension(0,50));
@@ -192,15 +193,15 @@ public class Settings extends JPanel{
         panel.add(keyBindPanel);
         return panel;
     }
-    private JCheckBox createCheckbox(String setting){
-        JCheckBox checkBox = new JCheckBox();
+    @SuppressWarnings("SameParameterValue")
+    private JButton createCheckbox(String setting){ //todo: replace png system in favor of custom drawn JPanels
+        JButton checkBox = new JButton();
         checkBox.setBackground(Color.lightGray);
         if(Boolean.parseBoolean(JsonFile.read("settings.json","general", setting))){
-            checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
+            //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
         }else{
-            checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
+            //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
         }
-
         return checkBox;
     }
     private static void setKeyBindButtons(boolean enable){
@@ -208,13 +209,13 @@ public class Settings extends JPanel{
         continueKeyBindButton.setEnabled(enable);
         fullscreenKeyBindButton.setEnabled(enable);
     }
-    private ActionListener checkBoxToggle(JCheckBox checkBox){
+    private ActionListener checkBoxToggle(JButton checkBox){
         return e -> {
             changedSettings = true;
             if(checkBox.isSelected()){
-                checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
+                //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
             }else{
-                checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
+                //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
             }
         };
     }

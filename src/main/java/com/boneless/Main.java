@@ -12,14 +12,14 @@ import java.util.ArrayList;
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Main menu | X
-        -General layout
-        -Functionality (frame changing, have bool for disabling ) | X
-            -Start          | X
-            -board chooser  | X
-            -board creator  | X
-            -settings       | X
+        -General layout | X
+        -Functionality (frame changing, have bool for disabling ) | √
+            -Start          | √
+            -board chooser  | √
+            -board creator  | √
+            -settings       | √
             -exit           | √
-    Frame changing system | X
+    Frame changing system | √
 
     Rework settings | X
         -make it work with new frame system | X
@@ -42,6 +42,7 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -get header color       | X
         -get team panel color   | X
         -get font color         | X
+        -get title color        | X
 
     fixme list:
         -Tile overlap in main menu | X
@@ -71,6 +72,7 @@ public class Main extends JFrame {
         if(!isDev) {
             add(menuPanel());
         } else {
+            //add(new GameBoard(fileName));
             add(new GameBoard(fileName));
         }
     }
@@ -90,17 +92,19 @@ public class Main extends JFrame {
 
         JLabel title = new JLabel("Jeopardy!");
         title.setFont(generateFont(50));
+        title.setForeground(Color.white); //todo: change to a json read
 
         titlePanel.add(title, gbc);
 
         //button setup
+        JPanel menuParentPanel = new JPanel(new BorderLayout());
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         buttonsPanel.setOpaque(false);
         buttonsPanel.setPreferredSize(new Dimension(250,250));
 
         buttonsPanel.add(createMenuButton("Start Game", 0));
         buttonsPanel.add(createMenuButton("Choose Board File", 1));
-        buttonsPanel.add(createMenuButton("Board Creator -fuck me-", 2));
+        buttonsPanel.add(createMenuButton("Board Creator", 2));
         buttonsPanel.add(createMenuButton("Settings", 3));
         buttonsPanel.add(createMenuButton("Exit", 4));
 
@@ -116,10 +120,7 @@ public class Main extends JFrame {
         button.addActionListener(e -> {
             switch (UUID){ //perhaps not the best way of doing this, but it works for now
                 case 0: { //start
-                    panel.removeSelf();
-                    removeAll();
-                    repaint();
-                    add(new JButton("This is txt"));
+                    changeCurrentPanel(panel, new GameBoard(fileName));
                     break;
                 }
                 case 1: { //board file
@@ -133,7 +134,7 @@ public class Main extends JFrame {
                     break;
                 }
                 case 3: { //settings
-                    changeCurrentPanel(new Settings());
+                    changeCurrentPanel(panel, new Settings());
                     break;
                 }
                 case 4: { //exit
@@ -155,9 +156,10 @@ public class Main extends JFrame {
     private void setFile(String fileName){
         this.fileName = fileName;
     }
-    private void changeCurrentPanel(JPanel panelToSet){
-        //removeAll();
+    private void changeCurrentPanel(JPanel oldPanel, JPanel panelToSet){
+        remove(oldPanel);
         add(panelToSet);
+        revalidate();
     }
     public static void changeButtonsState(boolean isEnabled){
         for (JButton menuButton : menuButtons) {
