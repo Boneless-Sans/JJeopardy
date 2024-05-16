@@ -1,6 +1,7 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
+import com.boneless.util.Print;
 import com.boneless.util.SystemUI;
 
 import javax.swing.*;
@@ -9,17 +10,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import static com.boneless.Main.changeButtonsState;
-
 @SuppressWarnings("ExtractMethodRecommender") //shut the fuck up
 public class Settings extends JPanel{
     private boolean changedSettings = false;
     private final String[] buttonOptions = {"Yes","No","Save"};
     private static JButton exitKeyBindButton = null;
     private static JButton continueKeyBindButton = null;
-    private static JButton fullscreenKeyBindButton = null;
+    private static JButton fullScreenKeyBindButton = null;
+    private JPanel menuPanel;
     private final JButton playAudio;
-    public Settings(){
+    public Settings(MainMenu menuPanel){
+        this.menuPanel = menuPanel;
         setLayout(new BorderLayout());
         SystemUI.set();
 
@@ -42,9 +43,9 @@ public class Settings extends JPanel{
         JPanel continuePanel = createKeyBindPanel("Continue", continueKeyBindButton);
         continueKeyBindButton.addActionListener(keyBindButtonListener("Continue"));
 
-        fullscreenKeyBindButton = createKeyBindButton("fullscreen");
-        JPanel fullscreenPanel = createKeyBindPanel("Fullscreen", fullscreenKeyBindButton);
-        fullscreenKeyBindButton.addActionListener(keyBindButtonListener("Fullscreen"));
+        fullScreenKeyBindButton = createKeyBindButton("fullscreen");
+        JPanel fullscreenPanel = createKeyBindPanel("Fullscreen", fullScreenKeyBindButton);
+        fullScreenKeyBindButton.addActionListener(keyBindButtonListener("Fullscreen"));
 
         mainPanel.add(createHeaderText("Key Binds"));
         mainPanel.add(exitPanel);
@@ -84,16 +85,13 @@ public class Settings extends JPanel{
                 switch(input){
                     case 0:
                         exitSettings();
-                        changeButtonsState(true);
                         break;
                     case 2:
                         save();
                         exitSettings();
-                        changeButtonsState(true);
                         break;
                 }
             }else {
-                changeButtonsState(true);
                 exitSettings();
             }
         });
@@ -195,19 +193,15 @@ public class Settings extends JPanel{
     }
     @SuppressWarnings("SameParameterValue")
     private JButton createCheckbox(String setting){ //todo: replace png system in favor of custom drawn JPanels
-        JButton checkBox = new JButton();
-        checkBox.setBackground(Color.lightGray);
-        if(Boolean.parseBoolean(JsonFile.read("settings.json","general", setting))){
-            //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
-        }else{
-            //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
-        }
+        CheckBoxToggle checkBox = new CheckBoxToggle(Boolean.parseBoolean(JsonFile.read("settings.json","general", setting)));
+        //checkBox.setBackground(Color.lightGray);
+
         return checkBox;
     }
     private static void setKeyBindButtons(boolean enable){
         exitKeyBindButton.setEnabled(enable);
         continueKeyBindButton.setEnabled(enable);
-        fullscreenKeyBindButton.setEnabled(enable);
+        fullScreenKeyBindButton.setEnabled(enable);
     }
     private ActionListener checkBoxToggle(JButton checkBox){
         return e -> {
@@ -224,10 +218,19 @@ public class Settings extends JPanel{
         //Key Binds
         JsonFile.writeln("settings.json","keyBinds","exit",exitKeyBindButton.getText());
         JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());
-        JsonFile.writeln("settings.json","keyBinds","fullscreen",fullscreenKeyBindButton.getText());
+        JsonFile.writeln("settings.json","keyBinds","fullScreen",fullScreenKeyBindButton.getText());
 
         //Check Boxes
         JsonFile.writeln("settings.json","general","play_audio", String.valueOf(playAudio.isSelected()));
+    }
+    private void exitSettings(){
+        Container parent = getParent();
+        parent.remove(this);
+
+        parent.add(menuPanel);
+
+        parent.revalidate();
+        parent.repaint();
     }
     private static class keyBindSet extends JFrame implements KeyListener {
         private final JLabel keyBindText;
@@ -311,16 +314,48 @@ public class Settings extends JPanel{
                     keyBindText.setText(toUpperCase(String.valueOf(e.getKeyChar())));
             }
         }
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-        }
-        @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
+        @Override public void keyPressed(KeyEvent e) {}
+        @Override public void keyReleased(KeyEvent e) {}
     }
-    private void exitSettings(){
-        //
+    private static class CheckBoxToggle extends JButton{
+        private boolean isEnabled;
+        public CheckBoxToggle(boolean isEnabled){
+            this.isEnabled = isEnabled;
+        }
+        public void toggleEnabled(){
+            isEnabled = !isEnabled;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g){
+            super.paintComponent(g);
+
+            //stolen code from teams >:)
+            Graphics2D g2d = (Graphics2D) g;
+
+            //enable antialiasing, not really needed but cool to have ig
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int width = getWidth();
+            int height = getHeight();
+
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            int lineThickness = 1; //im not explaining this
+
+            int lineLength = Math.min(width, height) / 3; //set rough size, really only works with 3 4
+
+            g2d.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            g2d.setColor(Color.cyan);
+
+            //draw circle
+            g2d.fillOval(centerX, centerY - lineLength, centerX, centerY + lineLength); //ass
+            //draw vertical line if subtract is false
+            g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength);
+            //horizontal line
+            g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY);
+        }
     }
 }
