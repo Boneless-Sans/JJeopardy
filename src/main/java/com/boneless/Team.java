@@ -43,7 +43,7 @@ public class Team extends JPanel {
 
             int lineThickness = 20; //im not explaining this
 
-            int lineLength = Math.min(width, height) / 3; //set rough size
+            int lineLength = Math.min(width, height) / 3; //set rough size, really only works with 3 4
 
             g2d.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 

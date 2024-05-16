@@ -54,7 +54,7 @@ public class ScrollGridPanel extends JPanel {
     public static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final double SCROLL_SPEED_X = 1;
     public static final double SCROLL_SPEED_Y = 1;
-    private final List<GradientSquare> squareList = new ArrayList<>();
+    private ArrayList<GradientSquare> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
     private Color color1 = new Color(0,0,150);
@@ -74,11 +74,14 @@ public class ScrollGridPanel extends JPanel {
 
         timer.start();
     }
+    public void removeSelf(){
+        removeAll();
+        squareList.clear();
+    }
     public void changeColors(Color color1, Color color2){
         this.color1 = color1;
         this.color2 = color2;
     }
-
     private void initializeSquares() {
         for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
             for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {

@@ -11,10 +11,16 @@ import java.util.ArrayList;
 
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
-    Fix frame changing system | X
-        >remove all objects | X
-        >add new JPanel? | X
-        -needs to preserve last state of a panel, else the board gets fucked a little. this might work automatically just bc of how java works. | X
+    Main menu | X
+        -General layout
+        -Functionality (frame changing, have bool for disabling ) | X
+            -Start          | X
+            -board chooser  | X
+            -board creator  | X
+            -settings       | X
+            -exit           | √
+    Frame changing system | X
+
     Rework settings | X
         -make it work with new frame system | X
     Create main board | X
@@ -44,6 +50,7 @@ public class Main extends JFrame {
     public static boolean isDev = false;
     private String fileName = "devBoard.json";
     private static final ArrayList<JButton> menuButtons = new ArrayList<>();
+    private ScrollGridPanel panel;
     public static void main(String[] args) {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");
@@ -69,10 +76,8 @@ public class Main extends JFrame {
     }
     //Menu Panel
     private JPanel menuPanel(){
-        ScrollGridPanel panel = new ScrollGridPanel();
+        panel = new ScrollGridPanel();
         panel.setLayout(new BorderLayout());
-
-        //todo: add Start, File Chooser, Settings, Creator, Exit Buttons, title, and current file
 
         //title text, pretty self-explanatory
         JPanel titlePanel = new JPanel(new GridBagLayout());
@@ -89,8 +94,9 @@ public class Main extends JFrame {
         titlePanel.add(title, gbc);
 
         //button setup
-        JPanel buttonsPanel = new JPanel();
+        JPanel buttonsPanel = new JPanel(new FlowLayout());
         buttonsPanel.setOpaque(false);
+        buttonsPanel.setPreferredSize(new Dimension(250,250));
 
         buttonsPanel.add(createMenuButton("Start Game", 0));
         buttonsPanel.add(createMenuButton("Choose Board File", 1));
@@ -110,7 +116,10 @@ public class Main extends JFrame {
         button.addActionListener(e -> {
             switch (UUID){ //perhaps not the best way of doing this, but it works for now
                 case 0: { //start
-                    //
+                    panel.removeSelf();
+                    removeAll();
+                    repaint();
+                    add(new JButton("This is txt"));
                     break;
                 }
                 case 1: { //board file
