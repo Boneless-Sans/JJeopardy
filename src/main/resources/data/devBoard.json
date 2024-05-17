@@ -2,9 +2,27 @@
   "data" : {
     "board_name": "Dev Board",
     "categories": 5,
-    "rows": 4,
+    "rows": 5,
 
     "font": "Arial",
-    "font_color": "black"
+    "font_color": "black",
+
+    "global_color": "255,0,0"
+  },
+  "board": {
+    "categories": {
+      "cat_0": "Test 1",
+      "cat_1": "Test 2",
+      "cat_2": "Test 3",
+      "cat_3": "Test 4",
+      "cat_4": "Test 5"
+    },
+    "scores": {
+      "row_0": "100",
+      "row_1": "200",
+      "row_2": "300",
+      "row_3": "400",
+      "row_4": "500"
+    }
   }
 }

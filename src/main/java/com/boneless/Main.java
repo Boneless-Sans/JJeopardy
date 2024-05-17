@@ -1,20 +1,23 @@
 package com.boneless;
 
+import com.boneless.util.JsonFile;
 import com.boneless.util.ScrollGridPanel;
 import com.boneless.util.SystemUI;
 
 import javax.swing.*;
+import java.awt.*;
 
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
-    Main menu | X
-        -General layout | X
+    Main menu | √
+        -General layout | √
         -Functionality (frame changing, have bool for disabling ) | √
             -Start          | √
             -board chooser  | √
             -board creator  | √
             -settings       | √
             -exit           | √
+       -have (background) colors change with global color | X
     Frame changing system | √
     Rework settings | X
         -make it work with new frame system | √
@@ -23,8 +26,8 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -make title header | X
         -change program title name to board name | X
         -get buttons to create the info card | X
-        -have buttons read points from json
-        -launch JCard
+        -have buttons read points from json | X
+        -launch JCard | X
     Create question card (JCard) | X
         -layout
         -key binds
@@ -50,8 +53,7 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
  */
 public class Main extends JFrame {
     public static boolean isDev = false;
-    private ScrollGridPanel panel;
-    private MainMenu menu;
+    private final MainMenu menu;
     public static void main(String[] args) {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");
@@ -74,7 +76,7 @@ public class Main extends JFrame {
             add(menu);
         } else {
             //add(new GameBoard(fileName));
-            add(new Settings(menu));
+            add(new GameBoard("devBoard.json"));
         }
     }
 }

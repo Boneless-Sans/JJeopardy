@@ -75,10 +75,6 @@ public class ScrollGridPanel extends JPanel {
 
         timer.start();
     }
-    public void changeColors(Color color1, Color color2){
-        this.color1 = color1;
-        this.color2 = color2;
-    }
     private void initializeSquares() {
         for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
             for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {

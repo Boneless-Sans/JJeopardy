@@ -27,13 +27,18 @@ public class MainMenu extends ScrollGridPanel {
         title.setFont(generateFont(50));
         title.setForeground(Color.white); //todo: change to a json read
 
+        //add(titlePanel, BorderLayout.SOUTH);
+
+        //title.add()
         titlePanel.add(title, gbc);
 
         //button setup
-        JPanel menuParentPanel = new JPanel(new BorderLayout());
+        JPanel menuParentPanel = new JPanel(new GridBagLayout());
+        menuParentPanel.setOpaque(false);
+
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         buttonsPanel.setOpaque(false);
-        buttonsPanel.setPreferredSize(new Dimension(250,250));
+        buttonsPanel.setPreferredSize(new Dimension(150,250));
 
         buttonsPanel.add(createMenuButton("Start Game", 0));
         buttonsPanel.add(createMenuButton("Choose Board File", 1));
@@ -42,7 +47,10 @@ public class MainMenu extends ScrollGridPanel {
         buttonsPanel.add(createMenuButton("Exit", 4));
 
         add(titlePanel, BorderLayout.NORTH);
-        add(buttonsPanel, BorderLayout.CENTER);
+
+        menuParentPanel.add(buttonsPanel, gbc);
+
+        add(menuParentPanel, BorderLayout.CENTER);
     }
     private JButton createMenuButton(String text, int UUID){
         JButton button = new JButton(text);
