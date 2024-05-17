@@ -327,13 +327,13 @@ public class Settings extends JPanel{
         }
 
         @Override
-        protected void paintComponent(Graphics g){
+        protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            //stolen code from teams >:)
+            // Cast to Graphics2D for better graphics capabilities
             Graphics2D g2d = (Graphics2D) g;
 
-            //enable antialiasing, not really needed but cool to have ig
+            // Enable antialiasing for smoother lines and shapes
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             int width = getWidth();
@@ -342,20 +342,34 @@ public class Settings extends JPanel{
             int centerX = width / 2;
             int centerY = height / 2;
 
-            int lineThickness = 1; //im not explaining this
+            int lineThickness = 1; // Thickness of the lines
 
-            int lineLength = Math.min(width, height) / 3; //set rough size, really only works with 3 4
+            int lineLength = Math.min(width, height) / 3; // Length of the lines and diameter of the circle
 
+            // Set the stroke for drawing lines
             g2d.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-            g2d.setColor(Color.cyan);
+            // Draw the circle with red color
+            g2d.setColor(Color.red);
+            int circleDiameter = lineLength * 2;
+            int circleX = centerX - lineLength;
+            int circleY = centerY - lineLength;
+            g2d.fillOval(circleX, circleY, circleDiameter, circleDiameter);
 
-            //draw circle
-            g2d.fillOval(centerX, centerY - lineLength, centerX, centerY + lineLength); //ass
-            //draw vertical line if subtract is false
+            // Draw the vertical and horizontal lines with cyan color
+            g2d.setColor(Color.cyan);
             g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength);
-            //horizontal line
             g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY);
+
+        }
+        @Override
+        protected void paintBorder(Graphics g) {
+            // Do not paint the border
+        }
+
+        @Override
+        protected void paintChildren(Graphics g) {
+            // Do not paint children components if any
         }
     }
 }

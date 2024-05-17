@@ -16,13 +16,19 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
             -settings       | √
             -exit           | √
     Frame changing system | √
-    Rework settings | √
+    Rework settings | X
         -make it work with new frame system | √
+        -change checkbox system for non png use | X
     Create main board | X
         -make title header | X
         -change program title name to board name | X
         -get buttons to create the info card | X
-    Create question card | X
+        -have buttons read points from json
+        -launch JCard
+    Create question card (JCard) | X
+        -layout
+        -key binds
+        -data from json
     Create board factory | X
         -figure out the layout | X
         -todo: fill out todo after last todo. then that todo should replace this todo with the new todo and that is quite the todo list of todos

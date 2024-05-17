@@ -5,9 +5,10 @@ import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class GameBoard extends JPanel {
-    private String fileName;
+    private final String fileName;
     public GameBoard(String fileName){
         this.fileName = fileName;
         SystemUI.set();
@@ -59,5 +60,27 @@ public class GameBoard extends JPanel {
         JPanel panel = new JPanel();
 
         return panel;
+    }
+    private static class BoardButton extends JButton{
+        private final int col;
+        private final int row;
+        private final int score;
+        private final String question;
+        private final String answer;
+        private final Color color;
+        public BoardButton(int score, String question, String answer, Color color, int col, int row){
+            this.score = score;
+            this.question = question;
+            this.answer = answer;
+            this.color = color;
+            this.col = col;
+            this.row = row;
+            addActionListener(listener());
+        }
+        private ActionListener listener(){
+            return e -> {
+                System.out.println("test");
+            };
+        }
     }
 }

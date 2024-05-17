@@ -59,7 +59,8 @@ public class ScrollGridPanel extends JPanel {
     public static final int SQUARE_SIZE = 70;
     private Color color1 = new Color(0,0,150);
     private Color color2 = new Color(20,20,255);
-    private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
+    private static final int NUM_THREADS = 1; //Runtime.getRuntime().availableProcessors();
+    // do to clipping issue and instability, multithreading has been disabled
     private ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
 
     public ScrollGridPanel() {
@@ -73,11 +74,6 @@ public class ScrollGridPanel extends JPanel {
         });
 
         timer.start();
-    }
-    public void removeSelf(){
-        removeAll();
-        squareList.clear();
-        repaint();
     }
     public void changeColors(Color color1, Color color2){
         this.color1 = color1;
@@ -102,13 +98,13 @@ public class ScrollGridPanel extends JPanel {
             });
         }
 
-        //while loops for waiting for other threads to finish
-        executor.shutdown();
-        while (true) { //required for thread sync
-            if (executor.isTerminated()) break;
-        }
+        //while loops for waiting for other threads to finish. MT removed, no longer needed
+//        executor.shutdown();
+//        while (true) { //required for thread sync
+//            if (executor.isTerminated()) break;
+//        }
 
-        executor = Executors.newFixedThreadPool(NUM_THREADS); //setup execute for next call
+        //executor = Executors.newFixedThreadPool(NUM_THREADS); //setup execute for next call
     }
     private List<List<GradientSquare>> createClusters() { //setup clusters for thread distro
         int clusterSize = (int) Math.ceil((double) squareList.size() / NUM_THREADS);
@@ -132,12 +128,11 @@ public class ScrollGridPanel extends JPanel {
                 }
             });
         }
-
+        //not sure why, but rendering breaks when this segment is disabled, even with MT off
         executor.shutdown();
         while (true) { //required for thread sync
             if (executor.isTerminated()) break;
         }
-
         executor = Executors.newFixedThreadPool(NUM_THREADS); //same as last one
     }
     @Override
