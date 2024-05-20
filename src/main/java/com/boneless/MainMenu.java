@@ -115,7 +115,7 @@ public class MainMenu extends ScrollGridPanel {
                     break;
                 }
                 case 2: { //board creator
-                    //changeCurrentPanel(new BoardFactory(this));
+                    changeCurrentPanel(new BoardFactory(), this);
                     break;
                 }
                 case 3: { //settings
@@ -135,8 +135,5 @@ public class MainMenu extends ScrollGridPanel {
         fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
         currentFile.setText("Current Board: " + fileName);
         buttonsList.get(0).setEnabled(!fileName.isEmpty());
-    }
-    private void setFile(String fileName){
-        Main.fileName = fileName;
     }
 }

@@ -1,10 +1,12 @@
 package com.boneless;
 
+import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 import static com.boneless.Team.getTeamCount;
@@ -46,7 +48,10 @@ public class GameBoard extends JPanel {
 
         for(int i = 1;i < boardY;i++){
             for(int j = 0;j < boardX;j++){
-                panel.add(createBoardButton());
+                int score = Integer.parseInt(JsonFile.read(fileName, "", ""));
+                String question = JsonFile.readWithThreeKeys(fileName, "", "", "");
+                String answer = JsonFile.readWithThreeKeys(fileName, "", "", "");
+                panel.add(new BoardButton(0, question, answer));
             }
         }
 
@@ -65,13 +70,6 @@ public class GameBoard extends JPanel {
         panel.add(new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index)), gbc);
         return panel;
     }
-    private JButton createBoardButton(){
-        JButton button = new JButton("test");
-        button.setFocusable(false);
-        button.setBackground(mainColor);
-
-        return button;
-    }
     private JScrollPane createTeamsPanel(){
         JScrollPane parentPanel = new JScrollPane();
         parentPanel.setPreferredSize(new Dimension(getWidth(), 130));
@@ -83,5 +81,32 @@ public class GameBoard extends JPanel {
         }
 
         return parentPanel;
+    }
+
+    //Dante
+    public static class BoardButton extends JButton {
+        private int score;
+        private String question;
+        private String answer;
+
+        public BoardButton(int score, String question, String answer) {
+            this.score = score;
+            this.question = question;
+            this.answer = answer;
+            setText(String.valueOf(score));
+            addActionListener(listener());
+        }
+
+        private ActionListener listener() {
+            return e -> {
+                //Change to the question panel
+//                JPanel parentPanel = (JPanel) getParent().getParent(); // Assuming the parent of the parent is the main panel with CardLayout
+//                CardLayout cardLayout = (CardLayout) parentPanel.getLayout();
+//                parentPanel.add(new JCard(score, question, answer), "questionPanel");
+//                cardLayout.show(parentPanel, "questionPanel");
+
+                GeneralUtils.changeCurrentPanel(new JCard(score, question, answer), (JPanel) getParent().getParent());
+            };
+        }
     }
 }

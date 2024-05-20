@@ -162,7 +162,7 @@ public class Settings extends JPanel{
         //Key Binds
         JsonFile.writeln("settings.json","keyBinds","exit",exitKeyBindButton.getText());
         JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());
-        JsonFile.writeln("settings.json","keyBinds","fullScreen",fullScreenKeyBindButton.getText());
+        JsonFile.writeln("settings.json","keyBinds","fullscreen",fullScreenKeyBindButton.getText());
     }
     private void exitSettings(){
         Container parent = getParent();

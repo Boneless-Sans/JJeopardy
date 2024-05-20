@@ -15,8 +15,6 @@ public class JsonFile {
     private JsonFile() {
     }
 
-    private static final String DEFAULT_DIRECTORY = "/src/main/resources/data/";
-
     public static String read(String filename, String mainKey, String valueKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -240,30 +238,6 @@ public class JsonFile {
         return null;
     }
 
-    public static boolean checkCredentials(String filename, String username, String password) {
-        try (Reader reader = new FileReader(getFilePath(filename))) {
-            JSONTokener tokener = new JSONTokener(reader);
-            JSONArray jsonArray = new JSONArray(tokener);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject userObject = jsonArray.getJSONObject(i);
-
-                if (userObject.has("username") && userObject.has("password")) {
-                    String storedUsername = userObject.getString("username");
-                    String storedPassword = userObject.getString("password");
-
-                    if (username.equals(storedUsername) && password.equals(storedPassword)) {
-                        return true;  // Credentials match
-                    }
-                }
-            }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-
-        return false;  // No matching credentials found
-    }
-
     public static void writeToArray(String filename, String mainKey, String data) {
         try {
             JSONObject jsonObject = readJsonObject(filename);
@@ -315,13 +289,13 @@ public class JsonFile {
     }
 
     private static String getFilePath(String filename) { //botched, not deleted for now but it's not needed
-        Path currentDir = Paths.get("");
         String directory;
         String OS = System.getProperty("os.name").toLowerCase();
         if (OS.contains("windows") && filename.contains("C:\\") || OS.contains("mac") && filename.contains("/Users/")) {
-            directory = currentDir.toAbsolutePath() + filename;
+            directory = filename;
         } else {
-            directory = DEFAULT_DIRECTORY + filename;
+            File file = new File("src/main/resources/data/" + filename);
+            directory = file.getAbsolutePath();
         }
         return directory;
     }

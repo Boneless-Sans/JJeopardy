@@ -2,8 +2,7 @@
   "general": {"play_audio": "false"},
   "keyBinds": {
     "exit": "Esc",
-    "fullscreen": "S",
-    "continue": "Space",
-    "fullScreen": "F"
+    "fullscreen": "F",
+    "continue": "Space"
   }
 }

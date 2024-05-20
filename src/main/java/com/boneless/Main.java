@@ -20,6 +20,7 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -get buttons to create the info card | X
         -have buttons read points from json | X
         -launch JCard | X
+        -create teams sub panel | X
     Create question card (JCard) | X
         -layout | X
         -key binds | X
@@ -54,6 +55,7 @@ public class Main extends JFrame implements KeyListener {
         new Main();
     }
     public Main(){
+        setTitle("Jeopardy!");
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
