@@ -48,6 +48,13 @@ public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
     public static String fileName;
     private boolean doFullScreen = false;
+
+    //init all the panels
+    public static final MainMenu menu = new MainMenu();
+    public static final GameBoard gameboard = new GameBoard();
+    public static final BoardFactory factory = new BoardFactory();
+    public static final Settings settings = new Settings();
+    public static final JCard jCard = new JCard();
     public static void main(String[] args) {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");

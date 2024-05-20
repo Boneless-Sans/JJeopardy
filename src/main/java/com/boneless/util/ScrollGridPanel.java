@@ -1,7 +1,5 @@
 package com.boneless.util;
 
-import com.boneless.Main;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,7 +10,7 @@ public class ScrollGridPanel extends JPanel {
     public static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final double SCROLL_SPEED_X = 1;
     public static final double SCROLL_SPEED_Y = 1;
-    private ArrayList<GradientSquare> squareList = new ArrayList<>();
+    private final ArrayList<GradientSquare> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
     private Color color1 = new Color(0,0,150);

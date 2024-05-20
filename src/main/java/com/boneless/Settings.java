@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static com.boneless.Main.menu;
+
 @SuppressWarnings("ExtractMethodRecommender") //shut the fuck up
 public class Settings extends JPanel{
     private boolean changedSettings = false;
@@ -16,9 +18,7 @@ public class Settings extends JPanel{
     private static JButton exitKeyBindButton = null;
     private static JButton continueKeyBindButton = null;
     private static JButton fullScreenKeyBindButton = null;
-    private final JPanel menuPanel;
-    public Settings(MainMenu menuPanel){
-        this.menuPanel = menuPanel;
+    public Settings(){
         setLayout(new BorderLayout());
         SystemUI.set();
 
@@ -168,7 +168,7 @@ public class Settings extends JPanel{
         Container parent = getParent();
         parent.remove(this);
 
-        parent.add(menuPanel);
+        parent.add(menu);
 
         parent.revalidate();
         parent.repaint();

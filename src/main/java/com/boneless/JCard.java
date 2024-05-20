@@ -2,9 +2,12 @@ package com.boneless;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class JCard extends JPanel {
-    public JCard(int score, String question, String answer, String bruh){
+    public JCard(){}
+    public void createCard(int score, String question, String answer){
         setLayout(new BorderLayout());
 
         add(header(), BorderLayout.NORTH);

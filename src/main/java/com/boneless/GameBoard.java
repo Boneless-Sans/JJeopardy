@@ -9,15 +9,21 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
 
+import static com.boneless.Main.fileName;
 import static com.boneless.Team.getTeamCount;
 import static com.boneless.util.GeneralUtils.parseColor;
 import static com.boneless.util.GeneralUtils.generateFont;
 
 public class GameBoard extends JPanel {
-    private final String fileName;
-    private final Color mainColor;
+    private Color mainColor ;
+    public GameBoard(){
+        init();
+    }
     public GameBoard(String fileName){
-        this.fileName = fileName;
+        Main.fileName = fileName;
+        init();
+    }
+    private void init(){
         this.mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
 
         setLayout(new BorderLayout());
