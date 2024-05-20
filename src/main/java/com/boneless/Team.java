@@ -18,6 +18,9 @@ public class Team extends JPanel {
     public String getTeamName(){
         return name;
     }
+    public static int getTeamCount(){
+        return teamCount;
+    }
 
     public static class ScoreButton extends JButton{
         private final Color color;

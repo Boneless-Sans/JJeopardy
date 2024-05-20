@@ -1,17 +1,27 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import com.boneless.util.Print;
 import com.boneless.util.ScrollGridPanel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.boneless.Main.fileName;
+import static com.boneless.Main.main;
+import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
-    private String fileName = "devBoard.json";
-    private static final ArrayList<JButton> menuButtons = new ArrayList<>();
+    private final ArrayList<JButton> buttonsList = new ArrayList<>();
+    private final JLabel currentFile;
     public MainMenu(){
+        fileName = "devBoard.json";
         setLayout(new BorderLayout());
 
         //title text, pretty self-explanatory
@@ -51,30 +61,65 @@ public class MainMenu extends ScrollGridPanel {
         menuParentPanel.add(buttonsPanel, gbc);
 
         add(menuParentPanel, BorderLayout.CENTER);
+
+        currentFile = new JLabel(fileName.isEmpty() ? "No Board Selected" : "Current Board: " + fileName);
+        currentFile.setFont(generateFont(15));
+        currentFile.setForeground(Color.white);
+        add(currentFile, BorderLayout.SOUTH);
     }
     private JButton createMenuButton(String text, int UUID){
-        JButton button = new JButton(text);
+        JButton button = new JButton(text){
+            @Override
+            public Dimension getPreferredSize() {
+                Dimension size = super.getPreferredSize();
+                size.width = 170;
+                return size;
+            }
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (!isEnabled()) {
+                    g.setColor(Color.lightGray);
+                    g.setFont(getFont());
+                    FontMetrics fm = g.getFontMetrics();
+                    int textWidth = fm.stringWidth(getText());
+                    int textHeight = fm.getAscent();
+                    int x = (getWidth() - textWidth) / 2;
+                    int y = (getHeight() + textHeight) / 2 - 4;
+                    g.drawString(getText(), x, y);
+                }
+            }
+        };
         button.setFocusable(false);
         button.setFont(generateFont(15));
-        menuButtons.add(button);
+        if(UUID == 0 && fileName.isEmpty()){ //disable start button if there is no current board file
+            button.setEnabled(false);
+        }
+        buttonsList.add(button);
         button.addActionListener(e -> {
             switch (UUID){ //perhaps not the best way of doing this, but it works for now
                 case 0: { //start
-                    changeCurrentPanel(new GameBoard(fileName));
+                    changeCurrentPanel(new GameBoard(fileName), this);
                     break;
                 }
                 case 1: { //board file
                     JFileChooser chooser = new JFileChooser();
-                    Print.print(chooser.showOpenDialog(null));
+                    chooser.setFileFilter(new FileNameExtensionFilter("Json File", "json"));
 
+                    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                        File file = chooser.getSelectedFile();
+                        System.out.println(file);
+                        changeFileName(String.valueOf(file));
+                        changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
+                    }
                     break;
                 }
                 case 2: { //board creator
-                    //
+                    //changeCurrentPanel(new BoardFactory(this));
                     break;
                 }
                 case 3: { //settings
-                    changeCurrentPanel(new Settings(this));
+                    changeCurrentPanel(new Settings(this), this);
                     break;
                 }
                 case 4: { //exit
@@ -86,23 +131,12 @@ public class MainMenu extends ScrollGridPanel {
 
         return button;
     }
-    private Font generateFont(int fontSize){
-        return new Font(
-                JsonFile.read(fileName, "data","font"),
-                Font.PLAIN,
-                fontSize
-        );
+    private void changeFileName(String newFile){
+        fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
+        currentFile.setText("Current Board: " + fileName);
+        buttonsList.get(0).setEnabled(!fileName.isEmpty());
     }
     private void setFile(String fileName){
-        this.fileName = fileName;
-    }
-    private void changeCurrentPanel(JPanel panelToSet){
-        Container parent = getParent();
-
-        parent.remove(this);
-        parent.add(panelToSet);
-
-        parent.revalidate();
-        parent.repaint();
+        Main.fileName = fileName;
     }
 }

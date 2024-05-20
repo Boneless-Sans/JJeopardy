@@ -1,7 +1,6 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import com.boneless.util.Print;
 import com.boneless.util.SystemUI;
 
 import javax.swing.*;
@@ -17,8 +16,7 @@ public class Settings extends JPanel{
     private static JButton exitKeyBindButton = null;
     private static JButton continueKeyBindButton = null;
     private static JButton fullScreenKeyBindButton = null;
-    private JPanel menuPanel;
-    private final JButton playAudio;
+    private final JPanel menuPanel;
     public Settings(MainMenu menuPanel){
         this.menuPanel = menuPanel;
         setLayout(new BorderLayout());
@@ -47,17 +45,10 @@ public class Settings extends JPanel{
         JPanel fullscreenPanel = createKeyBindPanel("Fullscreen", fullScreenKeyBindButton);
         fullScreenKeyBindButton.addActionListener(keyBindButtonListener("Fullscreen"));
 
-        mainPanel.add(createHeaderText("Key Binds"));
+        mainPanel.add(createHeaderText());
         mainPanel.add(exitPanel);
         mainPanel.add(continuePanel);
         mainPanel.add(fullscreenPanel);
-
-        playAudio = createCheckbox("play_audio");
-        JPanel playAudioPanel = createCheckboxPanel("Play Audio", playAudio);
-        playAudio.addActionListener(checkBoxToggle(playAudio));
-
-        mainPanel.add(createHeaderText("Audio"));
-        mainPanel.add(playAudioPanel);
 
         JScrollPane mainPane = new JScrollPane(mainPanel);
 
@@ -104,11 +95,11 @@ public class Settings extends JPanel{
         add(bottomPanel, BorderLayout.SOUTH);
         setVisible(true);
     }
-    private JPanel createHeaderText(String text){
+    private JPanel createHeaderText(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         panel.setPreferredSize(new Dimension(0,0));
 
-        JLabel label = new JLabel("<html>" + text + "<br>\n-----------------------------</html>");
+        JLabel label = new JLabel("<html>" + "Key Binds" + "<br>\n-----------------------------</html>");
         label.setFont(new Font("Arial", Font.PLAIN, 20));
 
         panel.add(label);
@@ -161,57 +152,10 @@ public class Settings extends JPanel{
             new keyBindSet(button, keyBind);
         };
     }
-    @SuppressWarnings("SameParameterValue")
-    private JPanel createCheckboxPanel(String text, JButton checkBox){
-        JPanel panel = new JPanel(new GridLayout(1,2));
-        panel.setBackground(Color.lightGray);
-        panel.setPreferredSize(new Dimension(0,50));
-
-        JPanel labelPanel = new JPanel(new GridBagLayout());
-        labelPanel.setBackground(Color.lightGray);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = 0;
-
-        Font font = new Font("Arial", Font.PLAIN, 25);
-
-        JLabel label = new JLabel(text);
-        label.setFont(font);
-
-        labelPanel.add(label, gbc);
-
-        JPanel keyBindPanel = new JPanel(new GridBagLayout());
-        keyBindPanel.setBackground(Color.lightGray);
-
-        keyBindPanel.add(checkBox, gbc);
-
-        panel.add(labelPanel);
-        panel.add(keyBindPanel);
-        return panel;
-    }
-    @SuppressWarnings("SameParameterValue")
-    private JButton createCheckbox(String setting){ //todo: replace png system in favor of custom drawn JPanels
-        CheckBoxToggle checkBox = new CheckBoxToggle(Boolean.parseBoolean(JsonFile.read("settings.json","general", setting)));
-        //checkBox.setBackground(Color.lightGray);
-
-        return checkBox;
-    }
     private static void setKeyBindButtons(boolean enable){
         exitKeyBindButton.setEnabled(enable);
         continueKeyBindButton.setEnabled(enable);
         fullScreenKeyBindButton.setEnabled(enable);
-    }
-    private ActionListener checkBoxToggle(JButton checkBox){
-        return e -> {
-            changedSettings = true;
-            if(checkBox.isSelected()){
-                //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/check_mark.png", 25,25).getImage());
-            }else{
-                //checkBox.setIcon(new IconResize("src/main/resources/assets/textures/cross_mark.png",25,25).getImage());
-            }
-        };
     }
     private void save(){
         changedSettings = false;
@@ -219,9 +163,6 @@ public class Settings extends JPanel{
         JsonFile.writeln("settings.json","keyBinds","exit",exitKeyBindButton.getText());
         JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());
         JsonFile.writeln("settings.json","keyBinds","fullScreen",fullScreenKeyBindButton.getText());
-
-        //Check Boxes
-        JsonFile.writeln("settings.json","general","play_audio", String.valueOf(playAudio.isSelected()));
     }
     private void exitSettings(){
         Container parent = getParent();
@@ -316,60 +257,5 @@ public class Settings extends JPanel{
         }
         @Override public void keyPressed(KeyEvent e) {}
         @Override public void keyReleased(KeyEvent e) {}
-    }
-    private static class CheckBoxToggle extends JButton{
-        private boolean isEnabled;
-        public CheckBoxToggle(boolean isEnabled){
-            this.isEnabled = isEnabled;
-        }
-        public void toggleEnabled(){
-            isEnabled = !isEnabled;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-
-            // Cast to Graphics2D for better graphics capabilities
-            Graphics2D g2d = (Graphics2D) g;
-
-            // Enable antialiasing for smoother lines and shapes
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            int width = getWidth();
-            int height = getHeight();
-
-            int centerX = width / 2;
-            int centerY = height / 2;
-
-            int lineThickness = 1; // Thickness of the lines
-
-            int lineLength = Math.min(width, height) / 3; // Length of the lines and diameter of the circle
-
-            // Set the stroke for drawing lines
-            g2d.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-
-            // Draw the circle with red color
-            g2d.setColor(Color.red);
-            int circleDiameter = lineLength * 2;
-            int circleX = centerX - lineLength;
-            int circleY = centerY - lineLength;
-            g2d.fillOval(circleX, circleY, circleDiameter, circleDiameter);
-
-            // Draw the vertical and horizontal lines with cyan color
-            g2d.setColor(Color.cyan);
-            g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength);
-            g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY);
-
-        }
-        @Override
-        protected void paintBorder(Graphics g) {
-            // Do not paint the border
-        }
-
-        @Override
-        protected void paintChildren(Graphics g) {
-            // Do not paint children components if any
-        }
     }
 }

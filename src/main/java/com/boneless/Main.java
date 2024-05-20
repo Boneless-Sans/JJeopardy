@@ -6,22 +6,14 @@ import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Main menu | √
-        -General layout | √
-        -Functionality (frame changing, have bool for disabling ) | √
-            -Start          | √
-            -board chooser  | √
-            -board creator  | √
-            -settings       | √
-            -exit           | √
-       -have (background) colors change with global color | X
     Frame changing system | √
-    Rework settings | X
-        -make it work with new frame system | √
-        -change checkbox system for non png use | X
+    Rework settings | √
     Create main board | X
         -make title header | X
         -change program title name to board name | X
@@ -29,13 +21,13 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -have buttons read points from json | X
         -launch JCard | X
     Create question card (JCard) | X
-        -layout
-        -key binds
-        -data from json
+        -layout | X
+        -key binds | X
+        -data from json | X
+        -animations | X
     Create board factory | X
         -figure out the layout | X
-        -todo: fill out todo after last todo. then that todo should replace this todo with the new todo and that is quite the todo list of todos
-    Implement key binds and have them match settings.json | X
+    Implement key binds and have them match settings.json | √
 
     General Json list
         -get questions
@@ -49,11 +41,13 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -get title color
 
     fixme list:
-        -Tile overlap in main menu | X
+        -Tile overlap in main menu | ? unfixable
  */
-public class Main extends JFrame {
+public class Main extends JFrame implements KeyListener {
     public static boolean isDev = false;
+    public static String fileName;
     private final MainMenu menu;
+    private boolean doFullScreen = false;
     public static void main(String[] args) {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");
@@ -68,6 +62,7 @@ public class Main extends JFrame {
         setUndecorated(true);
         init();
         setVisible(true);
+        addKeyListener(this);
     }
     private void init(){
         //todo: manage screens via adding and removing jPanels from the main frame 
@@ -75,8 +70,39 @@ public class Main extends JFrame {
         if(!isDev) {
             add(menu);
         } else {
-            //add(new GameBoard(fileName));
             add(new GameBoard("devBoard.json"));
         }
     }
+    private String parseKeyStrokeInput(String keyStrokeCode){
+        return switch (keyStrokeCode){
+            case "Esc" -> "\u001B";
+            case "Space" -> " ";
+            case "Enter" -> "\n";
+            case "Backspace" -> "\b";
+            default -> keyStrokeCode.toLowerCase();
+        };
+    }
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "fullscreen")))){
+            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+            if(doFullScreen){
+                doFullScreen = false;
+                setLocation((screenSize.width / 2) - 1600 / 2, (screenSize.height / 2) - 900 / 2);
+                setSize(1600,900);
+            }else{
+                doFullScreen = true;
+                setLocation(0,0);
+                setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
+            }
+        }
+        if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))){
+            System.exit(0);
+        }
+        if(e.getKeyChar() == 'r'){
+            new Main();
+        }
+    }
+    @Override public void keyPressed(KeyEvent e) {}
+    @Override public void keyReleased(KeyEvent e) {}
 }

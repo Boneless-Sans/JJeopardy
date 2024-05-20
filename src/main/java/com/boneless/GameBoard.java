@@ -5,18 +5,23 @@ import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
+import java.util.Arrays;
+
+import static com.boneless.Team.getTeamCount;
+import static com.boneless.util.GeneralUtils.parseColor;
+import static com.boneless.util.GeneralUtils.generateFont;
 
 public class GameBoard extends JPanel {
     private final String fileName;
+    private final Color mainColor;
     public GameBoard(String fileName){
         this.fileName = fileName;
-        SystemUI.set();
+        this.mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
 
         setLayout(new BorderLayout());
         add(headPanel(), BorderLayout.NORTH);
         add(mainBoard(), BorderLayout.CENTER);
-        add(teamPanel(), BorderLayout.SOUTH);
+        add(createTeamsPanel(), BorderLayout.SOUTH);
     }
     //board header panel
     private JPanel headPanel(){ //main board header
@@ -31,37 +36,51 @@ public class GameBoard extends JPanel {
 
         //setup values from json
         int boardX = Integer.parseInt(JsonFile.read(fileName, "data", "categories"));
-        int boardY = Integer.parseInt(JsonFile.read(fileName, "data", "rows"));;
-        panel.setLayout(new GridLayout(boardY, boardX,0,0));
+        int boardY = Integer.parseInt(JsonFile.read(fileName, "data", "rows")) + 1; //add one to add top row panels
+        panel.setLayout(new GridLayout(boardY, boardX,1,1));
+
+        for(int i = 0;i < boardX;i++){
+            panel.add(createHeaderPanel(i));
+        }
+
+        for(int i = 1;i < boardY;i++){
+            for(int j = 0;j < boardX;j++){
+                panel.add(createBoardButton());
+            }
+        }
 
         return panel;
     }
-    //panel to contain team panels
-    private JPanel teamPanel(){ //team panel, south of board todo: create layout for team panel, spacers and everything (god fucking damnit this shit fucking sucks to do)
-        JPanel panel = new JPanel();
+    private JPanel createHeaderPanel(int index){
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createBevelBorder(0));
+        panel.setBackground(mainColor);
 
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = 0;
+
+        panel.add(new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index)), gbc);
         return panel;
     }
-    private static class BoardButton extends JButton{
-        private final int col;
-        private final int row;
-        private final int score;
-        private final String question;
-        private final String answer;
-        private final Color color;
-        public BoardButton(int score, String question, String answer, Color color, int col, int row){
-            this.score = score;
-            this.question = question;
-            this.answer = answer;
-            this.color = color;
-            this.col = col;
-            this.row = row;
-            addActionListener(listener());
+    private JButton createBoardButton(){
+        JButton button = new JButton("test");
+        button.setFocusable(false);
+        button.setBackground(mainColor);
+
+        return button;
+    }
+    private JScrollPane createTeamsPanel(){
+        JScrollPane parentPanel = new JScrollPane();
+        parentPanel.setPreferredSize(new Dimension(getWidth(), 130));
+        parentPanel.setBorder(null);
+        parentPanel.setBackground(mainColor);
+
+        for(int i = 0;i < 5;i++){
+            parentPanel.add(new Team());
         }
-        private ActionListener listener(){
-            return e -> {
-                System.out.println("test");
-            };
-        }
+
+        return parentPanel;
     }
 }
