@@ -4,24 +4,19 @@ import com.boneless.util.JsonFile;
 import com.boneless.util.ScrollGridPanel;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static com.boneless.Main.fileName;
-import static com.boneless.Main.main;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
     public MainMenu(){
-        fileName = "devBoard.json";
+        //fileName = "devBoard.json";
         setLayout(new BorderLayout());
 
         //title text, pretty self-explanatory
@@ -35,7 +30,7 @@ public class MainMenu extends ScrollGridPanel {
 
         JLabel title = new JLabel("Jeopardy!");
         title.setFont(generateFont(50));
-        title.setForeground(Color.white); //todo: change to a json read
+        title.setForeground(Color.white);
 
         //add(titlePanel, BorderLayout.SOUTH);
 
@@ -62,7 +57,7 @@ public class MainMenu extends ScrollGridPanel {
 
         add(menuParentPanel, BorderLayout.CENTER);
 
-        currentFile = new JLabel(fileName.isEmpty() ? "No Board Selected" : "Current Board: " + fileName);
+        currentFile = new JLabel(fileName == null ? "No Board Selected" : "Current Board: " + fileName);
         currentFile.setFont(generateFont(15));
         currentFile.setForeground(Color.white);
         add(currentFile, BorderLayout.SOUTH);
@@ -92,7 +87,12 @@ public class MainMenu extends ScrollGridPanel {
         };
         button.setFocusable(false);
         button.setFont(generateFont(15));
-        if(UUID == 0 && fileName.isEmpty()){ //disable start button if there is no current board file
+        try { //im not sure why != null isn't working, but whatever this works
+            if (UUID == 0 && fileName.isEmpty()) { //disable start button if there is no current board file
+                button.setEnabled(false);
+            }
+        } catch (NullPointerException ignore){
+            System.out.println("File is null, using defaults...");
             button.setEnabled(false);
         }
         buttonsList.add(button);

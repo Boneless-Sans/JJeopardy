@@ -44,9 +44,8 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -Tile overlap in main menu | ? unfixable
  */
 public class Main extends JFrame implements KeyListener {
-    public static boolean isDev = false;
+    private static boolean isDev = false;
     public static String fileName;
-    private final MainMenu menu;
     private boolean doFullScreen = false;
     public static void main(String[] args) {
         if(args != null && args.length > 0){
@@ -55,7 +54,6 @@ public class Main extends JFrame implements KeyListener {
         new Main();
     }
     public Main(){
-        menu = new MainMenu();
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -65,10 +63,8 @@ public class Main extends JFrame implements KeyListener {
         addKeyListener(this);
     }
     private void init(){
-        //todo: manage screens via adding and removing jPanels from the main frame 
-        SystemUI.set();
         if(!isDev) {
-            add(menu);
+            add(new MainMenu());
         } else {
             add(new GameBoard("devBoard.json"));
         }

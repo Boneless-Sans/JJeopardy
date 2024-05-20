@@ -14,10 +14,20 @@ public class GeneralUtils {
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue);
     }
+    @SuppressWarnings("CallToPrintStackTrace")
     public static Font generateFont(int fontSize){
-        if(!fileName.isEmpty()) {
+        try {
+            if(fileName != null && !fileName.isEmpty()) {
+                return new Font(
+                        JsonFile.read(fileName, "data", "font"),
+                        Font.PLAIN,
+                        fontSize
+                );
+            }
+        } catch (NullPointerException e){
+            System.err.println("File is null, using defaults...");
             return new Font(
-                    JsonFile.read(fileName, "data", "font"),
+                    "Arial",
                     Font.PLAIN,
                     fontSize
             );

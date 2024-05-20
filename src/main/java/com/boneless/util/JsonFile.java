@@ -12,7 +12,9 @@ import java.nio.file.Paths;
 
 @SuppressWarnings("CallToPrintStackTrace")
 public class JsonFile {
-    private JsonFile(){}
+    private JsonFile() {
+    }
+
     private static final String DEFAULT_DIRECTORY = "/src/main/resources/data/";
 
     public static String read(String filename, String mainKey, String valueKey) {
@@ -52,6 +54,7 @@ public class JsonFile {
 
         return "invalid key";
     }
+
     public static String readWithThreeKeys(String filename, String mainKey, String subKey, String valueKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -100,6 +103,7 @@ public class JsonFile {
 
         return "invalid key";
     }
+
     public static String[][] read2DArray(String filename, String mainKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -135,6 +139,7 @@ public class JsonFile {
 
         return null;
     }
+
     public static String readTwoKeys(String filename, String firstKey, String secondKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -170,6 +175,7 @@ public class JsonFile {
 
         return null;
     }
+
     public static Color[] readColorArray(String filename, String mainKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -200,6 +206,7 @@ public class JsonFile {
 
         return null;
     }
+
     private static Color stringToColor(String colorString) {
         if (colorString.startsWith("Color.")) {
             try {
@@ -232,6 +239,7 @@ public class JsonFile {
 
         return null;
     }
+
     public static boolean checkCredentials(String filename, String username, String password) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);
@@ -280,6 +288,7 @@ public class JsonFile {
             e.printStackTrace();
         }
     }
+
     public static void writeln(String filename, String mainKey, String valueKey, String value) {
         try {
             JSONObject jsonObject = readJsonObject(filename);
@@ -305,15 +314,18 @@ public class JsonFile {
         }
     }
 
-    //        private static String getFilePath(String filename) {
-//        String directory = System.getProperty("user.dir") + DEFAULT_DIRECTORY;
-//        return directory + filename;
-//        }
-    private static String getFilePath(String filename) {
+    private static String getFilePath(String filename) { //botched, not deleted for now but it's not needed
         Path currentDir = Paths.get("");
-        String directory = currentDir.toAbsolutePath() + DEFAULT_DIRECTORY;
-        return directory + filename;
+        String directory;
+        String OS = System.getProperty("os.name").toLowerCase();
+        if (OS.contains("windows") && filename.contains("C:\\") || OS.contains("mac") && filename.contains("/Users/")) {
+            directory = currentDir.toAbsolutePath() + filename;
+        } else {
+            directory = DEFAULT_DIRECTORY + filename;
+        }
+        return directory;
     }
+
     private static JSONObject readJsonObject(String filename) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokener = new JSONTokener(reader);

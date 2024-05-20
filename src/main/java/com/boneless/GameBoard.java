@@ -19,6 +19,7 @@ public class GameBoard extends JPanel {
         this.mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
 
         setLayout(new BorderLayout());
+        setBackground(mainColor);
         add(headPanel(), BorderLayout.NORTH);
         add(mainBoard(), BorderLayout.CENTER);
         add(createTeamsPanel(), BorderLayout.SOUTH);
