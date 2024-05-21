@@ -16,33 +16,18 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Rework settings | √
     Create main board | X
         -make title header | X
-        -change program title name to board name | X
-        -get buttons to create the info card | X
+        -get buttons to create the info card | √
         -have buttons read points from json | X
-        -launch JCard | X
         -create teams sub panel | X
     Create question card (JCard) | X
         -layout | X
         -key binds | X
         -data from json | X
         -animations | X
-    Create board factory | X
+    Create board factory | X --not sure if we can do this in time
         -figure out the layout | X
     Implement key binds and have them match settings.json | √
-
-    General Json list
-        -get questions
-        -get answers
-        -get scores
-        -get button color
-        -get background color
-        -get header color
-        -get team panel color
-        -get font color
-        -get title color
-
-    fixme list:
-        -Tile overlap in main menu | ? unfixable
+    Fix Json shit | X
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
@@ -75,7 +60,7 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(new MainMenu());
         } else {
-            add(new GameBoard());
+            add(new GameBoard().init("devBoard.json"));
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){

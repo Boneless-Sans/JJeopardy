@@ -280,7 +280,7 @@ public class JsonFile {
             valuesObject.put(valueKey, value);
 
             try (Writer writer = new FileWriter(getFilePath(filename))) {
-                writer.write(jsonObject.toString(2)); // Indentation for better readability
+                writer.write(jsonObject.toString(2));
             }
 
         } catch (IOException e) {
@@ -288,7 +288,7 @@ public class JsonFile {
         }
     }
 
-    private static String getFilePath(String filename) { //botched, not deleted for now but it's not needed
+    private static String getFilePath(String filename) {
         String directory;
         String OS = System.getProperty("os.name").toLowerCase();
         if (OS.contains("windows") && filename.contains("C:\\") || OS.contains("mac") && filename.contains("/Users/")) {

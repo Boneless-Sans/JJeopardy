@@ -8,8 +8,8 @@ import java.awt.event.KeyListener;
 public class JCard extends JPanel {
     public boolean isActive = false;
     public JCard(){}
-    public void createCard(int score, String question, String answer){
-        isActive = false;
+    public void createCard(int score, int col, int row){ // !! PATH: board > col_# > question_# / answer_# !!
+        isActive = true;
         setLayout(new BorderLayout());
 
         add(header(), BorderLayout.NORTH);
@@ -26,7 +26,7 @@ public class JCard extends JPanel {
         return panel;
     }
     public void advance(){
-        System.out.println("Advance now");
+        System.out.println("Advance");
     }
 
     public JCard(int score, String question, String answer) {

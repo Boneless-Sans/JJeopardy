@@ -48,12 +48,12 @@ public class GameBoard extends JPanel {
             panel.add(createHeaderPanel(i));
         }
 
-        for(int i = 1;i < boardY;i++){
-            for(int j = 0;j < boardX;j++){
-                int score = Integer.parseInt(JsonFile.read(fileName, "", ""));
-                String question = JsonFile.readWithThreeKeys(fileName, "", "", "");
-                String answer = JsonFile.readWithThreeKeys(fileName, "", "", "");
-                panel.add(new BoardButton(0, question, answer));
+        for (int i = 0; i < boardY; i++) {
+            for (int j = 0; j < boardX; j++) {
+                int score = Integer.parseInt(JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i));
+                String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
+                String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
+                panel.add(new BoardButton(score, question, answer));
             }
         }
 
@@ -97,34 +97,6 @@ public class GameBoard extends JPanel {
             this.answer = answer;
             setText(String.valueOf(score));
             addActionListener(listener());
-        }
-        private MouseListener test() {
-            return new MouseListener() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println(SwingUtilities.isRightMouseButton(e));
-                }
-
-                @Override
-                public void mousePressed(MouseEvent e) {
-
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-
-                }
-            };
         }
         private ActionListener listener() {
             return e -> {

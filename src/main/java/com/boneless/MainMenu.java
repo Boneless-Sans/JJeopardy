@@ -102,7 +102,7 @@ public class MainMenu extends ScrollGridPanel {
         button.addActionListener(e -> {
             switch (UUID){ //perhaps not the best way of doing this, but it works for now
                 case 0: { //start
-                    changeCurrentPanel(Main.gameboard.init(), this);
+                    changeCurrentPanel(Main.gameboard.init(fileName), this);
                     break;
                 }
                 case 1: { //board file
