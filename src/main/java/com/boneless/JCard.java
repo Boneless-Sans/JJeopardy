@@ -32,7 +32,7 @@ public class JCard extends JPanel {
                 fadeQuestion();
             }
         });
-        //commit test nigger
+        //commit test niggerrr
     }
 
     private void fadeQuestion() {
