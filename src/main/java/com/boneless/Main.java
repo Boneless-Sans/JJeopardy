@@ -75,7 +75,7 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(new MainMenu());
         } else {
-            add(new GameBoard("devBoard.json"));
+            add(new GameBoard());
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){
@@ -101,8 +101,10 @@ public class Main extends JFrame implements KeyListener {
                 setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
             }
         }
-        if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))){
-            System.exit(0);
+        if(!menu.isActive && !jCard.isActive) {
+            if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))) {
+                System.exit(0);
+            }
         }
         if(e.getKeyChar() == 'r'){
             new Main();

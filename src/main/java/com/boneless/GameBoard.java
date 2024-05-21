@@ -2,35 +2,31 @@ package com.boneless;
 
 import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
-import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import static com.boneless.Main.fileName;
-import static com.boneless.Team.getTeamCount;
 import static com.boneless.util.GeneralUtils.parseColor;
-import static com.boneless.util.GeneralUtils.generateFont;
 
 public class GameBoard extends JPanel {
+    public boolean isActive = false;
     private Color mainColor ;
-    public GameBoard(){
-        init();
-    }
-    public GameBoard(String fileName){
-        Main.fileName = fileName;
-        init();
-    }
-    private void init(){
+    private String fileName;
+    public GameBoard() {}
+    public JPanel init(String fileName){
+        isActive = true;
+        this.fileName = fileName;
         this.mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
-
         setLayout(new BorderLayout());
         setBackground(mainColor);
         add(headPanel(), BorderLayout.NORTH);
         add(mainBoard(), BorderLayout.CENTER);
         add(createTeamsPanel(), BorderLayout.SOUTH);
+
+        return this;
     }
     //board header panel
     private JPanel headPanel(){ //main board header
@@ -102,7 +98,34 @@ public class GameBoard extends JPanel {
             setText(String.valueOf(score));
             addActionListener(listener());
         }
+        private MouseListener test() {
+            return new MouseListener() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    System.out.println(SwingUtilities.isRightMouseButton(e));
+                }
 
+                @Override
+                public void mousePressed(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+
+                }
+            };
+        }
         private ActionListener listener() {
             return e -> {
                 //Change to the question panel
@@ -110,6 +133,7 @@ public class GameBoard extends JPanel {
 //                CardLayout cardLayout = (CardLayout) parentPanel.getLayout();
 //                parentPanel.add(new JCard(score, question, answer), "questionPanel");
 //                cardLayout.show(parentPanel, "questionPanel");
+
 
                 GeneralUtils.changeCurrentPanel(new JCard(score, question, answer), (JPanel) getParent().getParent());
             };

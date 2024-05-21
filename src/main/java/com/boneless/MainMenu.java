@@ -13,9 +13,12 @@ import static com.boneless.Main.fileName;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
+    public boolean isActive = false;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
+
     public MainMenu(){
+        isActive = true;
         //fileName = "devBoard.json";
         setLayout(new BorderLayout());
 
@@ -99,7 +102,7 @@ public class MainMenu extends ScrollGridPanel {
         button.addActionListener(e -> {
             switch (UUID){ //perhaps not the best way of doing this, but it works for now
                 case 0: { //start
-                    changeCurrentPanel(new GameBoard(fileName), this);
+                    changeCurrentPanel(Main.gameboard.init(), this);
                     break;
                 }
                 case 1: { //board file
