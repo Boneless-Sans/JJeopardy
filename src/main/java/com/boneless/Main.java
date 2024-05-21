@@ -50,6 +50,7 @@ public class Main extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
+        setIconImage(new ImageIcon("icon/icon.png").getImage());
         init();
         setVisible(true);
         addKeyListener(this);

@@ -95,14 +95,14 @@ public class GameBoard extends JPanel {
         panel.add(new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index)), gbc);
         return panel;
     }
-    private JScrollPane createTeamsPanel(){
-        JScrollPane parentPanel = new JScrollPane();
+    private JPanel createTeamsPanel(){
+        JPanel parentPanel = new JPanel();
         parentPanel.setPreferredSize(new Dimension(getWidth(), 130));
         parentPanel.setBorder(null);
         parentPanel.setBackground(mainColor);
 
         for(int i = 0;i < 5;i++){
-            parentPanel.add(new Team());
+            //parentPanel.add(new Team());
         }
 
         return parentPanel;
@@ -127,7 +127,7 @@ public class GameBoard extends JPanel {
             addActionListener(listener());
         }
         private ActionListener listener() {
-            return e -> swapPanel(new JCard(score, question, answer));
+            return e -> GeneralUtils.changeCurrentPanel(new JCard(score, question, answer), (JPanel) getParent());
         }
     }
 }

@@ -29,13 +29,27 @@ public class ScrollGridPanel extends JPanel {
         timer.start();
     }
 
-    protected void changeColor(Color color){
+    protected void changeColor(Color color) {
         color1 = color;
-        color2 = new Color(Math.min(255, color.getRed() + 20), Math.min(255, color.getGreen() + 20), Math.min(255, color.getBlue() + 105));
+        color2 = adjustColor(color);
         for (GradientSquare gradientSquare : squareList) {
             gradientSquare.changeColors(color1, color2);
         }
     }
+
+    private Color adjustColor(Color color) {
+        int totalRGB = color.getRed() + color.getGreen() + color.getBlue();
+        int adjustment = totalRGB > 382 ? -100 : 100;
+        int r = clamp(color.getRed() + adjustment);
+        int g = clamp(color.getGreen() + adjustment);
+        int b = clamp(color.getBlue() + adjustment);
+        return new Color(r, g, b);
+    }
+
+    private int clamp(int value) {
+        return Math.max(0, Math.min(255, value));
+    }
+
     private void initializeSquares() {
         for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
             for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {
@@ -83,7 +97,6 @@ public class ScrollGridPanel extends JPanel {
             g2d.dispose();
             return image;
         }
-
         public void move(int speedX, int speedY, int width, int height) {
             x += speedX;
             y += speedY;

@@ -13,80 +13,43 @@ public class JCard extends JPanel {
     private JLabel answerLabel;
 
     public JCard(int score, String question, String answer) {
-        isActive = true;
-        setLayout(new BorderLayout());
-
-        add(header(), BorderLayout.NORTH);
-        add(mainContent(), BorderLayout.CENTER);
-    }
-
-    private JPanel header() {
-        JPanel panel = new JPanel(new FlowLayout());
-        return panel;
-    }
-
-    private JPanel mainContent() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        return panel;
-    }
-
-    public void advance() {
-        System.out.println("Advance");
-    }
-
-    public JCard(int score, String question, String answer, boolean gay) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        GridBagConstraints gbc2 = new GridBagConstraints();
 
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
 
-        gbc2.gridx = 0;
-        gbc2.gridy = 5;
-        gbc2.fill = GridBagConstraints.NONE;
-
         questionLabel = new JLabel("Question: " + question);
         answerLabel = new JLabel("Answer: " + answer);
 
-        add(questionLabel, gbc2);
-        add(answerLabel, gbc);
+        add(questionLabel, gbc);
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                fadeOutQuestion();
+                fadeQuestion();
             }
         });
     }
 
-    private void fadeQuestion(){
+    private void fadeQuestion() {
         Timer q = new Timer(50, null);
-        q.addActionListener(e -> {
-            float opacity = 1.0f;
-            if (questionLabel.isOpaque()) {
-                opacity = 0.0f;
-            }
-        });
-    }
-    private void fadeOutQuestion() {
-        Timer timer = new Timer(50, null);
-        timer.addActionListener(new ActionListener() {
-            private float opacity = 1.0f;
+        q.addActionListener(new ActionListener() {
+           private float opacity = 1.0f;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                opacity -= 0.05f;
-                if (opacity <= 0.0f) {
-                    opacity = 0.0f;
-                    timer.stop();
-                }
-                questionLabel.setForeground(new Color(0, 0, 0, opacity));
-                repaint();
-            }
+              @Override
+                 public void actionPerformed(ActionEvent e) {
+                    opacity -= 0.05f;
+                    if (opacity <= 0.0f) {
+                       opacity = 0.0f;
+                       q.stop();
+                       }
+                       questionLabel.setForeground(new Color(0, 0, 0, opacity));
+                       repaint();
+                       }
         });
-        timer.start();
+        q.start();
     }
 }
