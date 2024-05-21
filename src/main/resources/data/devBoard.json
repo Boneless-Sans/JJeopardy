@@ -7,7 +7,7 @@
     "font": "Arial",
     "font_color": "black",
 
-    "global_color": "0,0,255"
+    "global_color": "0,0,150"
   },
   "board": {
     "categories": {

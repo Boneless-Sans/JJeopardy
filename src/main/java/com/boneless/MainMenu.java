@@ -13,13 +13,12 @@ import static com.boneless.Main.fileName;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
-    public boolean isActive = false;
+    public boolean isActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
 
     public MainMenu(){
         isActive = true;
-        //fileName = "devBoard.json";
         setLayout(new BorderLayout());
 
         //title text, pretty self-explanatory
@@ -34,8 +33,6 @@ public class MainMenu extends ScrollGridPanel {
         JLabel title = new JLabel("Jeopardy!");
         title.setFont(generateFont(50));
         title.setForeground(Color.white);
-
-        //add(titlePanel, BorderLayout.SOUTH);
 
         //title.add()
         titlePanel.add(title, gbc);
@@ -63,7 +60,12 @@ public class MainMenu extends ScrollGridPanel {
         currentFile = new JLabel(fileName == null ? "No Board Selected" : "Current Board: " + fileName);
         currentFile.setFont(generateFont(15));
         currentFile.setForeground(Color.white);
-        add(currentFile, BorderLayout.SOUTH);
+
+        JPanel filePanel = new JPanel(new FlowLayout());
+        filePanel.setOpaque(false);
+        filePanel.add(currentFile);
+
+        add(filePanel, BorderLayout.SOUTH);
     }
     private JButton createMenuButton(String text, int UUID){
         JButton button = new JButton(text){
