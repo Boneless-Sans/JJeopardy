@@ -14,7 +14,6 @@ public class GeneralUtils {
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue);
     }
-    @SuppressWarnings("CallToPrintStackTrace")
     public static Font generateFont(int fontSize){
         try {
             if(fileName != null && !fileName.isEmpty()) {
@@ -25,7 +24,6 @@ public class GeneralUtils {
                 );
             }
         } catch (NullPointerException e){
-            System.err.println("File is null, using defaults...");
             return new Font(
                     "Arial",
                     Font.PLAIN,

@@ -37,8 +37,6 @@ public class Main extends JFrame implements KeyListener {
     //init all the panels
     public static final MainMenu menu = new MainMenu();
     public static final GameBoard gameboard = new GameBoard();
-    public static final BoardFactory factory = new BoardFactory();
-    public static final Settings settings = new Settings();
     public static final JCard jCard = new JCard();
     public static void main(String[] args) {
         if(args != null && args.length > 0){
@@ -56,11 +54,14 @@ public class Main extends JFrame implements KeyListener {
         setVisible(true);
         addKeyListener(this);
     }
+//    public void setName(String newName){
+//        setTitle(newName);
+//    }
     private void init(){
         if(!isDev) {
-            add(new MainMenu());
+            //add(new MainMenu());
         } else {
-            add(new GameBoard().init("devBoard.json"));
+            //add(new GameBoard().init("devBoard.json"));
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){
