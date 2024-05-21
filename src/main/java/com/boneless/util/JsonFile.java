@@ -300,6 +300,7 @@ public class JsonFile {
     }
 
     private static String getFilePath(String filename) {
+        filename = (filename == null) ? "devBoard.json" : filename;
         String directory;
         String OS = System.getProperty("os.name").toLowerCase();
         if (OS.contains("windows") && filename.contains("C:\\") || OS.contains("mac") && filename.contains("/Users/")) {

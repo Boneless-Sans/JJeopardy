@@ -12,9 +12,7 @@ public class JCard extends JPanel {
     private JLabel questionLabel;
     private JLabel answerLabel;
 
-    public JCard() {}
-
-    public void createCard(int score) { // !! PATH: board > col_# > question_# / answer_# !!
+    public JCard(int score, String question, String answer) {
         isActive = true;
         setLayout(new BorderLayout());
 
@@ -36,7 +34,7 @@ public class JCard extends JPanel {
         System.out.println("Advance");
     }
 
-    public JCard(int score, String question, String answer) {
+    public JCard(int score, String question, String answer, boolean gay) {
         setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -71,7 +69,7 @@ public class JCard extends JPanel {
             if (questionLabel.isOpaque()) {
                 opacity = 0.0f;
             }
-        }
+        });
     }
     private void fadeOutQuestion() {
         Timer timer = new Timer(50, null);

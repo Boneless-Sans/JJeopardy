@@ -167,7 +167,6 @@ public class Settings extends JPanel{
     private void exitSettings(){
         Container parent = getParent();
         parent.remove(this);
-
         parent.add(menu);
 
         parent.revalidate();

@@ -32,8 +32,22 @@ public class GameBoard extends JPanel {
     }
     //board header panel
     private JPanel headPanel(){ //main board header
-        JPanel panel = new JPanel();
-        panel.setBackground(Color.blue);
+        JPanel panel = new JPanel(new GridLayout());
+        panel.setBackground(mainColor);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+
+        JButton button = new JButton("Exit to Menu");
+        button.addActionListener(e -> {
+            //code here
+        });
+        buttonPanel.add(button);
+
+        add(buttonPanel);
+
+        JLabel title = new JLabel(JsonFile.read(fileName, "data", "board_name"));
+
+        add(title);
 
         return panel;
     }
