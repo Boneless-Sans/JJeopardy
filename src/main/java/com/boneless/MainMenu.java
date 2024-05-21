@@ -31,7 +31,7 @@ public class MainMenu extends ScrollGridPanel {
         gbc.fill = 0;
 
         JLabel title = new JLabel("Jeopardy!");
-        title.setFont(generateFont(50));
+        title.setFont(generateFont(175));
         title.setForeground(Color.white);
 
         //title.add()
