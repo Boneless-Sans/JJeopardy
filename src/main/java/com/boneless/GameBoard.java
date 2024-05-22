@@ -146,12 +146,11 @@ public class GameBoard extends JPanel {
             return panel;
         }
         public void activateJCard(){
-            rightPanel = null;
             rightPanel = createRightPanel(reveal, createHeaderButton("continue", 1));
             revalidate();
             repaint();
         }
-        public void inactiveJCard(){
+        public void deactivateJCard(){
             rightPanel = createBlank();
             revalidate();
             repaint();
