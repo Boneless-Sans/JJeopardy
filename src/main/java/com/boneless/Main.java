@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -112,16 +113,30 @@ public class Main extends JFrame implements KeyListener {
                 System.exit(0);
             }
             else if (GAME_BOARD.GameIsActive) { //game board
+                int size = 200;
+
+                BufferedImage bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+
+                Graphics2D g2d = bufferedImage.createGraphics();
+
+                g2d.fillRect(0,0,size,size);
+
+                g2d.setColor(Color.red);
+                g2d.setFont(g2d.getFont().deriveFont(100f));
+                g2d.drawString("?", 50, 150);
+
+                g2d.dispose();
+
                 String[] responses = {
                         "Exit","Continue"
                 };
                 int answer = JOptionPane.showOptionDialog(
                         null,
-                        "Are you sure you want to exit without saving?",
-                        "Unsaved Changes!",
+                        "Change me message",
+                        "change me title",
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.INFORMATION_MESSAGE,
-                        null, responses, 0);
+                        new ImageIcon(bufferedImage), responses, 0);
                 if (answer == 0) {
                     GAME_BOARD.GameIsActive = false;
                     MAIN_MENU.menuIsActive = true;
