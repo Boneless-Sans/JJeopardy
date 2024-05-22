@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import static com.boneless.Main.menu;
+import static com.boneless.Main.MAIN_MENU;
 
 @SuppressWarnings("ExtractMethodRecommender") //shut the fuck up
 public class Settings extends JPanel{
@@ -167,7 +167,7 @@ public class Settings extends JPanel{
     private void exitSettings(){
         Container parent = getParent();
         parent.remove(this);
-        parent.add(menu);
+        parent.add(MAIN_MENU);
 
         parent.revalidate();
         parent.repaint();

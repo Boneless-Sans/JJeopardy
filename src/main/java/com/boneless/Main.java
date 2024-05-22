@@ -1,13 +1,16 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import com.boneless.util.ScrollGridPanel;
-import com.boneless.util.SystemUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
+
+import static com.boneless.util.GeneralUtils.changeCurrentPanel;
 
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
@@ -26,18 +29,18 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -animations | X
     Create board factory | X --not sure if we can do this in time
         -figure out the layout | X
-    Implement key binds and have them match settings.json | √
-    Fix Json shit | X
+    Implement key binds and have them match settings.json | X broken >:(
+    Fix Json shit | √ ? forgot why this is here
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
-    public static String fileName;
+    public static String fileName = "devBoard.json";
     private boolean doFullScreen = false;
-    public static boolean JCardIsActive = false;
 
-    //init all the panels
-    public static final MainMenu menu = new MainMenu();
-    public static final GameBoard gameboard = new GameBoard();
+    //init global panels
+    public static final MainMenu MAIN_MENU = new MainMenu();
+    public static final GameBoard GAME_BOARD = new GameBoard();
+    public static JCard jCard;
     public static void main(String[] args) {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");
@@ -46,11 +49,24 @@ public class Main extends JFrame implements KeyListener {
     }
     public Main(){
         setTitle("Jeopardy!");
-        setSize(1600,900);
+        setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
-        setIconImage(new ImageIcon("icon/icon.png").getImage());
+        String OS = System.getProperty("os.name").toLowerCase();
+        String iconDir = "src/main/resources/icon/icon.png";
+        if (OS.contains("windows")) {
+            setIconImage(new ImageIcon(iconDir).getImage());
+        } else {
+            try {
+                File imageFile = new File(iconDir);
+                Image image = ImageIO.read(imageFile);
+                Taskbar.getTaskbar().setIconImage(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         init();
         setVisible(true);
         addKeyListener(this);
@@ -60,7 +76,7 @@ public class Main extends JFrame implements KeyListener {
     }
     private void init(){
         if(!isDev) {
-            add(new MainMenu());
+            add(MAIN_MENU);
         } else {
             add(new GameBoard().init("devBoard.json"));
         }
@@ -76,11 +92,13 @@ public class Main extends JFrame implements KeyListener {
     }
     @Override
     public void keyTyped(KeyEvent e) {
+        System.out.println("Key typed: " + e.getKeyChar());
+        //fullscreen handler
         if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "fullscreen")))){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             if(doFullScreen){
                 doFullScreen = false;
-                setLocation((screenSize.width / 2) - 1600 / 2, (screenSize.height / 2) - 900 / 2);
+                setLocation((screenSize.width / 2) - 1200 / 2, (screenSize.height / 2) - 720 / 2);
                 setSize(1600,900);
             }else{
                 doFullScreen = true;
@@ -88,12 +106,35 @@ public class Main extends JFrame implements KeyListener {
                 setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
             }
         }
-        if(!menu.isActive && JCardIsActive) {
-            if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))) {
+        //esc handler
+        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))) {
+            if(MAIN_MENU.menuIsActive) { //menu
                 System.exit(0);
             }
+            else if (GAME_BOARD.GameIsActive) { //game board
+                String[] responses = {
+                        "Exit","Continue"
+                };
+                int answer = JOptionPane.showOptionDialog(
+                        null,
+                        "Are you sure you want to exit without saving?",
+                        "Unsaved Changes!",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null, responses, 0);
+                if (answer == 0) {
+                    GAME_BOARD.GameIsActive = false;
+                    MAIN_MENU.menuIsActive = true;
+                    changeCurrentPanel(MAIN_MENU, GAME_BOARD);
+                }
+            }
+            else if(GAME_BOARD.jCardIsActive) { //jCard
+                jCard.exit();
+            }
         }
+        //reset handler
         if(e.getKeyChar() == 'r'){
+            dispose();
             new Main();
         }
     }
