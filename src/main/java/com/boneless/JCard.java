@@ -35,7 +35,14 @@ public class JCard extends JPanel {
         //commit test niggerrr
     }
 
+    private boolean hasFaded = false;
+
     private void fadeQuestion() {
+        if(hasFaded){
+            return;
+        }
+        hasFaded = true;
+
         Timer q = new Timer(50, null);
         q.addActionListener(new ActionListener() {
            private float opacity = 1.0f;
