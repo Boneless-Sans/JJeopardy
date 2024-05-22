@@ -1,5 +1,7 @@
 package com.boneless;
 
+import com.boneless.util.GeneralUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -9,12 +11,12 @@ import java.awt.event.ActionListener;
 
 public class JCard extends JPanel {
     public boolean isActive = false;
-    private JLabel questionLabel;
-    private JLabel answerLabel;
+    private final JLabel questionLabel;
+    private final JLabel answerLabel;
 
-    public JCard(int score, String question, String answer) {
+    public JCard(int score, String question, String answer, Color mainColor, JPanel headerPanel) {
         setLayout(new GridBagLayout());
-
+        //todo (for you bb): set background color with 'mainColor'
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
@@ -22,7 +24,10 @@ public class JCard extends JPanel {
         gbc.fill = GridBagConstraints.NONE;
 
         questionLabel = new JLabel("Question: " + question);
+        questionLabel.setFont(GeneralUtils.generateFont(15));
+
         answerLabel = new JLabel("Answer: " + answer);
+        answerLabel.setFont(GeneralUtils.generateFont(15));
 
         add(questionLabel, gbc);
 
@@ -32,12 +37,11 @@ public class JCard extends JPanel {
                 fadeQuestion();
             }
         });
-        //commit test niggerrr
     }
 
     private boolean hasFaded = false;
 
-    private void fadeQuestion() {
+    public void fadeQuestion() {
         if(hasFaded){
             return;
         }

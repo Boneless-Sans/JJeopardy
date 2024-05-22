@@ -1,13 +1,16 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import com.boneless.util.ScrollGridPanel;
-import com.boneless.util.SystemUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
+
+import com.apple.eawt.*;
 
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
@@ -26,8 +29,8 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -animations | X
     Create board factory | X --not sure if we can do this in time
         -figure out the layout | X
-    Implement key binds and have them match settings.json | √
-    Fix Json shit | X
+    Implement key binds and have them match settings.json | X broken >:(
+    Fix Json shit | √ ? forgot why this is here
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
@@ -35,7 +38,7 @@ public class Main extends JFrame implements KeyListener {
     private boolean doFullScreen = false;
     public static boolean JCardIsActive = false;
 
-    //init all the panels
+    //init global panels
     public static final MainMenu menu = new MainMenu();
     public static final GameBoard gameboard = new GameBoard();
     public static void main(String[] args) {
@@ -50,7 +53,20 @@ public class Main extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
-        setIconImage(new ImageIcon("icon/icon.png").getImage());
+        String OS = System.getProperty("os.name").toLowerCase();
+        String iconDir = "src/main/resources/icon/icon.png";
+        if (OS.contains("windows")) {
+            setIconImage(new ImageIcon(iconDir).getImage());
+        } else {
+            try {
+                File imageFile = new File(iconDir);
+                Image image = ImageIO.read(imageFile);
+                Application.getApplication().setDockIconImage(image);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         init();
         setVisible(true);
         addKeyListener(this);

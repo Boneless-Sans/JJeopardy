@@ -1,5 +1,4 @@
 package com.boneless;
-import java.awt.event.*;
 
 import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
@@ -12,9 +11,9 @@ import static com.boneless.util.GeneralUtils.parseColor;
 
 public class GameBoard extends JPanel {
     public boolean isActive = false;
-    private Color mainColor ;
+    private Color mainColor;
     private String fileName;
-    private final JPanel headerPanel = headPanel();
+    private final JPanel headerPanel = headerPanel();
     private final JPanel boardPanel = mainBoard();
     public GameBoard() {}
     public JPanel init(String fileName){
@@ -31,9 +30,10 @@ public class GameBoard extends JPanel {
         return this;
     }
     //board header panel
-    private JPanel headPanel(){ //main board header
+    private JPanel headerPanel(){ //main board header
         JPanel panel = new JPanel(new GridLayout());
         panel.setBackground(mainColor);
+        panel.setPreferredSize(new Dimension(getWidth(), 100));
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
@@ -61,7 +61,7 @@ public class GameBoard extends JPanel {
         panel.setLayout(new GridLayout(boardY, boardX,1,1));
 
         for(int i = 0;i < boardX;i++){
-            panel.add(createHeaderPanel(i));
+            panel.add(createCatPanel(i));
         }
 
         for (int i = 0; i < boardY -1; i++) {
@@ -71,7 +71,7 @@ public class GameBoard extends JPanel {
                     int score = Integer.parseInt(scoreString);
                     String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                     String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
-                    panel.add(new BoardButton(score, question, answer));
+                    panel.add(new BoardButton(score, question, answer, mainColor, headerPanel));
 
                 } catch (Exception e) {
                     System.err.println("Invalid score for row_" + i + ": " + e.getMessage());
@@ -82,7 +82,7 @@ public class GameBoard extends JPanel {
 
         return panel;
     }
-    private JPanel createHeaderPanel(int index){
+    private JPanel createCatPanel(int index){
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createBevelBorder(0));
         panel.setBackground(mainColor);
@@ -98,36 +98,36 @@ public class GameBoard extends JPanel {
     private JPanel createTeamsPanel(){
         JPanel parentPanel = new JPanel();
         parentPanel.setPreferredSize(new Dimension(getWidth(), 130));
-        parentPanel.setBorder(null);
-        parentPanel.setBackground(mainColor);
+        //parentPanel.setBorder(null);
+        //parentPanel.setBackground(mainColor);
 
         for(int i = 0;i < 5;i++){
-            //parentPanel.add(new Team());
+            parentPanel.add(new Team());
         }
 
         return parentPanel;
     }
-    public void swapPanel(JPanel panelToAdd){
-        remove(headerPanel);
-        remove(boardPanel);
-        add(panelToAdd, BorderLayout.CENTER);
-    }
 
     //Dante
-    public class BoardButton extends JButton {
+    private static class BoardButton extends JButton {
         private final int score;
         private final String question;
         private final String answer;
+        private final Color mainColor;
+        private final JPanel headerPanel;
 
-        public BoardButton(int score, String question, String answer) {
+        public BoardButton(int score, String question, String answer, Color mainColor, JPanel headerPanel) {
             this.score = score;
             this.question = question;
             this.answer = answer;
+            this.mainColor = mainColor;
+            this.headerPanel = headerPanel;
             setText(String.valueOf(score));
+            setBackground(mainColor);
             addActionListener(listener());
         }
         private ActionListener listener() {
-            return e -> GeneralUtils.changeCurrentPanel(new JCard(score, question, answer), (JPanel) getParent());
+            return e -> GeneralUtils.changeCurrentPanel(new JCard(score, question, answer, mainColor, headerPanel), (JPanel) getParent());
         }
     }
 }
