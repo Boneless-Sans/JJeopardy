@@ -13,12 +13,12 @@ import static com.boneless.Main.fileName;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
-    public boolean isActive;
+    public boolean menuIsActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
 
     public MainMenu(){
-        isActive = true;
+        menuIsActive = true;
         setLayout(new BorderLayout());
 
         //title text, pretty self-explanatory
@@ -102,9 +102,12 @@ public class MainMenu extends ScrollGridPanel {
         }
         buttonsList.add(button);
         button.addActionListener(e -> {
+            System.out.println("Menu state: " + menuIsActive);
+            menuIsActive = false;
+            System.out.println("Menu state: " + menuIsActive);
             switch (UUID){
                 case 0: { //start
-                    changeCurrentPanel(Main.gameboard.init(fileName), this);
+                    changeCurrentPanel(Main.GAME_BOARD.init(fileName), this);
                     break;
                 }
                 case 1: { //board file
