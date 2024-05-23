@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
-
 public class JCard extends JPanel {
     public boolean isActive = false;
     private JLabel questionLabel;
@@ -27,24 +26,12 @@ public class JCard extends JPanel {
 
         JCard.mainColor = mainColor;
 
-        JPanel questionLabel = new JPanel(new GridBagLayout());
+        questionLabel = new JLabel("Question: " + question, SwingConstants.CENTER);
         questionLabel.setBackground(Color.cyan);
-        JPanel answerLabel = new JPanel(new GridBagLayout());
+        questionLabel.setForeground(new Color(0, 0, 0, 1.0f));
 
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.NONE;
-
-        int sizeX = getWidth() / 2;
-        int sizeY = getHeight() / 2;
-        answerLabel.setBounds(getWidth() / 2 - sizeX / 2,(getHeight() / 2) - sizeY / 2, sizeX, sizeY);
-        questionLabel.setBounds((getWidth() / 2) - sizeX / 2,(getHeight() / 2) - sizeY / 2, sizeX, sizeY);
-
-        questionLabel.add(new JLabel("Question: "), gbc);
-        questionLabel.setForeground(new Color(0,0,0,1.0f));
-        answerLabel.add(new JLabel("Answer: "), gbc);
+        answerLabel = new JLabel("Answer: " + answer, SwingConstants.CENTER);
+        answerLabel.setBackground(Color.cyan);
         answerLabel.setForeground(new Color(0, 0, 0, 0.0f));
 
         add(questionLabel);
@@ -53,12 +40,27 @@ public class JCard extends JPanel {
         setupListeners();
     }
 
-    public void advance(){
-        //
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        // Center the labels
+        int sizeX = 400;
+        int sizeY = 200;
+        int x = (getWidth() - sizeX) / 2;
+        int y = (getHeight() - sizeY) / 2;
+        int yQuestion = (getHeight() - sizeY) / 2;
+        int yAnswer = yQuestion + sizeY - (sizeY / 2);
+        questionLabel.setBounds(x, y, sizeX, sizeY);
+        answerLabel.setBounds(x, yAnswer, sizeX, sizeY);
     }
 
-    private void setFonts(){
+    public void advance() {
+        // Placeholder for future functionality
+    }
 
+    private void setFonts() {
+        // Placeholder for setting custom fonts if needed
     }
 
     private void setupListeners() {
@@ -131,20 +133,19 @@ public class JCard extends JPanel {
                     j.stop();
                 }
 
-                int size = 200;
-                questionLabel.setBounds(getWidth() / 2 - size, getHeight() / 2  - size, size, size);
-                questionLabel.setForeground(new Color(0,0,0, opacity2));
+                questionLabel.setForeground(new Color(0, 0, 0, opacity2));
                 answerLabel.setForeground(new Color(0, 0, 0, opacity2));
                 repaint();
             }
         });
         j.start();
     }
-    public void exit(){
+
+    public void exit() {
         GameBoard.HeaderPanel.leftText.setText("Exit");
         changeCurrentPanel(GAME_BOARD.boardPanel, this);
         GAME_BOARD.jCardIsActive = false;
         GAME_BOARD.GameIsActive = true;
+        hasFaded = false;
     }
 }
-
