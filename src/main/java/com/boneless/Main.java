@@ -113,7 +113,7 @@ public class Main extends JFrame implements KeyListener {
                 System.exit(0);
             }
             else if (GAME_BOARD.GameIsActive) { //game board
-                int size = 200;
+                int size = 32;
 
                 BufferedImage bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 
@@ -122,8 +122,8 @@ public class Main extends JFrame implements KeyListener {
                 g2d.fillRect(0,0,size,size);
 
                 g2d.setColor(Color.red);
-                g2d.setFont(g2d.getFont().deriveFont(100f));
-                g2d.drawString("?", 50, 150);
+                g2d.setFont(g2d.getFont().deriveFont(5f));
+                g2d.drawString("?", 0,0);
 
                 g2d.dispose();
 
@@ -135,7 +135,7 @@ public class Main extends JFrame implements KeyListener {
                         "Change me message",
                         "change me title",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.INFORMATION_MESSAGE,
+                        JOptionPane.QUESTION_MESSAGE,
                         new ImageIcon(bufferedImage), responses, 0);
                 if (answer == 0) {
                     GAME_BOARD.GameIsActive = false;
