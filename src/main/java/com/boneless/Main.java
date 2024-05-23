@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.boneless.util.GeneralUtils.changeCurrentPanel;
+import static com.boneless.util.GeneralUtils.generateFont;
 
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
@@ -113,35 +114,7 @@ public class Main extends JFrame implements KeyListener {
                 System.exit(0);
             }
             else if (GAME_BOARD.GameIsActive) { //game board
-                int size = 32;
-
-                BufferedImage bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-
-                Graphics2D g2d = bufferedImage.createGraphics();
-
-                g2d.fillRect(0,0,size,size);
-
-                g2d.setColor(Color.red);
-                g2d.setFont(g2d.getFont().deriveFont(5f));
-                g2d.drawString("?", 0,0);
-
-                g2d.dispose();
-
-                String[] responses = {
-                        "Exit","Continue"
-                };
-                int answer = JOptionPane.showOptionDialog(
-                        null,
-                        "Change me message",
-                        "change me title",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        new ImageIcon(bufferedImage), responses, 0);
-                if (answer == 0) {
-                    GAME_BOARD.GameIsActive = false;
-                    MAIN_MENU.menuIsActive = true;
-                    changeCurrentPanel(MAIN_MENU, GAME_BOARD);
-                }
+              GAME_BOARD.exit();
             }
             else if(GAME_BOARD.jCardIsActive) { //jCard
                 jCard.exit();
@@ -149,6 +122,9 @@ public class Main extends JFrame implements KeyListener {
         }
         //reset handler
         if(e.getKeyChar() == 'r'){
+            MAIN_MENU.menuIsActive = true;
+            GAME_BOARD.GameIsActive = false;
+            GAME_BOARD.jCardIsActive = false;
             dispose();
             new Main();
         }

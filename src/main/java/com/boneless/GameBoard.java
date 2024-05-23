@@ -5,6 +5,7 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -86,6 +87,38 @@ public class GameBoard extends JPanel {
         }
 
         return parentPanel;
+    }
+    public void exit(){
+        int size = 32;
+
+        BufferedImage bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = bufferedImage.createGraphics();
+
+        g2d.fillRect(0,0,size,size);
+
+        g2d.setColor(Color.red);
+
+        g2d.setFont(generateFont(50));
+        g2d.drawString("fix me",(32 / 2) - 5,(32 / 2) - 5);
+
+        g2d.dispose();
+
+        String[] responses = {
+                "Exit","Continue"
+        };
+        int answer = JOptionPane.showOptionDialog(
+                null,
+                "Change me message",
+                "change me title",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                new ImageIcon(bufferedImage), responses, 0);
+        if (answer == 0) {
+            GAME_BOARD.GameIsActive = false;
+            MAIN_MENU.menuIsActive = true;
+            changeCurrentPanel(MAIN_MENU, GAME_BOARD);
+        }
     }
     private class HeaderPanel extends JPanel{
         private JPanel rightPanel;
