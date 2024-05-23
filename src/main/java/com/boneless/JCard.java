@@ -145,6 +145,7 @@ public class JCard extends JPanel {
         changeCurrentPanel(GAME_BOARD.boardPanel, this);
         GAME_BOARD.jCardIsActive = false;
         GAME_BOARD.GameIsActive = true;
+        hasFaded = false;
     }
 }
 

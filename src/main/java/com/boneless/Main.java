@@ -99,7 +99,7 @@ public class Main extends JFrame implements KeyListener {
             if(doFullScreen){
                 doFullScreen = false;
                 setLocation((screenSize.width / 2) - 1200 / 2, (screenSize.height / 2) - 720 / 2);
-                setSize(1600,900);
+                setSize(1200,720);
             }else{
                 doFullScreen = true;
                 setLocation(0,0);
