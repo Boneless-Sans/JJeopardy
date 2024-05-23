@@ -5,6 +5,7 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
@@ -128,8 +129,10 @@ public class GameBoard extends JPanel {
     class HeaderPanel extends JPanel{
         public static JLabel leftText;
         public static JPanel rightPanel;
+        private JPanel rightInfoPanel;
+        private JPanel rightInfoParentPanel;
         public static int fontSize = 20;
-        public HeaderPanel(){
+        public HeaderPanel() {
             setBackground(mainColor);
             setLayout(new GridLayout());
 
@@ -173,29 +176,45 @@ public class GameBoard extends JPanel {
         }
 
         private JPanel createRightPanel(JLabel label, JButton button) {
-            JPanel parent = new JPanel(null);
-            parent.setBackground(Color.cyan);
+            rightInfoParentPanel = new JPanel(null);
+            rightInfoParentPanel.setBackground(Color.cyan);
 
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            panel.add(label);
-            panel.add(button);
-            panel.setBackground(Color.red);
+            JPanel rightInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            rightInfoPanel.add(label);
+            rightInfoPanel.add(button);
+            rightInfoPanel.setBackground(Color.red);
 
-            parent.addComponentListener(new ComponentListener() {
+            Dimension parentSize = rightInfoParentPanel.getSize();
+            Dimension panelSize = rightInfoPanel.getPreferredSize();
+            rightInfoPanel.setBounds(parentSize.width - panelSize.width, 0, panelSize.width, panelSize.height);
+
+            rightInfoParentPanel.addComponentListener(new ComponentAdapter() {
                 @Override
                 public void componentResized(ComponentEvent e) {
-                    int width = parent.getWidth();
-                    int height = parent.getHeight();
-                    panel.setBounds(panel.getX(), panel.getY(), width, height);
+                    Dimension parentSize = rightInfoParentPanel.getSize();
+                    Dimension panelSize = rightInfoPanel.getPreferredSize();
+                    rightInfoPanel.setBounds(parentSize.width - panelSize.width, 0, panelSize.width, panelSize.height);
                 }
-                @Override public void componentMoved(ComponentEvent e) {}
-                @Override public void componentShown(ComponentEvent e) {}
-                @Override public void componentHidden(ComponentEvent e) {}
             });
 
-            parent.add(panel);
-            return parent;
+            rightInfoParentPanel.add(rightInfoPanel);
+            return rightInfoParentPanel;
         }
+        public void movePanel(int dir){
+            Thread thread = new Thread(() -> {
+                while (rightInfoPanel.getX() < rightInfoParentPanel.getX() + rightInfoParentPanel.getWidth()){
+                    try{
+                        System.out.println("Moving");
+                        rightInfoPanel.setBounds(rightInfoPanel.getX() + dir, rightInfoPanel.getY(),rightInfoPanel.getWidth(),rightInfoPanel.getHeight());
+                        Thread.sleep(1);
+                    } catch (InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+            thread.start();
+        }
+
 
         public static JButton createHeaderButton(String text, boolean isExit){
             String rawKeyBind = JsonFile.read("settings.json","keyBinds", text);
