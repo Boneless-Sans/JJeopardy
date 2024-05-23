@@ -93,9 +93,7 @@ public class Main extends JFrame implements KeyListener {
         };
     }
     @Override
-    public void keyTyped(KeyEvent e) {
-        System.out.println("Key typed: " + e.getKeyChar());
-        //fullscreen handler
+    public void keyTyped(KeyEvent e) {//fullscreen handler
         if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "fullscreen")))){
             Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
             if(doFullScreen){
@@ -122,12 +120,14 @@ public class Main extends JFrame implements KeyListener {
         }
         //reset handler
         if(e.getKeyChar() == 'r'){
-            MAIN_MENU.menuIsActive = true;
-            GAME_BOARD.GameIsActive = false;
-            GAME_BOARD.jCardIsActive = false;
-            dispose();
-            new Main();
+            reset();
         }
+    }
+    public static void reset(){
+        MAIN_MENU.menuIsActive = true;
+        GAME_BOARD.GameIsActive = false;
+        GAME_BOARD.jCardIsActive = false;
+        new Main();
     }
     @Override public void keyPressed(KeyEvent e) {}
     @Override public void keyReleased(KeyEvent e) {}

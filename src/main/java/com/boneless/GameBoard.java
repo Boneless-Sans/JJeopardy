@@ -5,8 +5,11 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
+import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -29,6 +32,9 @@ public class GameBoard extends JPanel {
         add(headerPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
         add(createTeamsPanel(), BorderLayout.SOUTH);
+
+        revalidate();
+        repaint();
 
         return this;
     }
@@ -59,7 +65,6 @@ public class GameBoard extends JPanel {
                 }
             }
         }
-
 
         return panel;
     }
@@ -120,30 +125,24 @@ public class GameBoard extends JPanel {
             changeCurrentPanel(MAIN_MENU, GAME_BOARD);
         }
     }
-    private class HeaderPanel extends JPanel{
-        private JPanel rightPanel;
-
-        private JButton exitButton;
-        private JLabel exitText;
-
-        private final JLabel reveal;
-
-        private final int fontSize = 20;
-
+    class HeaderPanel extends JPanel{
+        public static JLabel leftText;
+        public static JPanel rightPanel;
+        public static int fontSize = 20;
         public HeaderPanel(){
             setBackground(mainColor);
             setLayout(new GridLayout());
 
-            exitText = new JLabel("Exit");
-            exitText.setForeground(fontColor);
-            exitText.setFont(generateFont(fontSize));
+            leftText = new JLabel("Exit");
+            leftText.setForeground(fontColor);
+            leftText.setFont(generateFont(fontSize));
 
-            exitButton = createHeaderButton("exit", 0);
+            JButton exitButton = createHeaderButton("exit", true);
 
             JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             leftPanel.setOpaque(false);
             leftPanel.add(exitButton);
-            leftPanel.add(exitText);
+            leftPanel.add(leftText);
 
             JLabel title = new JLabel(JsonFile.read(fileName, "data", "board_name"));
             title.setForeground(fontColor);
@@ -157,65 +156,65 @@ public class GameBoard extends JPanel {
             gbc.gridy = 0;
             gbc.fill = 0;
 
-            titlePanel.add(title, gbc);
-
-            reveal = new JLabel("Reveal Correct Answer");
+            JLabel reveal = new JLabel("Reveal Correct Answer");
             reveal.setForeground(fontColor);
             reveal.setFont(generateFont(fontSize));
 
-            rightPanel = createBlank();
-            rightPanel.setBackground(mainColor);
-            rightPanel.setOpaque(false);
+            titlePanel.add(title, gbc);
+
+            rightPanel = createRightPanel(reveal, createHeaderButton("continue", false));
+            //rightPanel.setBackground(mainColor);
+            //rightPanel.setOpaque(false);
 
             add(leftPanel, BorderLayout.WEST); //left panel
             add(titlePanel, BorderLayout.CENTER);
             add(rightPanel, BorderLayout.EAST);
 
         }
-        private JPanel createBlank(){
-            JPanel panel = new JPanel();
-            panel.setBackground(mainColor);
-            panel.setOpaque(false);
-            return panel;
+
+        private JPanel createRightPanel(JLabel label, JButton button) {
+            JPanel parent = new JPanel(null);
+            parent.setBackground(Color.cyan);
+
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            panel.add(label);
+            panel.add(button);
+            panel.setBackground(Color.red);
+
+            parent.addComponentListener(new ComponentListener() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    int width = parent.getWidth();
+                    int height = parent.getHeight();
+                    panel.setBounds(panel.getX(), panel.getY(), width, height);
+                }
+                @Override public void componentMoved(ComponentEvent e) {}
+                @Override public void componentShown(ComponentEvent e) {}
+                @Override public void componentHidden(ComponentEvent e) {}
+            });
+
+            parent.add(panel);
+            return parent;
         }
-        public void activateJCard(){
-            rightPanel = createRightPanel(reveal, createHeaderButton("continue", 1));
-            revalidate();
-            repaint();
-        }
-        public void deactivateJCard(){
-            rightPanel = createBlank();
-            revalidate();
-            repaint();
-        }
-        private JButton createHeaderButton(String text, int UUID){
+
+        public static JButton createHeaderButton(String text, boolean isExit){
             String rawKeyBind = JsonFile.read("settings.json","keyBinds", text);
             String keyBind = rawKeyBind.substring(0,1).toUpperCase() + rawKeyBind.substring(1);
             JButton button = new JButton(keyBind);
             button.setFocusable(false);
             button.setFont(generateFont(20));
             button.addActionListener(e -> {
-                switch (UUID){
-                    case 0: { //board exit
-                        //
-                    }
-                    case 1: { //card exit
-                        //
-                    }
-                    case 2: { //card continue
-                        //
-                    }
+                if(isExit) {
+                    if (GAME_BOARD.GameIsActive)
+                        GAME_BOARD.exit();
+                    else
+                        jCard.exit();
+                } else {
+                    jCard.advance();
                 }
             });
 
             return button;
-        }
-        private JPanel createRightPanel(JLabel label, JButton button){
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            panel.setOpaque(false);
-            panel.add(button);
-            panel.add(label);
-            return panel;
         }
     }
     //Dante
@@ -237,10 +236,9 @@ public class GameBoard extends JPanel {
         }
         private ActionListener listener() {
             return e -> {
-                headerPanel.activateJCard();
+                HeaderPanel.leftText.setText("Back");
 
                 JPanel parentPanel = (JPanel) getParent();
-                System.out.println(parentPanel);
                 jCard = new JCard(score, question, answer, mainColor);
                 jCardIsActive = true;
                 GameIsActive = false;

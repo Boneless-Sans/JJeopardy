@@ -9,6 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import static com.boneless.Main.*;
+import static com.boneless.util.GeneralUtils.*;
+
 
 public class JCard extends JPanel {
     public boolean isActive = false;
@@ -17,10 +20,12 @@ public class JCard extends JPanel {
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
 
-    public JCard(int score, String question, String answer) {
+    public static Color mainColor;
+
+    public JCard(int score, String question, String answer, Color mainColor) {
         setLayout(null);
 
-
+        JCard.mainColor = mainColor;
 
         JPanel questionLabel = new JPanel(new GridBagLayout());
         questionLabel.setBackground(Color.cyan);
@@ -46,6 +51,10 @@ public class JCard extends JPanel {
         add(answerLabel);
 
         setupListeners();
+    }
+
+    public void advance(){
+        //
     }
 
     private void setFonts(){
@@ -130,6 +139,12 @@ public class JCard extends JPanel {
             }
         });
         j.start();
+    }
+    public void exit(){
+        GameBoard.HeaderPanel.leftText.setText("Exit");
+        changeCurrentPanel(GAME_BOARD.boardPanel, this);
+        GAME_BOARD.jCardIsActive = false;
+        GAME_BOARD.GameIsActive = true;
     }
 }
 
