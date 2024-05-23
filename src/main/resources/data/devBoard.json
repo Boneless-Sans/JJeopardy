@@ -5,9 +5,9 @@
     "rows": 5,
 
     "font": "Arial",
-    "font_color": "black",
+    "font_color": "255,255,255",
 
-    "global_color": "0,0,150"
+    "global_color": "30,30,150"
   },
   "board": {
     "categories": {
