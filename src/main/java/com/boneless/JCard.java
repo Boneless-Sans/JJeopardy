@@ -1,5 +1,7 @@
 package com.boneless;
 
+import com.boneless.util.JsonFile;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -27,24 +29,25 @@ public class JCard extends JPanel {
         JCard.mainColor = mainColor;
 
         questionLabel = new JLabel("Question: " + question, SwingConstants.CENTER);
-        questionLabel.setBackground(Color.cyan);
+        //questionLabel.setBackground(Color.cyan);
         questionLabel.setForeground(new Color(0, 0, 0, 1.0f));
 
         answerLabel = new JLabel("Answer: " + answer, SwingConstants.CENTER);
-        answerLabel.setBackground(Color.cyan);
+        //answerLabel.setBackground(Color.cyan);
         answerLabel.setForeground(new Color(0, 0, 0, 0.0f));
 
         add(questionLabel);
         add(answerLabel);
 
-        setupListeners();
+        setupMouseListeners();
+        setFonts();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Center the labels
+        // Center labels
         int sizeX = 400;
         int sizeY = 200;
         int x = (getWidth() - sizeX) / 2;
@@ -56,15 +59,16 @@ public class JCard extends JPanel {
     }
 
     public void advance() {
-        // Placeholder for future functionality
+        // Placeholder
+        fadeQuestion();
     }
 
     private void setFonts() {
-        // Placeholder for setting custom fonts if needed
+        questionLabel.setFont(Font.getFont(JsonFile.read("devBoard.json", "data", "font")));
+        answerLabel.setFont(Font.getFont(JsonFile.read("devBoard.json", "data", "font")));
     }
 
-    private void setupListeners() {
-        // Mouse listener to trigger fading on mouse click
+    private void setupMouseListeners() {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -74,17 +78,7 @@ public class JCard extends JPanel {
             }
         });
 
-        // Key listener to trigger fading on key press
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (!hasFaded) {
-                    fadeQuestion();
-                }
-            }
-        });
 
-        // Ensure the panel is focusable to receive key events
         setFocusable(true);
         requestFocusInWindow();
     }
@@ -95,24 +89,24 @@ public class JCard extends JPanel {
         }
         hasFaded = true;
 
-        Timer q = new Timer(50, null);
-        q.addActionListener(new ActionListener() {
-            private float opacity = 1.0f;
+         Timer q = new Timer(50, null);
+         q.addActionListener(new ActionListener() {
+             private float opacity = 1.0f;
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                opacity -= 0.05f;
-                if (opacity <= 0.0f) {
-                    opacity = 0.0f;
-                    q.stop();
-                    fadeInAnswer();
-                }
-                questionLabel.setForeground(new Color(0, 0, 0, opacity));
-                repaint();
-            }
-        });
-        q.start();
-    }
+             @Override
+             public void actionPerformed(ActionEvent e) {
+                 opacity -= 0.05f;
+                 if (opacity <= 0.0f) {
+                     opacity = 0.0f;
+                     q.stop();
+                     fadeInAnswer();
+                 }
+                 questionLabel.setForeground(new Color(0, 0, 0, opacity));
+                 repaint();
+             }
+         });
+         q.start();
+     }
 
     private void fadeInAnswer() {
 
