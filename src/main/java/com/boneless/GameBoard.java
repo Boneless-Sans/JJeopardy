@@ -7,39 +7,34 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class GameBoard extends JPanel {
-    public boolean GameIsActive = false;
+    public boolean GameIsActive;
     public boolean jCardIsActive = false;
-
+    private boolean boardHasInitialized = false;
     private final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));;
     public static final Color fontColor = parseColor(JsonFile.read(fileName, "data","font_color"));
-    private final HeaderPanel headerPanel = new HeaderPanel();
     public final JPanel boardPanel = mainBoard();
     private final ArrayList<BoardButton> buttons = new ArrayList<>();
-    public GameBoard() {}
-    public JPanel init(String fileName){
+    public GameBoard() {
         GameIsActive = true;
         MAIN_MENU.menuIsActive = false;
 
         setLayout(new BorderLayout());
         setBackground(mainColor);
         setFocusable(true);
+        HeaderPanel headerPanel = new HeaderPanel();
         add(headerPanel, BorderLayout.NORTH);
         add(boardPanel, BorderLayout.CENTER);
         add(createTeamsPanel(), BorderLayout.SOUTH);
 
         revalidate();
         repaint();
-
-        return this;
     }
     //panel to contain the main board grid
     private JPanel mainBoard(){ //the board
@@ -54,18 +49,29 @@ public class GameBoard extends JPanel {
             panel.add(createCatPanel(i));
         }
 
-        for (int i = 0; i < boardY -1; i++) {
-            for (int j = 0; j < boardX; j++) {
-                try {
-                    String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
-                    int score = Integer.parseInt(scoreString);
-                    String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
-                    String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
-                    panel.add(new BoardButton(score, question, answer, mainColor));
+        if(!boardHasInitialized) {
+            for (int i = 0; i < boardY - 1; i++) {
+                for (int j = 0; j < boardX; j++) {
+                    try {
+                        String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
+                        int score = Integer.parseInt(scoreString);
+                        String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
+                        String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
+                        BoardButton button = new BoardButton(score, question, answer, mainColor);
+                        panel.add(button);
+                        assert buttons != null;
+                        buttons.add(button);
 
-                } catch (Exception e) {
-                    System.err.println("Invalid score for row_" + i + ": " + e.getMessage());
+                    } catch (Exception e) {
+                        System.err.println("Invalid score for row_" + i + ": " + e.getMessage());
+                    }
                 }
+            }
+            boardHasInitialized = true;
+        } else {
+            assert buttons != null;
+            for(BoardButton button : buttons){
+                panel.add(button);
             }
         }
 

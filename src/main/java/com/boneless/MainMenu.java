@@ -107,7 +107,7 @@ public class MainMenu extends ScrollGridPanel {
             System.out.println("Menu state: " + menuIsActive);
             switch (UUID){
                 case 0: { //start
-                    changeCurrentPanel(Main.GAME_BOARD.init(fileName), this);
+                    changeCurrentPanel(Main.GAME_BOARD, this);
                     break;
                 }
                 case 1: { //board file
