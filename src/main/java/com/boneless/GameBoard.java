@@ -9,6 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
@@ -19,9 +20,10 @@ public class GameBoard extends JPanel {
     public boolean jCardIsActive = false;
 
     private final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));;
-    private final Color fontColor = parseColor(JsonFile.read(fileName, "data","font_color"));
+    public static final Color fontColor = parseColor(JsonFile.read(fileName, "data","font_color"));
     private final HeaderPanel headerPanel = new HeaderPanel();
     public final JPanel boardPanel = mainBoard();
+    private final ArrayList<BoardButton> buttons = new ArrayList<>();
     public GameBoard() {}
     public JPanel init(String fileName){
         GameIsActive = true;
