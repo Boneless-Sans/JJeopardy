@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
@@ -28,11 +29,11 @@ public class JCard extends JPanel {
 
         JCard.mainColor = mainColor;
 
-        questionLabel = new JLabel("Question: " + question, SwingConstants.CENTER);
+        questionLabel = new JLabel("Question: " + question, JLabel.CENTER);
         //questionLabel.setBackground(Color.cyan);
         questionLabel.setForeground(new Color(0, 0, 0, 1.0f));
 
-        answerLabel = new JLabel("Answer: " + answer, SwingConstants.CENTER);
+        answerLabel = new JLabel("Answer: " + answer, JLabel.CENTER);
         //answerLabel.setBackground(Color.cyan);
         answerLabel.setForeground(new Color(0, 0, 0, 0.0f));
 
@@ -40,7 +41,7 @@ public class JCard extends JPanel {
         add(answerLabel);
 
         setupMouseListeners();
-        setFonts();
+        setJcardFonts();
     }
 
     @Override
@@ -63,9 +64,9 @@ public class JCard extends JPanel {
         fadeQuestion();
     }
 
-    private void setFonts() {
-        questionLabel.setFont(Font.getFont(JsonFile.read("devBoard.json", "data", "font")));
-        answerLabel.setFont(Font.getFont(JsonFile.read("devBoard.json", "data", "font")));
+    private void setJcardFonts() {
+        questionLabel.setFont(GeneralUtils.generateFont(15));
+        answerLabel.setFont(GeneralUtils.generateFont(15));
     }
 
     private void setupMouseListeners() {
