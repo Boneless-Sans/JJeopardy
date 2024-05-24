@@ -1,7 +1,6 @@
 package com.boneless;
 
 import com.boneless.util.GeneralUtils;
-import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -29,19 +26,23 @@ public class JCard extends JPanel {
 
         JCard.mainColor = mainColor;
 
+        int r = mainColor.getRed();
+        int g = mainColor.getGreen();
+        int b = mainColor.getBlue();
+
         questionLabel = new JLabel("Question: " + question, JLabel.CENTER);
-        //questionLabel.setBackground(Color.cyan);
-        questionLabel.setForeground(new Color(0, 0, 0, 1.0f));
+        questionLabel.setForeground(new Color(255, 255, 255, 255));
+        questionLabel.setOpaque(false);
 
         answerLabel = new JLabel("Answer: " + answer, JLabel.CENTER);
-        //answerLabel.setBackground(Color.cyan);
-        answerLabel.setForeground(new Color(0, 0, 0, 0.0f));
+        answerLabel.setForeground(new Color(r, g, b, 0));
+        answerLabel.setOpaque(false);
 
         add(questionLabel);
         add(answerLabel);
 
         setupMouseListeners();
-        setJcardFonts();
+        setColors();
     }
 
     @Override
@@ -54,19 +55,19 @@ public class JCard extends JPanel {
         int x = (getWidth() - sizeX) / 2;
         int y = (getHeight() - sizeY) / 2;
         int yQuestion = (getHeight() - sizeY) / 2;
-        int yAnswer = yQuestion + sizeY - (sizeY / 2);
-        questionLabel.setBounds(x, y, sizeX, sizeY);
+        int yAnswer = yQuestion + sizeY;
+        questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
         answerLabel.setBounds(x, yAnswer, sizeX, sizeY);
     }
 
     public void advance() {
-        // Placeholder
         fadeQuestion();
     }
 
-    private void setJcardFonts() {
+    private void setColors() {
         questionLabel.setFont(GeneralUtils.generateFont(15));
         answerLabel.setFont(GeneralUtils.generateFont(15));
+        setBackground(mainColor);
     }
 
     private void setupMouseListeners() {
@@ -79,37 +80,43 @@ public class JCard extends JPanel {
             }
         });
 
-
         setFocusable(true);
         requestFocusInWindow();
     }
 
     private void fadeQuestion() {
+        int r = mainColor.getRed();
+        int g = mainColor.getGreen();
+        int b = mainColor.getBlue();
+
         if (hasFaded) {
             return;
         }
         hasFaded = true;
 
-         Timer q = new Timer(50, null);
-         q.addActionListener(new ActionListener() {
-             private float opacity = 1.0f;
+        Timer q = new Timer(50, null);
+        q.addActionListener(new ActionListener() {
+            private float opacity = 1.0f;
 
-             @Override
-             public void actionPerformed(ActionEvent e) {
-                 opacity -= 0.05f;
-                 if (opacity <= 0.0f) {
-                     opacity = 0.0f;
-                     q.stop();
-                     fadeInAnswer();
-                 }
-                 questionLabel.setForeground(new Color(0, 0, 0, opacity));
-                 repaint();
-             }
-         });
-         q.start();
-     }
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                opacity -= 0.05f;
+                if (opacity <= 0.0f) {
+                    opacity = 0.0f;
+                    q.stop();
+                    fadeInAnswer();
+                }
+                questionLabel.setForeground(new Color(0, 0, 0, (int)(opacity * 255)));
+                repaint();
+            }
+        });
+        q.start();
+    }
 
     private void fadeInAnswer() {
+        int r = mainColor.getRed();
+        int g = mainColor.getGreen();
+        int b = mainColor.getBlue();
 
         if (!hasFadedIn) {
             return;
@@ -127,9 +134,8 @@ public class JCard extends JPanel {
                     opacity2 = 1.0f;
                     j.stop();
                 }
-
-                questionLabel.setForeground(new Color(0, 0, 0, opacity2));
-                answerLabel.setForeground(new Color(0, 0, 0, opacity2));
+                questionLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
+                answerLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
                 repaint();
             }
         });
