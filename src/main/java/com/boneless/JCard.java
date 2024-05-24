@@ -1,6 +1,7 @@
 package com.boneless;
 
 import com.boneless.util.GeneralUtils;
+import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,16 +27,13 @@ public class JCard extends JPanel {
 
         JCard.mainColor = mainColor;
 
-        int r = mainColor.getRed();
-        int g = mainColor.getGreen();
-        int b = mainColor.getBlue();
 
         questionLabel = new JLabel("Question: " + question, JLabel.CENTER);
         questionLabel.setForeground(new Color(255, 255, 255, 255));
         questionLabel.setOpaque(false);
 
         answerLabel = new JLabel("Answer: " + answer, JLabel.CENTER);
-        answerLabel.setForeground(new Color(r, g, b, 0));
+        answerLabel.setForeground(new Color(255, 255, 255, 0));
         answerLabel.setOpaque(false);
 
         add(questionLabel);
@@ -104,7 +102,7 @@ public class JCard extends JPanel {
                 if (opacity <= 0.0f) {
                     opacity = 0.0f;
                     q.stop();
-                    fadeInAnswer();
+                    fadeInAnswerAndQuestion();
                 }
                 questionLabel.setForeground(new Color(0, 0, 0, (int)(opacity * 255)));
                 repaint();
@@ -113,7 +111,7 @@ public class JCard extends JPanel {
         q.start();
     }
 
-    private void fadeInAnswer() {
+    private void fadeInAnswerAndQuestion() {
         int r = mainColor.getRed();
         int g = mainColor.getGreen();
         int b = mainColor.getBlue();
