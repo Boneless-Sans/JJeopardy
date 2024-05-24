@@ -321,4 +321,32 @@ public class JsonFile {
         }
         return null;
     }
+
+    public static int getIntValueFromJson(String filePath, String key) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            return jsonObject.getInt(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
+    public static int getIntValueFromNestedJson(String filePath, String mainKey, String subKey) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            JSONObject mainObject = jsonObject.getJSONObject(mainKey);
+            return mainObject.getInt(subKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
 }
+
