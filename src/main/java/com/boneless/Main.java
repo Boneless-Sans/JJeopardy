@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 
 import javax.imageio.ImageIO;
@@ -64,7 +65,7 @@ public class Main extends JFrame implements KeyListener {
         String OS = System.getProperty("os.name").toLowerCase();
         String iconDir = "src/main/resources/icon/icon.png";
         if (OS.contains("windows")) {
-            setIconImage(new ImageIcon(iconDir).getImage());
+            setIconImage(new ImageIcon(createIcon(Color.red, Color.green,"Test", GeneralUtils.generateFont(50))).getImage());
         } else {
             try {
                 File imageFile = new File(iconDir);
@@ -143,6 +144,57 @@ public class Main extends JFrame implements KeyListener {
         GAME_BOARD.GameIsActive = false;
         GAME_BOARD.jCardIsActive = false;
         new Main();
+    }
+    public static BufferedImage createIcon(Color colorGradient1, Color colorGradient2, String text, Font font) {
+        // Define text size based on font
+        int textSize = 24; // Default text size, you can adjust this if needed
+
+        // Get the preferred size for the text
+        BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D tempGraphics = tempImage.createGraphics();
+        tempGraphics.setFont(font);
+        FontMetrics fm = tempGraphics.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int textHeight = fm.getHeight();
+        textSize = Math.min((int) (0.8 * textWidth), (int) (0.5 * textHeight)); // Adjust text size if needed
+        tempGraphics.dispose();
+
+        // Define image width and height based on text size
+        int width = textWidth + 40; // Adjusted to fit the text with some padding
+        int height = textHeight + 20; // Adjusted to fit the text with some padding
+
+        // Create a buffered image
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+
+        // Draw gradient background
+        GradientPaint gradient = new GradientPaint(0, 0, colorGradient1, width, height, colorGradient2);
+        g2d.setPaint(gradient);
+        g2d.fill(new RoundRectangle2D.Double(0, 0, width, height, 20, 20));
+
+        // Draw text
+        g2d.setColor(Color.BLACK); // You can change text color here
+        g2d.setFont(font.deriveFont((float) textSize));
+        fm = g2d.getFontMetrics();
+        textWidth = fm.stringWidth(text);
+        textHeight = fm.getHeight();
+        int x = (width - textWidth) / 2;
+        int y = (height - textHeight) / 2 + fm.getAscent();
+        g2d.drawString(text, x, y);
+
+        // Cartoon-like text border
+        g2d.setColor(Color.BLACK); // You can change the border color here
+        for (int i = -2; i <= 2; i++) {
+            for (int j = -2; j <= 2; j++) {
+                if (i != 0 || j != 0) {
+                    g2d.drawString(text, x + i, y + j);
+                }
+            }
+        }
+
+        g2d.dispose();
+
+        return image;
     }
     @Override public void keyPressed(KeyEvent e) {}
     @Override public void keyReleased(KeyEvent e) {}

@@ -67,6 +67,15 @@ public class ScrollGridPanel extends JPanel {
             square.draw(g2d);
         }
     }
+    public static BufferedImage createGradientImage(int size, Color color1, Color color2) {
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+        GradientPaint gradient = new GradientPaint(0, 0, color1, size, size, color2);
+        g2d.setPaint(gradient);
+        g2d.fillRect(0, 0, size, size);
+        g2d.dispose();
+        return image;
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -87,15 +96,6 @@ public class ScrollGridPanel extends JPanel {
         }
         public void changeColors(Color color1, Color color2){
             image = createGradientImage(size, color1, color2);
-        }
-        private BufferedImage createGradientImage(int size, Color color1, Color color2) {
-            BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = image.createGraphics();
-            GradientPaint gradient = new GradientPaint(0, 0, color1, size, size, color2);
-            g2d.setPaint(gradient);
-            g2d.fillRect(0, 0, size, size);
-            g2d.dispose();
-            return image;
         }
         public void move(int speedX, int speedY, int width, int height) {
             x += speedX;

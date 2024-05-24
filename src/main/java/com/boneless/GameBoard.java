@@ -137,6 +137,7 @@ public class GameBoard extends JPanel {
     class HeaderPanel extends JPanel{
         public static JLabel leftText;
         public static JPanel rightPanel;
+        public static JLabel rightText;
         private JPanel rightInfoPanel;
         private JPanel rightInfoParentPanel;
         public static int fontSize = 20;
@@ -167,13 +168,13 @@ public class GameBoard extends JPanel {
             gbc.gridy = 0;
             gbc.fill = 0;
 
-            JLabel reveal = new JLabel("Reveal Correct Answer");
-            reveal.setForeground(fontColor);
-            reveal.setFont(generateFont(fontSize));
+            rightText = new JLabel("Reveal Correct Answer");
+            rightText.setForeground(fontColor);
+            rightText.setFont(generateFont(fontSize));
 
             titlePanel.add(title, gbc);
 
-            rightPanel = createRightPanel(reveal, createHeaderButton("continue", false));
+            rightPanel = createRightPanel(rightText, createHeaderButton("continue", false));
             //rightPanel.setBackground(mainColor);
             //rightPanel.setOpaque(false);
 
@@ -185,12 +186,13 @@ public class GameBoard extends JPanel {
 
         private JPanel createRightPanel(JLabel label, JButton button) {
             rightInfoParentPanel = new JPanel(null);
-            rightInfoParentPanel.setBackground(Color.cyan);
+            rightInfoParentPanel.setBackground(mainColor);
 
             JPanel rightInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
             rightInfoPanel.add(label);
             rightInfoPanel.add(button);
-            rightInfoPanel.setBackground(Color.red);
+            //rightInfoPanel.setBackground(Color.red);
+            rightInfoPanel.setOpaque(false);
 
             Dimension parentSize = rightInfoParentPanel.getSize();
             Dimension panelSize = rightInfoPanel.getPreferredSize();
@@ -201,20 +203,22 @@ public class GameBoard extends JPanel {
                 public void componentResized(ComponentEvent e) {
                     Dimension parentSize = rightInfoParentPanel.getSize();
                     Dimension panelSize = rightInfoPanel.getPreferredSize();
-                    rightInfoPanel.setBounds(parentSize.width - panelSize.width, 0, panelSize.width, panelSize.height);
+                    rightInfoPanel.setBounds((int) parentSize.getWidth(), 0, panelSize.width, panelSize.height);
                 }
             });
 
             rightInfoParentPanel.add(rightInfoPanel);
             return rightInfoParentPanel;
         }
-        public void movePanel(int dir){
+        public void movePanel(boolean isOpen){
+            int tickSpeed = 1;
+            int speed = 1;
             Thread thread = new Thread(() -> {
-                while (rightInfoPanel.getX() < rightInfoParentPanel.getX() + rightInfoParentPanel.getWidth()){
+                while (isOpen ? (rightInfoPanel.getX() == 0) : (rightInfoPanel.getX() < rightInfoParentPanel.getX() + rightInfoParentPanel.getWidth())){
                     try{
                         System.out.println("Moving");
-                        rightInfoPanel.setBounds(rightInfoPanel.getX() + dir, rightInfoPanel.getY(),rightInfoPanel.getWidth(),rightInfoPanel.getHeight());
-                        Thread.sleep(1);
+                        rightInfoPanel.setBounds(rightInfoPanel.getX() + (isOpen ? -tickSpeed : tickSpeed), rightInfoPanel.getY(),rightInfoPanel.getWidth(),rightInfoPanel.getHeight());
+                        Thread.sleep(tickSpeed);
                     } catch (InterruptedException e){
                         e.printStackTrace();
                     }
