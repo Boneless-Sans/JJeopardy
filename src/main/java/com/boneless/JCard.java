@@ -82,30 +82,62 @@ public class JCard extends JPanel {
         requestFocusInWindow();
     }
 
+//    private void fadeQuestion() {
+//        if (hasFaded) {
+//            return;
+//        }
+//        hasFaded = true;
+//
+//        Timer q = new Timer(50, null);
+//        q.addActionListener(new ActionListener() {
+//            private float opacity = 1.0f;
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                opacity -= 0.05f;
+//                if (opacity <= 0.0f) {
+//                    opacity = 0.0f;
+//                    q.stop();
+//                    fadeInAnswerAndQuestion();
+//                }
+//                questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity * 255)));
+//                repaint();
+//            }
+//        });
+//        q.start();
+//    }
+
     private void fadeQuestion() {
         if (hasFaded) {
             return;
         }
         hasFaded = true;
 
+        int sizeX = 400;
+        int sizeY = 200;
+        int x = (getWidth() - sizeX) / 2;
+        int yQuestion = (getHeight() - sizeY) / 2;
+        int yAnswer = yQuestion + sizeY;
+
         Timer q = new Timer(50, null);
         q.addActionListener(new ActionListener() {
-            private float opacity = 1.0f;
+            private int currentY = yQuestion;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                opacity -= 0.05f;
-                if (opacity <= 0.0f) {
-                    opacity = 0.0f;
+                currentY -= 5; // Adjust this value to control the speed of movement
+                if (currentY <= 0) {
+                    currentY = 0;
                     q.stop();
                     fadeInAnswerAndQuestion();
                 }
-                questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity * 255)));
+                questionLabel.setBounds(x, currentY, sizeX, sizeY);
                 repaint();
             }
         });
         q.start();
     }
+
 
     private void fadeInAnswerAndQuestion() {
         if (!hasFadedIn) {
