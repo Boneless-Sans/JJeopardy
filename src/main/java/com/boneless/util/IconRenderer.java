@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
-public class IconRenderer extends JComponent {
+public class IconRenderer extends JPanel {
 
     private final Color colorGradient1;
     private final Color colorGradient2;
@@ -38,18 +38,15 @@ public class IconRenderer extends JComponent {
         g2d.setPaint(gradient);
         g2d.fill(new RoundRectangle2D.Double(0, 0, width, height, 20, 20));
 
-        // Draw text
-        g2d.setColor(textColor);
+        // Draw cartoon-like text border (shadow)
+        g2d.setColor(textBorderColor);
         g2d.setFont(font);
         FontMetrics fm = g2d.getFontMetrics();
         int textWidth = fm.stringWidth(text);
         int textHeight = fm.getHeight();
         int x = (width - textWidth) / 2;
         int y = (height - textHeight) / 2 + fm.getAscent();
-        g2d.drawString(text, x, y);
 
-        // Cartoon-like text border
-        g2d.setColor(textBorderColor);
         for (int i = -2; i <= 2; i++) {
             for (int j = -2; j <= 2; j++) {
                 if (i != 0 || j != 0) {
@@ -57,21 +54,9 @@ public class IconRenderer extends JComponent {
                 }
             }
         }
-    }
 
-    public static void main(String[] args) {
-        // Example usage
-        JFrame frame = new JFrame();
-        frame.setLayout(new BorderLayout());
-
-        // Create IconRenderer instance
-        IconRenderer iconRenderer = new IconRenderer(Color.WHITE, Color.BLUE,Color.white,Color.black,"Jeopardy!",GeneralUtils.generateFont(50));
-
-        // Add IconRenderer to the frame
-        frame.add(iconRenderer, BorderLayout.CENTER);
-
-        frame.setSize(300, 200);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        //draw main text
+        g2d.setColor(textColor);
+        g2d.drawString(text, x, y);
     }
 }

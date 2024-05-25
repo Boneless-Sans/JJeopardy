@@ -1,6 +1,5 @@
 package com.boneless;
 
-import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 
 import javax.imageio.ImageIO;
@@ -12,10 +11,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import static com.boneless.util.GeneralUtils.changeCurrentPanel;
-import static com.boneless.util.GeneralUtils.generateFont;
-
 /*
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Main menu | √
@@ -28,9 +23,8 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -create teams sub panel | X
     Create question card (JCard) | X
         -layout | X
-        -key binds | X
+        -key binds | √
         -data from json | √
-        -animations | X
     Create board factory | X --not sure if we can do this in time
         -figure out the layout | X
     Implement key binds and have them match settings.json | X broken >:(
@@ -70,8 +64,7 @@ public class Main extends JFrame implements KeyListener {
             try {
                 File imageFile = new File(iconDir);
                 Image image = ImageIO.read(imageFile);
-                Taskbar.getTaskbar().setIconImage(image);
-
+                Taskbar.getTaskbar().setIconImage(new ImageIcon(getIcon(Color.blue,Color.cyan,Color.white,Color.black,"Jeopardy!",new Font("Arial",Font.PLAIN,10))).getImage());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -138,6 +131,42 @@ public class Main extends JFrame implements KeyListener {
         if(e.getKeyChar() == 'r'){
             reset();
         }
+    }
+    public BufferedImage getIcon(Color colorGradient1, Color colorGradient2, Color textColor, Color textBorderColor, String text, Font font){
+        BufferedImage image = new BufferedImage(128,128, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+
+        // Get component size
+        int width = getWidth();
+        int height = getHeight();
+
+        // Draw gradient background
+        GradientPaint gradient = new GradientPaint(0, 0, colorGradient1, width, height, colorGradient2);
+        g2d.setPaint(gradient);
+        g2d.fill(new RoundRectangle2D.Double(0, 0, width, height, 20, 20));
+
+        // Draw cartoon-like text border (shadow)
+        g2d.setColor(textBorderColor);
+        g2d.setFont(font);
+        FontMetrics fm = g2d.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int textHeight = fm.getHeight();
+        int x = (width - textWidth) / 2;
+        int y = (height - textHeight) / 2 + fm.getAscent();
+
+        for (int i = -2; i <= 2; i++) {
+            for (int j = -2; j <= 2; j++) {
+                if (i != 0 || j != 0) {
+                    g2d.drawString(text, x + i, y + j);
+                }
+            }
+        }
+
+        //draw main text
+        g2d.setColor(textColor);
+        g2d.drawString(text, x, y);
+
+        return image;
     }
     public static void reset(){
         MAIN_MENU.menuIsActive = true;

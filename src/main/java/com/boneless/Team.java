@@ -7,10 +7,11 @@ public class Team extends JPanel {
     private static int teamCount;
     private int score = 0;
     private String name;
-    public Team(){
+    public Team(JPanel parent){
         teamCount++;
 
-        setPreferredSize(new Dimension(0,0));
+        setPreferredSize(new Dimension(50,parent.getHeight()));
+        setBackground(Color.cyan);
     }
     public int getScore(){
         return score;

@@ -40,7 +40,7 @@ public class JCard extends JPanel {
         add(answerLabel);
 
         setupMouseListeners();
-        setColors();
+        setUpCharacters();
     }
 
     @Override
@@ -55,16 +55,16 @@ public class JCard extends JPanel {
         int yQuestion = (getHeight() - sizeY) / 2;
         int yAnswer = yQuestion + sizeY;
         questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
-        answerLabel.setBounds(x, yAnswer, sizeX, sizeY);
+        answerLabel.setBounds(x, yAnswer - 50, sizeX, sizeY);
     }
 
     public void advance() {
         fadeQuestion();
     }
 
-    private void setColors() {
-        questionLabel.setFont(GeneralUtils.generateFont(15));
-        answerLabel.setFont(GeneralUtils.generateFont(15));
+    private void setUpCharacters() {
+        questionLabel.setFont(GeneralUtils.generateFont(30));
+        answerLabel.setFont(GeneralUtils.generateFont(30));
         setBackground(mainColor);
     }
 
@@ -83,10 +83,6 @@ public class JCard extends JPanel {
     }
 
     private void fadeQuestion() {
-        int r = mainColor.getRed();
-        int g = mainColor.getGreen();
-        int b = mainColor.getBlue();
-
         if (hasFaded) {
             return;
         }

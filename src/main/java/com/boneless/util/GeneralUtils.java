@@ -33,17 +33,9 @@ public class GeneralUtils {
                 );
             }
         } catch (NullPointerException e){
-            return new Font(
-                    "Arial",
-                    Font.PLAIN,
-                    fontSize
-            );
+            return new Font("Arial", Font.PLAIN, fontSize);
         }
-        return new Font(
-                "Arial",
-                Font.PLAIN,
-                fontSize
-        );
+        return new Font("Arial", Font.PLAIN, fontSize);
     }
     public static void changeCurrentPanel(JPanel panelToSet, JComponent self) {
         Container parent = self.getParent();
