@@ -29,7 +29,7 @@ public class JCard extends JPanel {
 
 
         questionLabel = new JLabel("Question: " + question, JLabel.CENTER);
-        questionLabel.setForeground(new Color(255, 255, 255, 255));
+        questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data","font_color")));
         questionLabel.setOpaque(false);
 
         answerLabel = new JLabel("Answer: " + answer, JLabel.CENTER);
@@ -112,10 +112,6 @@ public class JCard extends JPanel {
     }
 
     private void fadeInAnswerAndQuestion() {
-        int r = mainColor.getRed();
-        int g = mainColor.getGreen();
-        int b = mainColor.getBlue();
-
         if (!hasFadedIn) {
             return;
         }

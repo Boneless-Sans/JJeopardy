@@ -11,8 +11,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
-import static com.boneless.Main.createIcon;
-
 public class Dev extends JFrame {
     public static void main(String[] args){
         new Dev();

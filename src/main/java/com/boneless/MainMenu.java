@@ -9,6 +9,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.boneless.Main.GAME_BOARD;
 import static com.boneless.Main.fileName;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -107,7 +108,8 @@ public class MainMenu extends ScrollGridPanel {
             System.out.println("Menu state: " + menuIsActive);
             switch (UUID){
                 case 0: { //start
-                    changeCurrentPanel(Main.GAME_BOARD, this);
+                    GAME_BOARD = new GameBoard();
+                    changeCurrentPanel(GAME_BOARD, this);
                     break;
                 }
                 case 1: { //board file
