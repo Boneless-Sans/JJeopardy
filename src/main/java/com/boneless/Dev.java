@@ -1,9 +1,17 @@
 package com.boneless;
 
+import com.boneless.util.GeneralUtils;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.geom.Area;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
+
+import static com.boneless.Main.createIcon;
 
 public class Dev extends JFrame {
     public static void main(String[] args){
@@ -18,31 +26,5 @@ public class Dev extends JFrame {
         setVisible(true);
     }
     private void init() {
-        setLayout(new GridLayout(10,10));
-
-        for(int i = 0; i < 100; i++){
-            add(mineButton("src/main/resources/icon/icon.png"));
-        }
-    }
-    private JButton mineButton(String pathToImage){
-        JButton button = new JButton();
-
-        ImageIcon originalIcon = new ImageIcon(pathToImage);
-        Image originalImage = originalIcon.getImage();
-
-        button.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                int width = button.getWidth();
-                int height = button.getHeight();
-
-                Image scaledImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                ImageIcon icon = new ImageIcon(scaledImage);
-
-                button.setIcon(icon);
-            }
-        });
-
-        return button;
     }
 }

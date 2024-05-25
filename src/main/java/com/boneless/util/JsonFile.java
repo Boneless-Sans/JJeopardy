@@ -321,4 +321,96 @@ public class JsonFile {
         }
         return null;
     }
+
+    public static int getIntValueFromJson(String filePath, String key) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            return jsonObject.getInt(key);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
+    public static int getIntValueFromNestedJson(String filePath, String mainKey, String subKey) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            JSONObject mainObject = jsonObject.getJSONObject(mainKey);
+            return mainObject.getInt(subKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
+    public static int getColorAsIntFromJson(String filePath, String mainKey, String colorKey) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            JSONObject mainObject = jsonObject.getJSONObject(mainKey);
+            String[] rgb = mainObject.getString(colorKey).split(",");
+            int r = Integer.parseInt(rgb[0].trim());
+            int g = Integer.parseInt(rgb[1].trim());
+            int b = Integer.parseInt(rgb[2].trim());
+            return (r << 16) | (g << 8) | b;
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
+    public static int getFirstRGBValue(String filePath, String mainKey, String colorKey) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            JSONObject mainObject = jsonObject.getJSONObject(mainKey);
+            String[] rgb = mainObject.getString(colorKey).split(",");
+            return Integer.parseInt(rgb[0].trim());
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
+    public static int getSecondRGBValue(String filePath, String mainKey, String colorKey) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            JSONObject mainObject = jsonObject.getJSONObject(mainKey);
+            String[] rgb = mainObject.getString(colorKey).split(",");
+            return Integer.parseInt(rgb[1].trim());
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
+    public static int getThirdRGBValue(String filePath, String mainKey, String colorKey) {
+        try (Reader reader = new FileReader(filePath)) {
+            JSONTokener tokener = new JSONTokener(reader);
+            JSONObject jsonObject = new JSONObject(tokener);
+            JSONObject mainObject = jsonObject.getJSONObject(mainKey);
+            String[] rgb = mainObject.getString(colorKey).split(",");
+            return Integer.parseInt(rgb[2].trim());
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
+            System.out.println("Key not found or value is not an integer.");
+        }
+        return -1; // Return a default value in case of error
+    }
+
 }
+
