@@ -33,7 +33,7 @@ public class JCard extends JPanel {
         questionLabel.setOpaque(false);
 
         answerLabel = new JLabel("Answer: " + answer, JLabel.CENTER);
-        answerLabel.setForeground(new Color(255, 255, 255, 0));
+        answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"), 0));
         answerLabel.setOpaque(false);
 
         add(questionLabel);
@@ -104,7 +104,7 @@ public class JCard extends JPanel {
                     q.stop();
                     fadeInAnswerAndQuestion();
                 }
-                questionLabel.setForeground(new Color(0, 0, 0, (int)(opacity * 255)));
+                questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity * 255)));
                 repaint();
             }
         });
@@ -132,9 +132,8 @@ public class JCard extends JPanel {
                     opacity2 = 1.0f;
                     j.stop();
                 }
-                //questionLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
                 questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
-                answerLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
+                answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
                 repaint();
             }
         });
