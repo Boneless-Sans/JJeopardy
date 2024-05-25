@@ -132,7 +132,8 @@ public class JCard extends JPanel {
                     opacity2 = 1.0f;
                     j.stop();
                 }
-                questionLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
+                //questionLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
+                questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
                 answerLabel.setForeground(new Color(255, 255, 255, (int)(opacity2 * 255)));
                 repaint();
             }

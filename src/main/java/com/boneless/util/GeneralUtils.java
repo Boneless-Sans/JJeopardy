@@ -16,6 +16,13 @@ public class GeneralUtils {
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue);
     }
+    public static Color parseColorFade(String color, int alpha){
+        String[] split = color.split(",");
+        int red = Integer.parseInt(split[0]);
+        int green = Integer.parseInt(split[1]);
+        int blue = Integer.parseInt(split[2]);
+        return new Color(red,green,blue,alpha);
+    }
     public static Font generateFont(int fontSize){
         try {
             if(fileName != null && !fileName.isEmpty()) {
