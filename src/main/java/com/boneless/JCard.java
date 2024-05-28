@@ -27,15 +27,26 @@ public class JCard extends JPanel {
 
         JCard.mainColor = mainColor;
 
+        int sizeX = 400;
+        int sizeY = 200;
+        int x = (getWidth() - sizeX) / 2;
+        int y = (getHeight() - sizeY) / 2;
+        int yQuestion = (getHeight() - sizeY) / 2;
+        int yAnswer = yQuestion + sizeY;
+
+
+
+
         questionLabel = new JLabel("Question: " + question);
         questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data","font_color")));
-        questionLabel.setOpaque(true);
+        questionLabel.setOpaque(false);
+        questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
 
-        questionLabel.setBounds(getWidth() / 2,50,50,50);
 
         answerLabel = new JLabel("Answer: " + answer);
         answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"), 0));
         answerLabel.setOpaque(false);
+        answerLabel.setBounds(answerLabel.getWidth() / x, yAnswer, sizeX, sizeY);
 
         add(questionLabel);
         add(answerLabel);
@@ -120,38 +131,26 @@ public class JCard extends JPanel {
         int yQuestion = (getHeight() - sizeY) / 2;
         int targetY = 50; // Target Y position for question label
 
-        int moveAmount = 100;
-        int moveTick = 1;
-        Timer stinky = new Timer(1, e -> {
-            System.out.println(answerLabel.getY());
-            if(answerLabel.getY() >= answerLabel.getY() + moveAmount){
-                ((Timer) e.getSource()).stop();
-            } else {
-                answerLabel.setBounds(answerLabel.getY(), answerLabel.getY() - moveTick, answerLabel.getWidth(), answerLabel.getHeight());
+        Timer q = new Timer(50, null);
+        q.addActionListener(new ActionListener() {
+            private int currentY = yQuestion;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentY -= 5; // Adjust this value to control the speed of movement
+                System.out.println("premove:  " + currentY); // Print currentY value
+                if (currentY <= targetY) {
+                    currentY = targetY;
+                    q.stop();
+                    fadeInAnswerAndQuestion();
+                }
+                questionLabel.setBounds(x, questionLabel.getY() - 1, sizeX, sizeY);
+                System.out.println("postmove: " + currentY);
+                revalidate();
+                repaint();
             }
         });
-        stinky.start();
-//        Timer q = new Timer(50, null);
-//        // Adjust the delay as needed
-//        q.addActionListener(new ActionListener() {
-//            private int currentY = yQuestion;
-//
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                currentY -= 5; // Adjust this value to control the speed of movement
-//                System.out.println("premove:  " + currentY); // Print currentY value
-//                if (currentY <= targetY) {
-//                    currentY = targetY;
-//                    q.stop();
-//                    //fadeInAnswerAndQuestion();
-//                }
-//                questionLabel.setBounds(x, questionLabel.getY() - 1, sizeX, sizeY);
-//                System.out.println("postmove: " + currentY);
-//                revalidate();
-//                repaint();
-//            }
-//        });
-//        q.start();
+        q.start();
     }
     private void fadeInAnswerAndQuestion() {
         if (!hasFadedIn) {
