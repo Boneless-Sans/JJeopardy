@@ -117,21 +117,23 @@ public class JCard extends JPanel {
         int sizeY = 200;
         int x = (getWidth() - sizeX) / 2;
         int yQuestion = (getHeight() - sizeY) / 2;
-        int yAnswer = yQuestion + sizeY;
+        int targetY = 50; // Target Y position for question label
 
-        Timer q = new Timer(50, null);
+        Timer q = new Timer(50, null); // Adjust the delay as needed
         q.addActionListener(new ActionListener() {
             private int currentY = yQuestion;
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentY -= 5; // Adjust this value to control the speed of movement
-                if (currentY <= 0) {
-                    currentY = 0;
+                System.out.println("currentY: " + currentY); // Print currentY value
+                if (currentY <= targetY) {
+                    currentY = targetY;
                     q.stop();
-                    fadeInAnswerAndQuestion();
+                    //fadeInAnswerAndQuestion();
                 }
                 questionLabel.setBounds(x, currentY, sizeX, sizeY);
+                revalidate();
                 repaint();
             }
         });
@@ -156,7 +158,7 @@ public class JCard extends JPanel {
                     opacity2 = 1.0f;
                     j.stop();
                 }
-                questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
+                //questionLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
                 answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
                 repaint();
             }
