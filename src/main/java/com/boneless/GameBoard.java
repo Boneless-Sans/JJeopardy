@@ -17,15 +17,17 @@ public class GameBoard extends JPanel {
     public boolean GameIsActive;
     public boolean jCardIsActive = false;
     private boolean boardHasInitialized = false;
-    private final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+    public static final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
     public static final Color fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
     private final ArrayList<BoardButton> buttons;
     public final JPanel boardPanel;
+    private final int teamCount;
 
-    public GameBoard() {
+    public GameBoard(int teamCount) {
         GameIsActive = true;
         MAIN_MENU.menuIsActive = false;
         buttons = new ArrayList<>();
+        this.teamCount = teamCount;
 
         setLayout(new BorderLayout());
         setBackground(mainColor);
@@ -77,11 +79,6 @@ public class GameBoard extends JPanel {
                 panel.add(button);
             }
         }
-
-        for (BoardButton button : buttons) {
-            System.out.println(button.getText());
-        }
-
         return panel;
     }
 
@@ -99,17 +96,94 @@ public class GameBoard extends JPanel {
         return panel;
     }
 
-    private JPanel createTeamsPanel() {
-        JPanel parentPanel = new JPanel(new FlowLayout());
-        parentPanel.setPreferredSize(new Dimension(getWidth(), 130));
+    /*
+    private JScrollPane createTeamsPanel(){
 
-        for (int i = 0; i < 5; i++) {
-            parentPanel.add(new Team(parentPanel));
+        JPanel panel = new JPanel();
+        panel.setLayout(new FlowLayout());
+        panel.setBackground(parseColor("team_background"));
+        panel.setBorder(null);
+
+        for(int i = 0; i < teamCount; i++){
+            panel.add(createGap(80, parseColor("categories_background")));
+            panel.add(createTeamPanel(new Team("Team " + (i + 1))));
         }
+        panel.add(createGap(80, parseColor("categories_background")));
 
-        return parentPanel;
+        JScrollPane pane = new JScrollPane(panel);
+        pane.setPreferredSize(new Dimension(getWidth(),120)); //Height controller
+        pane.setBorder(null);
+
+        return pane;
     }
+    private JPanel createTeamPanel(Team team){
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.setBackground(parseColor("categories_background"));
+        panel.setPreferredSize(new Dimension(150,110)); //Panel height controller
+        panel.setBorder(null);
 
+        JTextField teamName = new JTextField(team.getTeamName());
+        teamName.setPreferredSize(new Dimension(125,25));
+        teamName.setBackground(Color.GRAY);
+        teamName.setBorder(null);
+        teamName.setHorizontalAlignment(JTextField.CENTER);
+
+        JPanel line = new JPanel();
+        line.setBackground(Color.pink);
+        line.setPreferredSize(new Dimension(130,1));
+
+        JTextField score = new JTextField(String.valueOf(team.getPoints()));
+        score.setFont(parseFont("team_font"));
+        score.setHorizontalAlignment(JTextField.CENTER);
+        score.setBorder(null);
+        score.setBackground(Color.cyan);
+        //score.setForeground(parseColor("team_name_font_color"));
+        score.setPreferredSize(new Dimension(125,25));
+
+        panel.add(teamName);
+        panel.add(line);
+        panel.add(score);
+        panel.add(createScoreButton("dom.png", true, score));
+        panel.add(createGap(25, null));
+        panel.add(createScoreButton("dom.png", false, score));
+        return panel;
+    }
+    private JButton createScoreButton(String image, boolean add, JTextField score){
+        int buttonSize = 35;
+        JButton button = new JButton(new IconResize("dom.png", buttonSize, buttonSize).getImage());
+        button.setPreferredSize(new Dimension(buttonSize, buttonSize));
+        button.setFocusable(false);
+        button.addActionListener(e -> {
+            int currentScore = Integer.parseInt(score.getText());
+            if(add){
+                currentScore += lastCardPoints;
+                score.setText(String.valueOf(currentScore));
+            }else{
+                currentScore -= lastCardPoints;
+                score.setText(String.valueOf(currentScore));
+            }
+        });
+        return button;
+    }
+    private JPanel createGap(int size, Color color){
+        JPanel panel = new JPanel();
+        panel.setBackground(color);
+        panel.setPreferredSize(new Dimension(size,size));
+        return panel;
+    }
+     */
+    private JScrollPane createTeamsPanel() {
+        JPanel panel = new JPanel(new FlowLayout());
+        panel.setBackground(mainColor);
+        panel.setBorder(null);
+
+        for(int i = 0; i < teamCount; i++){
+            panel.add()
+        }
+    }
+    private JPanel gapPanel(){
+
+    }
     public void exit() {
         int size = 32;
 
@@ -281,7 +355,7 @@ public class GameBoard extends JPanel {
                 HeaderPanel.leftText.setText("Back");
 
                 JPanel parentPanel = (JPanel) getParent();
-                jCard = new JCard(score, question, answer, mainColor);
+                jCard = new JCard(score, question, answer);
                 jCardIsActive = true;
                 GameIsActive = false;
 
