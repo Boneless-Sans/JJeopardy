@@ -37,7 +37,7 @@ public class ScrollGridPanel extends JPanel {
         }
     }
 
-    private Color adjustColor(Color color) {
+    public static Color adjustColor(Color color) {
         int totalRGB = color.getRed() + color.getGreen() + color.getBlue();
         int adjustment = totalRGB > 180 ? -100 : 100;
         int r = clamp(color.getRed() + adjustment);
@@ -46,7 +46,7 @@ public class ScrollGridPanel extends JPanel {
         return new Color(r, g, b);
     }
 
-    private int clamp(int value) {
+    private static int clamp(int value) {
         return Math.max(0, Math.min(255, value));
     }
 

@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 import com.boneless.util.ScrollGridPanel;
 
@@ -103,13 +104,34 @@ public class MainMenu extends ScrollGridPanel {
         }
         buttonsList.add(button);
         button.addActionListener(e -> {
-            System.out.println("Menu state: " + menuIsActive);
-            menuIsActive = false;
-            System.out.println("Menu state: " + menuIsActive);
+            menuIsActive = true;
             switch (UUID){
                 case 0: { //start
-                    GAME_BOARD = new GameBoard(4); //todo: add ui for teamsw
-                    changeCurrentPanel(GAME_BOARD, this);
+                    GAME_BOARD = new GameBoard(4); //todo: add ui for teams
+                    //changeCurrentPanel(GAME_BOARD, this);
+
+                    changeCurrentPanel(new JPanel(new GridBagLayout()){{
+                        Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
+                        setBackground(color);
+
+                        GridBagConstraints gbc = new GridBagConstraints();
+                        gbc.gridx = 0;
+                        gbc.gridy = 0;
+                        gbc.fill = 0;
+
+                        JPanel panel = new JPanel(new FlowLayout()){
+                            @Override
+                            protected void paintComponent(Graphics g) {
+                                super.paintComponent(g);
+                                Graphics2D g2d = (Graphics2D) g;
+
+                                GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
+                            }
+                        };
+                        panel.setPreferredSize(new Dimension(getWidth(),500));
+
+                        add(panel, gbc);
+                    }}, this);
                     break;
                 }
                 case 1: { //board file
