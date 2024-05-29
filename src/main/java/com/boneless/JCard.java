@@ -29,24 +29,33 @@ public class JCard extends JPanel {
 
         int sizeX = 400;
         int sizeY = 200;
-        int x = (getWidth() - sizeX) / 2;
-        int y = (getHeight() - sizeY) / 2;
-        int yQuestion = (getHeight() - sizeY) / 2;
+
+        int parentWidth = getWidth();
+        int parentHeight = getHeight();
+
+        int x = (parentWidth - sizeX) / 2;
+        int yQuestion = (parentHeight - sizeY) / 2;
         int yAnswer = yQuestion + sizeY;
 
-
-
+        System.out.println("Parent Width: " + parentWidth);
+        System.out.println("Parent Height: " + parentHeight);
+        System.out.println("Label X: " + x);
+        System.out.println("Label Y Question: " + yQuestion);
+        System.out.println("Label Y Answer: " + yAnswer);
 
         questionLabel = new JLabel("Question: " + question);
-        questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data","font_color")));
+        questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data", "font_color")));
         questionLabel.setOpaque(false);
         questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
 
-
         answerLabel = new JLabel("Answer: " + answer);
-        answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"), 0));
+        answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         answerLabel.setOpaque(false);
-        answerLabel.setBounds(answerLabel.getWidth() / x, yAnswer, sizeX, sizeY);
+        answerLabel.setBounds(x / 2, yAnswer, sizeX, sizeY);
+
+        revalidate();
+        repaint();
+
 
         add(questionLabel);
         add(answerLabel);
@@ -138,14 +147,14 @@ public class JCard extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentY -= 5; // Adjust this value to control the speed of movement
-                System.out.println("premove:  " + currentY); // Print currentY value
+                //System.out.println("premove:  " + currentY); // Print currentY value
                 if (currentY <= targetY) {
                     currentY = targetY;
                     q.stop();
                     fadeInAnswerAndQuestion();
                 }
                 questionLabel.setBounds(x, questionLabel.getY() - 1, sizeX, sizeY);
-                System.out.println("postmove: " + currentY);
+                //System.out.println("postmove: " + currentY);
                 revalidate();
                 repaint();
             }
