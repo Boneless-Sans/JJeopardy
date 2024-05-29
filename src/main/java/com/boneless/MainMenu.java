@@ -126,6 +126,7 @@ public class MainMenu extends ScrollGridPanel {
                                 Graphics2D g2d = (Graphics2D) g;
 
                                 GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
+                                g2d.setPaint(gradientPaint);
                             }
                         };
                         panel.setPreferredSize(new Dimension(getWidth(),500));

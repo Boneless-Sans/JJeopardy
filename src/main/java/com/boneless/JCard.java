@@ -15,7 +15,7 @@ import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
-public class JCard extends JPanel {
+public class JCard extends JPanel { //sync here
     public boolean isActive = false;
     private JLabel questionLabel;
     private JLabel answerLabel;
