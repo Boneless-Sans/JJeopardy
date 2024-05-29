@@ -1,7 +1,6 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import com.boneless.util.SystemUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +19,6 @@ public class Settings extends JPanel{
     private static JButton fullScreenKeyBindButton = null;
     public Settings(){
         setLayout(new BorderLayout());
-        SystemUI.set();
 
         JPanel title = new JPanel(new FlowLayout());
         title.setSize(new Dimension());

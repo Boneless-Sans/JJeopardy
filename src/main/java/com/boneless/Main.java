@@ -18,17 +18,20 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Rework settings | √
     Create main board | X
         -make title header | X
-        -get buttons to create the info card | √
+        -get buttons to create the info card | √ todo: fix wack mac color override
         -have buttons read points from json | √
-        -create teams sub panel | X
+        -create teams sub panel | √
     Create question card (JCard) | X
-        -layout | X
-        -key binds | √
+        -layout | √
+        -key binds | X
         -data from json | √
-    Create board factory | X --not sure if we can do this in time
-        -figure out the layout | X
-    Implement key binds and have them match settings.json | X broken >:(
-    Fix Json shit | √ ? forgot why this is here
+        -animations | X
+    Create board factory | X
+        -figure out the layout | √
+        -create left board panel | X
+        -create right settings panel | X
+        -figure out more | X
+    Implement key binds and have them match settings.json | √ working (only non dev?) :)
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
@@ -81,7 +84,7 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(MAIN_MENU);
         } else {
-            add(GAME_BOARD = new GameBoard());
+            add(GAME_BOARD = new GameBoard(3));
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){

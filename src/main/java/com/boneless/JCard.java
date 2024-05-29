@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -20,12 +21,8 @@ public class JCard extends JPanel {
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
 
-    public static Color mainColor;
-
-    public JCard(int score, String question, String answer, Color mainColor) {
+    public JCard(String question, String answer) {
         setLayout(null);
-
-        JCard.mainColor = mainColor;
 
         int sizeX = 400;
         int sizeY = 200;
