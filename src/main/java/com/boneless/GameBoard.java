@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -60,7 +59,7 @@ public class GameBoard extends JPanel {
                     String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                     String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                    BoardButton button = new BoardButton(score, question, answer, mainColor);
+                    BoardButton button = new BoardButton(score, question, answer);
                     button.setBackground(mainColor);
                     panel.add(button);
                 } catch (Exception e) {
@@ -223,22 +222,6 @@ public class GameBoard extends JPanel {
             return rightInfoParentPanel;
         }
 
-        public void movePanel(boolean isOpen) {
-            int tickSpeed = 1;
-            Thread thread = new Thread(() -> {
-                while (isOpen ? rightInfoPanel.getX() > 0 : rightInfoPanel.getX() < rightInfoParentPanel.getWidth()) {
-                    try {
-                        rightInfoPanel.setBounds(rightInfoPanel.getX() + (isOpen ? -tickSpeed : tickSpeed),
-                                rightInfoPanel.getY(), rightInfoPanel.getWidth(), rightInfoPanel.getHeight());
-                        Thread.sleep(tickSpeed);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            thread.start();
-        }
-
         public static JButton createHeaderButton(String text, boolean isExit) {
             String rawKeyBind = JsonFile.read("settings.json", "keyBinds", text);
             String keyBind = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
@@ -264,13 +247,11 @@ public class GameBoard extends JPanel {
         private final int score;
         private final String question;
         private final String answer;
-        private final Color mainColor;
 
-        public BoardButton(int score, String question, String answer, Color mainColor) {
+        public BoardButton(int score, String question, String answer) {
             this.score = score;
             this.question = question;
             this.answer = answer;
-            this.mainColor = mainColor;
             setText(String.valueOf(score));
             setBackground(mainColor);
             setFocusable(false);

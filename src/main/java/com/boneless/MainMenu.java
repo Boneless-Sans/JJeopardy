@@ -7,6 +7,7 @@ import com.boneless.util.ScrollGridPanel;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -18,6 +19,9 @@ public class MainMenu extends ScrollGridPanel {
     public boolean menuIsActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
+    private final String[] dropDownList = {
+            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "Other",
+    };
 
     public MainMenu(){
         menuIsActive = true;
@@ -109,30 +113,44 @@ public class MainMenu extends ScrollGridPanel {
                 case 0: { //start
                     GAME_BOARD = new GameBoard(4); //todo: add ui for teams
                     //changeCurrentPanel(GAME_BOARD, this);
+                    Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
+                    JPanel teamChoosePanel = new JPanel(new GridBagLayout()){
+                        @Override
+                        protected void paintComponent(Graphics g) {
+                            super.paintComponent(g);
+                            Graphics2D g2d = (Graphics2D) g;
 
-                    changeCurrentPanel(new JPanel(new GridBagLayout()){{
-                        Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
-                        setBackground(color);
+                            //draw background
+                            GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
+                            g2d.setPaint(gradientPaint);
+                            g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0));
+                        }
+                    };
 
-                        GridBagConstraints gbc = new GridBagConstraints();
-                        gbc.gridx = 0;
-                        gbc.gridy = 0;
-                        gbc.fill = 0;
+                    GridBagConstraints gbc = new GridBagConstraints();
+                    gbc.gridx = 0;
+                    gbc.gridy = 0;
+                    gbc.fill = 0;
 
-                        JPanel panel = new JPanel(new FlowLayout()){
-                            @Override
-                            protected void paintComponent(Graphics g) {
-                                super.paintComponent(g);
-                                Graphics2D g2d = (Graphics2D) g;
+                    //main body
+                    JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                    contentPane.setPreferredSize(new Dimension(300,200));
+                    contentPane.setBackground(Color.white);
 
-                                GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
-                                g2d.setPaint(gradientPaint);
-                            }
-                        };
-                        panel.setPreferredSize(new Dimension(getWidth(),500));
+                    JLabel numTeamText = new JLabel("Number of Teams");
+                    numTeamText.setFont(generateFont(35));
 
-                        add(panel, gbc);
-                    }}, this);
+                    JComboBox<String> dropDown = new JComboBox<>(dropDownList);
+                    dropDown.setFont(generateFont(20));
+                    dropDown.setFocusable(false);
+
+                    //todo: add 2 buttons, sound / start use checkbox gen
+
+
+                    contentPane.add(numTeamText);
+                    contentPane.add(dropDown);
+                    teamChoosePanel.add(contentPane, gbc);
+                    changeCurrentPanel(teamChoosePanel, this);
                     break;
                 }
                 case 1: { //board file
@@ -141,7 +159,6 @@ public class MainMenu extends ScrollGridPanel {
 
                     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                         File file = chooser.getSelectedFile();
-                        System.out.println(file);
                         changeFileName(String.valueOf(file));
                         changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
                     }

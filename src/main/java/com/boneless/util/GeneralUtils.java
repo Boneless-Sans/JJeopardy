@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
+import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.fileName;
 
 public class GeneralUtils {
@@ -64,5 +65,43 @@ public class GeneralUtils {
         g2.dispose();
 
         return output;
+    }
+    public static JButton createCheckButton(){
+        JButton button = new JButton(){
+            @Override
+            protected void paintComponent(Graphics g){
+                //super.paintComponent(g); disable super for complete render control
+
+                Graphics2D g2d = (Graphics2D) g;
+
+                //enable antialiasing, not really needed but cool to have
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int width = getWidth();
+                int height = getHeight();
+
+                int centerX = width / 2;
+                int centerY = height / 2;
+
+                int lineThickness = 4; //im not explaining this
+
+                int lineLength = Math.min(width, height) / 4; //sets line length, higher is smaller
+
+                g2d.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+                //draw circle
+                int ovalDiameter = (Math.min(width, height) / 2) + 10;
+                int ovalX = centerX - ovalDiameter /2;
+                int ovalY = centerY - ovalDiameter /2;
+                g2d.setColor(mainColor);
+                g2d.fillOval(ovalX, ovalY, ovalDiameter, ovalDiameter);
+
+                g2d.setColor(Color.white);
+                //draw vertical line if subtract is false
+                if(!subtract) g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength);
+                //horizontal line
+                g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY);
+            }
+        };
     }
 }
