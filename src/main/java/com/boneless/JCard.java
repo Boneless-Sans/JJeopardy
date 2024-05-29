@@ -4,7 +4,6 @@ import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
@@ -24,18 +23,26 @@ public class JCard extends JPanel {
     public JCard(String question, String answer) {
         setLayout(null);
 
+//        int sizeX = 400;
+//        int sizeY = 200;
+//
+//        int parentWidth = getWidth();
+//        int parentHeight = getHeight();
+//
+//        int x = parentWidth / 2;
+//        int yQuestion = (parentHeight - sizeY) / 2;
+//        int yAnswer = yQuestion + sizeY;
+
         int sizeX = 400;
         int sizeY = 200;
-
-        int parentWidth = getWidth();
-        int parentHeight = getHeight();
-
-        int x = (parentWidth - sizeX) / 2;
-        int yQuestion = (parentHeight - sizeY) / 2;
+        int x = (getWidth() - sizeX) / 2;
+        int y = (getHeight() - sizeY) / 2;
+        int yQuestion = (getHeight() - sizeY) / 2;
         int yAnswer = yQuestion + sizeY;
 
-        System.out.println("Parent Width: " + parentWidth);
-        System.out.println("Parent Height: " + parentHeight);
+
+        System.out.println("Parent Width: " + getWidth());
+        System.out.println("Parent Height: " + getHeight());
         System.out.println("Label X: " + x);
         System.out.println("Label Y Question: " + yQuestion);
         System.out.println("Label Y Answer: " + yAnswer);
@@ -43,12 +50,13 @@ public class JCard extends JPanel {
         questionLabel = new JLabel("Question: " + question);
         questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data", "font_color")));
         questionLabel.setOpaque(false);
-        questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
+        questionLabel.setBounds(x, questionLabel.getY() - 1, sizeX, sizeY);
 
         answerLabel = new JLabel("Answer: " + answer);
         answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         answerLabel.setOpaque(false);
-        answerLabel.setBounds(x / 2, yAnswer, sizeX, sizeY);
+        answerLabel.setBounds(answerLabel.getX() - 1, yAnswer - 50, sizeX, sizeY);
+
 
         revalidate();
         repaint();
@@ -59,7 +67,8 @@ public class JCard extends JPanel {
 
         setupMouseListeners();
         setUpCharacters();
-    }
+        }
+
 
 //    @Override
 //    protected void paintComponent(Graphics g) {
@@ -77,7 +86,7 @@ public class JCard extends JPanel {
 //    }
 
     public void advance() {
-        fadeQuestion();
+        moveQuestion();
     }
 
     private void setUpCharacters() {
@@ -91,7 +100,7 @@ public class JCard extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!hasFaded) {
-                    fadeQuestion();
+                    moveQuestion();
                 }
             }
         });
@@ -100,7 +109,7 @@ public class JCard extends JPanel {
         requestFocusInWindow();
     }
 
-//    private void fadeQuestion() {
+//    private void moveQuestion() {
 //        if (hasFaded) {
 //            return;
 //        }
@@ -125,7 +134,7 @@ public class JCard extends JPanel {
 //        q.start();
 //    }
 
-    private void fadeQuestion() {
+    private void moveQuestion() {
         if (hasFaded) {
             return;
         }
