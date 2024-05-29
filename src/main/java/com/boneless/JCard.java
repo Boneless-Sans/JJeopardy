@@ -15,10 +15,11 @@ import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
-public class JCard extends JPanel { //sync here
+public class JCard extends JPanel {
     public boolean isActive = false;
     private JLabel questionLabel;
     private JLabel answerLabel;
+    private JLabel faggot;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
 
@@ -33,8 +34,13 @@ public class JCard extends JPanel { //sync here
         answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         answerLabel.setOpaque(false);
 
+        faggot = new JLabel("you're a faggot :)");
+        faggot.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
+
+
         add(questionLabel);
         add(answerLabel);
+        add(faggot);
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -55,7 +61,8 @@ public class JCard extends JPanel { //sync here
         int yAnswer = yQuestion + sizeY;
 
         questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
-        answerLabel.setBounds(x, yAnswer, sizeX, sizeY);
+        answerLabel.setBounds(x, yQuestion, sizeX, sizeY);
+        faggot.setBounds(x, yQuestion + 20, sizeX, sizeY);
 
         revalidate();
         repaint();
@@ -68,6 +75,7 @@ public class JCard extends JPanel { //sync here
     private void setUpCharacters() {
         questionLabel.setFont(GeneralUtils.generateFont(30));
         answerLabel.setFont(GeneralUtils.generateFont(30));
+        faggot.setFont(GeneralUtils.generateFont(10));
         setBackground(mainColor);
     }
 
@@ -135,6 +143,7 @@ public class JCard extends JPanel { //sync here
                     j.stop();
                 }
                 answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
+                faggot.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
                 repaint();
             }
         });
