@@ -87,6 +87,7 @@ public class JCard extends JPanel {
         add(test4);
         add(test5);
 
+        //stop
 //        add(test);
 
 //        addComponentListener(new ComponentAdapter() {
