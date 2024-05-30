@@ -4,8 +4,7 @@ import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
@@ -28,6 +27,31 @@ public class JCard extends JPanel {
     public JCard(String question, String answer) {
         setLayout(null);
 
+        int factor = 4;
+        int sizeX2 = getWidth() - (getWidth() / factor);
+        int sizeY2 = (getHeight() - (getHeight() / factor)) / factor;
+
+        JPanel test = new JPanel(null);
+        test.setBackground(Color.CYAN);
+        test.setBounds((getWidth() / 2) - (sizeX2 / 2), (getHeight() / 2), sizeX2, sizeY2);
+
+        JPanel test2 = new JPanel(null);
+        test2.setBackground(Color.CYAN);
+        test2.setBounds((getWidth() / 2) - (sizeX2 / 2), (getHeight() / 2) + 30, sizeX2, sizeY2);
+
+        JPanel test3 = new JPanel(null);
+        test3.setBackground(Color.CYAN);
+        test3.setBounds((getWidth() / 2) - (sizeX2 / 2), (getHeight() / 2) + 60, sizeX2, sizeY2);
+
+        JPanel test4 = new JPanel(null);
+        test4.setBackground(Color.CYAN);
+        test4.setBounds((getWidth() / 2) - (sizeX2 / 2), (getHeight() / 2) + 90, sizeX2, sizeY2);
+
+        JPanel test5 = new JPanel(null);
+        test5.setBackground(Color.CYAN);
+        test5.setBounds((getWidth() / 2) - (sizeX2 / 2), (getHeight() / 2) + 120, sizeX2, sizeY2);
+
+
         questionLabel = new JLabel("Question: ");
         questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data", "font_color")));
         questionLabel.setOpaque(false);
@@ -49,20 +73,28 @@ public class JCard extends JPanel {
         moron.setOpaque(false);
 
 
-        add(questionLabel);
-        add(questionQuestion);
 
-        add(answerLabel);
-        add(answerAnswer);
+        test.add(questionLabel);
+        test2.add(questionQuestion);
 
-        add(moron);
+        test3.add(answerLabel);
+        test5.add(answerAnswer);
+        test5.add(moron);
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                centerLabels();
-            }
-        });
+        add(test);
+        add(test2);
+        add(test3);
+        add(test4);
+        add(test5);
+
+//        add(test);
+
+//        addComponentListener(new ComponentAdapter() {
+//            @Override
+//            public void componentResized(ComponentEvent e) {
+//                centerLabels();
+//            }
+//        });
 
         setupMouseListeners();
         setUpCharacters();
@@ -70,7 +102,13 @@ public class JCard extends JPanel {
 
     private void centerLabels() {
         int sizeX = 400;
+
+        int sizeX2 = getWidth() - (getWidth() / 3);
+
         int sizeY = 200;
+
+        int sizeY2 = getHeight() - (getHeight() / 3);
+
         int x = (getWidth() - sizeX) / 2;
         int x2 = getWidth() / 2;
         int x3 =  ((getWidth() - sizeX) / 2) / (getWidth() / 2);
@@ -87,7 +125,6 @@ public class JCard extends JPanel {
         answerAnswer.setBounds(x6, yQuestion + 20, sizeX, sizeY);
 
         moron.setBounds(x6, yQuestion + 40, sizeX, sizeY);
-
 
         revalidate();
         repaint();
