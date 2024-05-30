@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.ButtonIcon;
 import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 import com.boneless.util.ScrollGridPanel;
@@ -111,8 +112,7 @@ public class MainMenu extends ScrollGridPanel {
             menuIsActive = true;
             switch (UUID){
                 case 0: { //start
-                    GAME_BOARD = new GameBoard(4); //todo: add ui for teams
-                    //changeCurrentPanel(GAME_BOARD, this);
+                    GAME_BOARD = new GameBoard(4);
                     Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
                     JPanel teamChoosePanel = new JPanel(new GridBagLayout()){
                         @Override
@@ -141,14 +141,14 @@ public class MainMenu extends ScrollGridPanel {
                     numTeamText.setFont(generateFont(35));
 
                     JComboBox<String> dropDown = new JComboBox<>(dropDownList);
+                    dropDown.setPreferredSize(new Dimension(200,40));
                     dropDown.setFont(generateFont(20));
                     dropDown.setFocusable(false);
 
-                    //todo: add 2 buttons, sound / start use checkbox gen
-
-
+                    JButton soundOption = getSoundOption();
                     contentPane.add(numTeamText);
                     contentPane.add(dropDown);
+                    contentPane.add(soundOption);
                     teamChoosePanel.add(contentPane, gbc);
                     changeCurrentPanel(teamChoosePanel, this);
                     break;
@@ -181,6 +181,16 @@ public class MainMenu extends ScrollGridPanel {
 
         return button;
     }
+
+    private ButtonIcon getSoundOption() {
+        ButtonIcon soundOption = new ButtonIcon(5,
+                new Color(128,201,152),
+                Color.white
+        );
+        soundOption.setPreferredSize(new Dimension(50,50));
+        return soundOption;
+    }
+
     private void changeFileName(String newFile){
         fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
         currentFile.setText("Current Board: " + fileName);
