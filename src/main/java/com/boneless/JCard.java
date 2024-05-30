@@ -74,17 +74,19 @@ public class JCard extends JPanel {
         int x = (getWidth() - sizeX) / 2;
         int x2 = getWidth() / 2;
         int x3 =  ((getWidth() - sizeX) / 2) / (getWidth() / 2);
-        int x4 =  (getWidth() / 2) - ((getWidth() - sizeX) / 2);
+        int x4 =  (getWidth() / 2) + ((getWidth() - sizeX) / 2);
+        int x5 =  (getWidth() / 2) - ((getWidth() - sizeX) / 2);
+        int x6 =  (x4 / 2) + 35;
         int yQuestion = (getHeight() - sizeY) / 2;
         int yAnswer = yQuestion + sizeY;
 
-        questionLabel.setBounds(x4, yQuestion, sizeX, sizeY);
-        questionQuestion.setBounds(x4, yQuestion + 30, sizeX, sizeY);
+        questionLabel.setBounds(x6, yQuestion, sizeX, sizeY);
+        questionQuestion.setBounds(x6, yQuestion + 30, sizeX, sizeY);
 
-        answerLabel.setBounds(x, yQuestion + 20, sizeX, sizeY);
-        answerAnswer.setBounds(x, yQuestion, sizeX, sizeY);
+        answerLabel.setBounds(x6, yQuestion + 20, sizeX, sizeY);
+        answerAnswer.setBounds(x6, yQuestion, sizeX, sizeY);
 
-        faggot.setBounds(x, yQuestion + 40, sizeX, sizeY);
+        faggot.setBounds(x6, yQuestion + 40, sizeX, sizeY);
 
 
         revalidate();
@@ -125,6 +127,8 @@ public class JCard extends JPanel {
         int sizeX = 400;
         int sizeY = 200;
         int x = (getWidth() - sizeX) / 2;
+        int x4 =  (getWidth() / 2) + ((getWidth() - sizeX) / 2);
+        int x6 =  (x4 / 2) + 35;
         int yQuestion = (getHeight() - sizeY) / 2;
         int targetY = 50; // Target Y position for question label
 
@@ -140,8 +144,8 @@ public class JCard extends JPanel {
                     q.stop();
                     fadeInAnswerAndQuestion();
                 }
-                questionLabel.setBounds(x, currentY, sizeX, sizeY);
-                questionQuestion.setBounds(x, currentY + 30, sizeX, sizeY);
+                questionLabel.setBounds(x6, currentY, sizeX, sizeY);
+                questionQuestion.setBounds(x6, currentY + 30, sizeX, sizeY);
                 revalidate();
                 repaint();
             }
