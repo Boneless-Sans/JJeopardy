@@ -74,16 +74,17 @@ public class JCard extends JPanel {
         int x = (getWidth() - sizeX) / 2;
         int x2 = getWidth() / 2;
         int x3 =  ((getWidth() - sizeX) / 2) / (getWidth() / 2);
+        int x4 =  (getWidth() / 2) - ((getWidth() - sizeX) / 2);
         int yQuestion = (getHeight() - sizeY) / 2;
         int yAnswer = yQuestion + sizeY;
 
-        questionLabel.setBounds(x2, yQuestion, sizeX, sizeY);
-        questionQuestion.setBounds(x2, yQuestion + 30, sizeX, sizeY);
+        questionLabel.setBounds(x4, yQuestion, sizeX, sizeY);
+        questionQuestion.setBounds(x4, yQuestion + 30, sizeX, sizeY);
 
-        answerLabel.setBounds(x, yQuestion, sizeX, sizeY);
+        answerLabel.setBounds(x, yQuestion + 20, sizeX, sizeY);
         answerAnswer.setBounds(x, yQuestion, sizeX, sizeY);
 
-        faggot.setBounds(x, yQuestion + 20, sizeX, sizeY);
+        faggot.setBounds(x, yQuestion + 40, sizeX, sizeY);
 
 
         revalidate();
@@ -140,6 +141,7 @@ public class JCard extends JPanel {
                     fadeInAnswerAndQuestion();
                 }
                 questionLabel.setBounds(x, currentY, sizeX, sizeY);
+                questionQuestion.setBounds(x, currentY + 30, sizeX, sizeY);
                 revalidate();
                 repaint();
             }
