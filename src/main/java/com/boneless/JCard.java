@@ -17,11 +17,11 @@ import static com.boneless.util.GeneralUtils.*;
 
 public class JCard extends JPanel {
     public boolean isActive = false;
-    private JLabel questionLabel;
-    private JLabel answerLabel;
-    private JLabel questionQuestion;
-    private JLabel answerAnswer;
-    private JLabel faggot;
+    private final JLabel questionLabel;
+    private final JLabel answerLabel;
+    private final JLabel questionQuestion;
+    private final JLabel answerAnswer;
+    private final JLabel moron;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
 
@@ -44,9 +44,9 @@ public class JCard extends JPanel {
         answerAnswer.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         answerAnswer.setOpaque(false);
 
-        faggot = new JLabel("you're a faggot :)");
-        faggot.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
-        faggot.setOpaque(false);
+        moron = new JLabel("you're a moron :)");
+        moron.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
+        moron.setOpaque(false);
 
 
         add(questionLabel);
@@ -55,7 +55,7 @@ public class JCard extends JPanel {
         add(answerLabel);
         add(answerAnswer);
 
-        add(faggot);
+        add(moron);
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -83,10 +83,10 @@ public class JCard extends JPanel {
         questionLabel.setBounds(x6, yQuestion, sizeX, sizeY);
         questionQuestion.setBounds(x6, yQuestion + 30, sizeX, sizeY);
 
-        answerLabel.setBounds(x6, yQuestion + 20, sizeX, sizeY);
-        answerAnswer.setBounds(x6, yQuestion, sizeX, sizeY);
+        answerLabel.setBounds(x6, yQuestion, sizeX, sizeY);
+        answerAnswer.setBounds(x6, yQuestion + 20, sizeX, sizeY);
 
-        faggot.setBounds(x6, yQuestion + 40, sizeX, sizeY);
+        moron.setBounds(x6, yQuestion + 40, sizeX, sizeY);
 
 
         revalidate();
@@ -100,7 +100,7 @@ public class JCard extends JPanel {
     private void setUpCharacters() {
         questionLabel.setFont(GeneralUtils.generateFont(30));
         answerLabel.setFont(GeneralUtils.generateFont(30));
-        faggot.setFont(GeneralUtils.generateFont(10));
+        moron.setFont(GeneralUtils.generateFont(10));
         setBackground(mainColor);
     }
 
@@ -171,7 +171,7 @@ public class JCard extends JPanel {
                     j.stop();
                 }
                 answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
-                faggot.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
+                moron.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
                 repaint();
             }
         });
