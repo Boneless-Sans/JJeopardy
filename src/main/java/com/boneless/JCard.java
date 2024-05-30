@@ -10,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static com.boneless.GameBoard.HeaderPanel.createRightPanel;
+import static com.boneless.GameBoard.HeaderPanel.rightPanel;
 import static com.boneless.GameBoard.fontColor;
 import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.*;
@@ -175,6 +177,10 @@ public class JCard extends JPanel {
 
     public void exit() {
         GameBoard.HeaderPanel.leftText.setText("Exit");
+        rightPanel.removeAll();
+        rightPanel.add(createRightPanel(true));
+        rightPanel.revalidate();
+        rightPanel.repaint();
         changeCurrentPanel(GAME_BOARD.boardPanel, this);
         GAME_BOARD.jCardIsActive = false;
         GAME_BOARD.GameIsActive = true;

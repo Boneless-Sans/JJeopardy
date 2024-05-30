@@ -9,7 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
-import static com.boneless.GameBoard.HeaderPanel.rightText;
+import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -46,7 +46,7 @@ public class GameBoard extends JPanel {
 
         int boardX = Integer.parseInt(JsonFile.read(fileName, "data", "categories"));
         int boardY = Integer.parseInt(JsonFile.read(fileName, "data", "rows")) + 1;
-        panel.setLayout(new GridLayout(boardY, boardX, 1, 1));
+        panel.setLayout(new GridLayout(boardY, boardX, 0, 0));
 
         for (int i = 0; i < boardX; i++) {
             panel.add(createCatPanel(i));
@@ -62,6 +62,9 @@ public class GameBoard extends JPanel {
 
                     BoardButton button = new BoardButton(score, question, answer);
                     button.setBackground(mainColor);
+                    button.setForeground(fontColor);
+                    button.setFont(generateFont(fontSize));
+                    button.setOpaque(true);
                     panel.add(button);
                 } catch (Exception e) {
                     // ignore
@@ -76,7 +79,11 @@ public class GameBoard extends JPanel {
         panel.setBorder(BorderFactory.createBevelBorder(0));
         panel.setBackground(mainColor);
 
-        panel.add(new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index)), gbc);
+        JLabel label = new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
+        label.setFont(generateFont(fontSize));
+        label.setForeground(fontColor);
+
+        panel.add(label, gbc);
         return panel;
     }
     private JScrollPane createTeamsPanel() {
@@ -84,14 +91,24 @@ public class GameBoard extends JPanel {
         panel.setBackground(mainColor);
         panel.setBorder(null);
 
-        for(int i = 0; i < teamCount; i++){
-            Team team = new Team();
-            panel.add(gapPanel(80));
-            panel.add(team);
-        }
-        panel.add(gapPanel(80));
+        int teamPanelWidth = 150;
+        int totalTeamsWidth = teamCount * teamPanelWidth;
+        int totalGapsWidth = (teamCount + 1) * 80; // Initial assumption of 80 units gap
+        int availableWidth = getWidth();
 
-        JScrollPane pane = new JScrollPane(panel); // Set the panel as the viewport view
+        // Calculate the dynamic gap size
+        int dynamicGapSize = (availableWidth - totalTeamsWidth) / (teamCount + 1);
+        if (dynamicGapSize < 0) {
+            dynamicGapSize = 0; // Ensure no negative gap
+        }
+
+        for (int i = 0; i < teamCount; i++) {
+            panel.add(gapPanel(dynamicGapSize));
+            panel.add(new Team());
+        }
+        panel.add(gapPanel(dynamicGapSize));
+
+        JScrollPane pane = new JScrollPane(panel);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
         pane.setBorder(null);
         pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -100,12 +117,13 @@ public class GameBoard extends JPanel {
         return pane;
     }
 
-    public static JPanel gapPanel(int size){
+    public static JPanel gapPanel(int size) {
         JPanel panel = new JPanel();
         panel.setBackground(mainColor);
-        panel.setPreferredSize(new Dimension(size,size));
+        panel.setPreferredSize(new Dimension(size, size));
         return panel;
     }
+
     public void exit() {
         int size = 32;
 
@@ -147,9 +165,6 @@ public class GameBoard extends JPanel {
     public static class HeaderPanel extends JPanel {
         public static JLabel leftText;
         public static JPanel rightPanel;
-        public static JLabel rightText;
-        private static JPanel rightInfoPanel;
-        private static JPanel rightInfoParentPanel;
         public static int fontSize = 20;
 
         public HeaderPanel() {
@@ -174,44 +189,28 @@ public class GameBoard extends JPanel {
             JPanel titlePanel = new JPanel(new GridBagLayout());
             titlePanel.setOpaque(false);
 
-            rightText = new JLabel("Reveal Correct Answer");
-            rightText.setForeground(fontColor);
-            rightText.setFont(generateFont(fontSize));
-
             titlePanel.add(title, gbc);
 
-            rightPanel = new JPanel();
-            rightPanel.setOpaque(false);
+            rightPanel = createRightPanel(true);
 
             add(leftPanel);
             add(titlePanel);
             add(rightPanel);
         }
 
-        private static JPanel createRightPanel(JLabel label, JButton button) {
-            rightInfoParentPanel = new JPanel(null);
-            rightInfoParentPanel.setBackground(mainColor);
+        static JPanel createRightPanel(boolean blank) {
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+            panel.setBackground(mainColor);
 
-            rightInfoPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            rightInfoPanel.add(label);
-            rightInfoPanel.add(button);
-            rightInfoPanel.setOpaque(false);
+            if(!blank) {
+                JLabel rightText = new JLabel("Reveal Correct Answer");
+                rightText.setForeground(fontColor);
+                rightText.setFont(generateFont(fontSize));
 
-            Dimension parentSize = rightInfoParentPanel.getSize();
-            Dimension panelSize = rightInfoPanel.getPreferredSize();
-            rightInfoPanel.setBounds(parentSize.width - panelSize.width, 0, panelSize.width, panelSize.height);
-
-            rightInfoParentPanel.addComponentListener(new ComponentAdapter() {
-                @Override
-                public void componentResized(ComponentEvent e) {
-                    Dimension parentSize = rightInfoParentPanel.getSize();
-                    Dimension panelSize = rightInfoPanel.getPreferredSize();
-                    rightInfoPanel.setBounds(parentSize.width - panelSize.width, 0, panelSize.width, panelSize.height);
-                }
-            });
-
-            rightInfoParentPanel.add(rightInfoPanel);
-            return rightInfoParentPanel;
+                panel.add(rightText);
+                panel.add(createHeaderButton("continue", false));
+            }
+            return panel;
         }
 
         public static JButton createHeaderButton(String text, boolean isExit) {
@@ -252,8 +251,13 @@ public class GameBoard extends JPanel {
 
         private ActionListener listener() {
             return e -> {
-                HeaderPanel.leftText.setText("Back");
-                HeaderPanel.rightPanel = HeaderPanel.createRightPanel(rightText, HeaderPanel.createHeaderButton("continue", false));
+                leftText.setText("Back");
+
+                rightPanel.removeAll();
+                rightPanel.add(createRightPanel(false));
+                rightPanel.revalidate();
+                rightPanel.repaint();
+
                 JPanel parentPanel = (JPanel) getParent();
                 jCard = new JCard(question, answer);
                 jCardIsActive = true;

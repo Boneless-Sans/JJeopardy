@@ -12,17 +12,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 /*
+√  - √
+X  - \bX\b
+!! - !!(.*?)!!
 Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Main menu | √
     Frame changing system | √
     Rework settings | √
     Create main board | X
         -make title header | X
-        -get buttons to create the info card | √ todo: fix wack mac color override
+        -get buttons to create the info card | X todo: fix wack mac color override
         -have buttons read points from json | √
         -create teams sub panel | √
     Create question card (JCard) | X
-        -layout | √
+        -layout | X?
         -key binds | X
         -data from json | √
         -animations | X
@@ -31,7 +34,7 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -create left board panel | X
         -create right settings panel | X
         -figure out more | X
-    Implement key binds and have them match settings.json | √ working (only non dev?) :)
+    Implement key binds and have them match settings.json | √ !!No ARG Only!!
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
@@ -84,7 +87,7 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(MAIN_MENU);
         } else {
-            add(GAME_BOARD = new GameBoard(3));
+            add(GAME_BOARD = new GameBoard(4));
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){
