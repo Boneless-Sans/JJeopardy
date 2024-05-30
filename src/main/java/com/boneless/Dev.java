@@ -4,19 +4,14 @@ import com.boneless.util.GeneralUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Dev extends JFrame {
     public static void main(String[] args){
         new Dev();
     }
     public Dev(){
-        setSize(500,500);
+        setSize(1280,720);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setTitle("Dev");
@@ -25,11 +20,30 @@ public class Dev extends JFrame {
         setVisible(true);
     }
     private void init() {
-        JButton button = new JButton("OK");
+        JPanel testPanel = new JPanel(new BorderLayout());
+        testPanel.setBackground(Color.cyan);
+        int factor = 10;
+        int sizeX = getWidth() - (getWidth() / factor);
+        int sizeY = (getHeight() - (getHeight() / factor)) / 2;
+        testPanel.setBounds((getWidth() / 2) - (sizeX / 2), (getHeight() / 2) - (sizeY / 2), sizeX, sizeY);
 
-        int size = 50;
-        button.setBounds((getWidth() / 2) - (size / 2),(getWidth() / 2) - (size / 2),size,size);
+        JLabel label = new JLabel("This is a very very interesting question");
+        label.setFont(GeneralUtils.generateFont(50));
 
-        add(button);
+        testPanel.add(label);
+        add(testPanel);
+
+        System.out.println(testPanel.getY() + " " + getHeight() / 5);
+        Thread thread = new Thread(() -> {
+            while(testPanel.getY() >= getHeight() / 10){
+                try {
+                    testPanel.setBounds(testPanel.getX(), testPanel.getY() - 3, testPanel.getWidth(), testPanel.getHeight());
+                    Thread.sleep(16); //~60 fps
+                } catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 }

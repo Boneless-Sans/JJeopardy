@@ -54,10 +54,12 @@ public class ButtonIcon extends JButton {
             int checkmarkEndX = centerX + checkmarkSize / 2;
             int checkmarkEndY = centerY - checkmarkSize / 2;
 
-            g2d.drawLine(checkmarkStartX, checkmarkStartY, checkmarkMiddleX, checkmarkMiddleY);
-            g2d.drawLine(checkmarkMiddleX, checkmarkMiddleY, checkmarkEndX, checkmarkEndY);
+            g2d.drawLine(checkmarkStartX, checkmarkStartY, checkmarkMiddleX, checkmarkMiddleY); // .
+            g2d.drawLine(checkmarkMiddleX, checkmarkMiddleY, checkmarkEndX, checkmarkEndY); // /
         } else if(iconID == 1) { //cross
-
+            int margin = 4;
+            g2d.drawLine(centerX - (lineLength - margin), centerY - (lineLength - margin), centerX + (lineLength - margin), centerY + (lineLength - margin)); // \
+            g2d.drawLine(centerX + (lineLength - margin), centerY - (lineLength - margin), centerX - (lineLength - margin), centerY + (lineLength - margin)); // /
         } else if(iconID == 2) { //plus
             g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength); // |
             g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY); // -
@@ -66,15 +68,7 @@ public class ButtonIcon extends JButton {
         } else {
             System.err.println("Unknown icon ID: " + iconID);
 
-            g2d.setFont(new Font("Comic Sans MS", Font.PLAIN, 12));
-            FontMetrics fm = g2d.getFontMetrics();
-            int size = 2;
-            int textWidth = fm.stringWidth("?");
-            int textHeight = fm.getHeight();
-            int x = (size - textWidth) / 2;
-            int y = (size - textHeight) / 2 + fm.getAscent();
-
-            g2d.drawString("?", x, y);
+            g2d.drawString(String.valueOf(iconID), centerX, centerY);
         }
         g2d.dispose();
     }

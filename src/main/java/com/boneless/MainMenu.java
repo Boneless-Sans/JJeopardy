@@ -145,10 +145,20 @@ public class MainMenu extends ScrollGridPanel {
                     dropDown.setFont(generateFont(20));
                     dropDown.setFocusable(false);
 
-                    JButton soundOption = getSoundOption();
                     contentPane.add(numTeamText);
                     contentPane.add(dropDown);
-                    contentPane.add(soundOption);
+                    contentPane.add(getSoundOption(0,
+                            new Color(70,200,58),
+                            Color.white));
+                    contentPane.add(getSoundOption(1,
+                            new Color(230,40,58),
+                            Color.white));
+                    contentPane.add(getSoundOption(2,
+                            Color.cyan,
+                            Color.white));
+                    contentPane.add(getSoundOption(3,
+                            Color.magenta,
+                            Color.white));
                     teamChoosePanel.add(contentPane, gbc);
                     changeCurrentPanel(teamChoosePanel, this);
                     break;
@@ -182,11 +192,8 @@ public class MainMenu extends ScrollGridPanel {
         return button;
     }
 
-    private ButtonIcon getSoundOption() {
-        ButtonIcon soundOption = new ButtonIcon(5,
-                new Color(128,201,152),
-                Color.white
-        );
+    private ButtonIcon getSoundOption(int iconID, Color color, Color color2) {
+        ButtonIcon soundOption = new ButtonIcon(iconID,color,color2);
         soundOption.setPreferredSize(new Dimension(50,50));
         return soundOption;
     }
