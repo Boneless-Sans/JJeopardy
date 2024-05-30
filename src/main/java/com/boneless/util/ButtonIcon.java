@@ -68,7 +68,7 @@ public class ButtonIcon extends JButton {
 
             g2d.setFont(new Font("Comic Sans MS", Font.PLAIN, 12));
             FontMetrics fm = g2d.getFontMetrics();
-            int size = 20;
+            int size = 2;
             int textWidth = fm.stringWidth("?");
             int textHeight = fm.getHeight();
             int x = (size - textWidth) / 2;
