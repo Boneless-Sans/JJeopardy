@@ -20,9 +20,16 @@ public class Dev extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setTitle("Dev");
+        setLayout(null);
         init();
         setVisible(true);
     }
     private void init() {
+        JButton button = new JButton("OK");
+
+        int size = 50;
+        button.setBounds((getWidth() / 2) - (size / 2),(getWidth() / 2) - (size / 2),size,size);
+
+        add(button);
     }
 }
