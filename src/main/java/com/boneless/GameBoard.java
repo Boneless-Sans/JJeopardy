@@ -3,10 +3,10 @@ package com.boneless;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
 import static com.boneless.GameBoard.HeaderPanel.*;
@@ -43,6 +43,7 @@ public class GameBoard extends JPanel {
     // panel to contain the main board grid
     private JPanel mainBoard() {
         JPanel panel = new JPanel();
+        panel.setBackground(Color.black);
 
         int boardX = Integer.parseInt(JsonFile.read(fileName, "data", "categories"));
         int boardY = Integer.parseInt(JsonFile.read(fileName, "data", "rows")) + 1;
@@ -60,7 +61,7 @@ public class GameBoard extends JPanel {
                     String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                     String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                    BoardButton button = new BoardButton(score, question, answer);
+                    BoardButton button = new BoardButton(score, question, answer, 0);
                     button.setBackground(mainColor);
                     button.setForeground(fontColor);
                     button.setFont(generateFont(fontSize));
@@ -93,13 +94,12 @@ public class GameBoard extends JPanel {
 
         int teamPanelWidth = 150;
         int totalTeamsWidth = teamCount * teamPanelWidth;
-        int totalGapsWidth = (teamCount + 1) * 80; // Initial assumption of 80 units gap
         int availableWidth = getWidth();
 
-        // Calculate the dynamic gap size
+        //gap size calc
         int dynamicGapSize = (availableWidth - totalTeamsWidth) / (teamCount + 1);
         if (dynamicGapSize < 0) {
-            dynamicGapSize = 0; // Ensure no negative gap
+            dynamicGapSize = 0;
         }
 
         for (int i = 0; i < teamCount; i++) {
@@ -108,10 +108,10 @@ public class GameBoard extends JPanel {
         }
         panel.add(gapPanel(dynamicGapSize));
 
-        JScrollPane pane = new JScrollPane(panel);
+        HiddenScroller pane = new HiddenScroller(panel);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
         pane.setBorder(null);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         return pane;
@@ -161,7 +161,23 @@ public class GameBoard extends JPanel {
             changeCurrentPanel(MAIN_MENU, GAME_BOARD);
         }
     }
+    public static class HiddenScroller extends JScrollPane {
 
+        public HiddenScroller(Component view) {
+            super(view);
+            setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            JScrollBar horizontalScrollBar = getHorizontalScrollBar();
+            horizontalScrollBar.setUI(new HiddenScrollUI());
+            horizontalScrollBar.setPreferredSize(new Dimension(0, 0)); //hide
+        }
+
+        // Custom ScrollBarUI to customize scrollbar appearance
+        private static class HiddenScrollUI extends BasicScrollBarUI {
+            @Override protected void configureScrollBarColors() {}
+            @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
+            @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
+        }
+    }
     public static class HeaderPanel extends JPanel {
         public static JLabel leftText;
         public static JPanel rightPanel;
@@ -238,11 +254,13 @@ public class GameBoard extends JPanel {
         private final int score;
         private final String question;
         private final String answer;
+        private final int arcSize;
 
-        public BoardButton(int score, String question, String answer) {
+        public BoardButton(int score, String question, String answer, int arcSize) {
             this.score = score;
             this.question = question;
             this.answer = answer;
+            this.arcSize = arcSize;
             setText(String.valueOf(score));
             setBackground(mainColor);
             setFocusable(false);
@@ -265,6 +283,42 @@ public class GameBoard extends JPanel {
                 scoreToAdd = score;
                 changeCurrentPanel(jCard, parentPanel);
             };
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Background
+            g2d.setColor(getBackground());
+            Shape backgroundShape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), arcSize, arcSize);
+            g2d.fill(backgroundShape);
+
+            // Text
+            g2d.setColor(getForeground());
+            Font font = getFont();
+            FontMetrics metrics = g2d.getFontMetrics(font);
+            int x = (getWidth() - metrics.stringWidth(getText())) / 2;
+            int y = ((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
+            g2d.setFont(font);
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override
+        protected void paintBorder(Graphics g) {
+            super.paintBorder(g);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Border
+            g2d.setColor(Color.black);
+            g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcSize, arcSize);
+
+            g2d.dispose();
         }
     }
 }

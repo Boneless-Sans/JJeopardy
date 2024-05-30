@@ -21,7 +21,7 @@ public class MainMenu extends ScrollGridPanel {
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
     private final String[] dropDownList = {
-            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "Other",
+            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams"
     };
 
     public MainMenu(){
@@ -137,18 +137,13 @@ public class MainMenu extends ScrollGridPanel {
 
                     contentPane.add(numTeamText);
                     contentPane.add(dropDown);
-                    contentPane.add(getSoundOption(0,
-                            new Color(70,200,58),
-                            Color.white));
-                    contentPane.add(getSoundOption(1,
-                            new Color(230,40,58),
-                            Color.white));
-                    contentPane.add(getSoundOption(2,
-                            Color.cyan,
-                            Color.white));
-                    contentPane.add(getSoundOption(3,
-                            Color.magenta,
-                            Color.white));
+//                    contentPane.add(getSoundOption(0,
+//                            new Color(70,200,58),
+//                            Color.white));
+//                    contentPane.add(getSoundOption(1,
+//                            new Color(230,40,58),
+//                            Color.white));
+                    contentPane.add(new ButtonIcon(false));
                     teamChoosePanel.add(contentPane, gbc);
                     changeCurrentPanel(teamChoosePanel, this);
                     break;
@@ -180,12 +175,6 @@ public class MainMenu extends ScrollGridPanel {
         });
 
         return button;
-    }
-
-    private ButtonIcon getSoundOption(int iconID, Color color, Color color2) {
-        ButtonIcon soundOption = new ButtonIcon(iconID,color,color2);
-        soundOption.setPreferredSize(new Dimension(50,50));
-        return soundOption;
     }
 
     private void changeFileName(String newFile){

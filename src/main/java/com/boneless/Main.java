@@ -19,14 +19,10 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Main menu | √
     Frame changing system | √
     Rework settings | √
-    Create main board | X
-        -make title header | X
-        -get buttons to create the info card | X todo: fix wack mac color override
-        -have buttons read points from json | √
-        -create teams sub panel | √
+    Create main board | √
     Create question card (JCard) | X
         -layout | X?
-        -key binds | X
+        -key binds | √
         -data from json | √
         -animations | X
     Create board factory | X
@@ -87,7 +83,7 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(MAIN_MENU);
         } else {
-            add(GAME_BOARD = new GameBoard(4));
+            add(GAME_BOARD = new GameBoard(5));
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){

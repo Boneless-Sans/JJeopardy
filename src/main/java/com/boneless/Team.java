@@ -24,7 +24,7 @@ public class Team extends JPanel {
 
         //setup UI
         setBackground(Color.white);
-        setPreferredSize(new Dimension(150,110)); //Panel height controller
+        setPreferredSize(new Dimension(150,500)); //Panel height controller
         setBorder(null);
 
         //name field
