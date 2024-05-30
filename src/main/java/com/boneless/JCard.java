@@ -19,6 +19,8 @@ public class JCard extends JPanel {
     public boolean isActive = false;
     private JLabel questionLabel;
     private JLabel answerLabel;
+    private JLabel questionQuestion;
+    private JLabel answerAnswer;
     private JLabel faggot;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
@@ -26,20 +28,33 @@ public class JCard extends JPanel {
     public JCard(String question, String answer) {
         setLayout(null);
 
-        questionLabel = new JLabel("Question: " + question);
+        questionLabel = new JLabel("Question: ");
         questionLabel.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data", "font_color")));
         questionLabel.setOpaque(false);
 
-        answerLabel = new JLabel("Answer: " + answer);
+        questionQuestion = new JLabel(question);
+        questionQuestion.setForeground(GeneralUtils.parseColor(JsonFile.read(fileName, "data", "font_color")));
+        questionQuestion.setOpaque(false);
+
+        answerLabel = new JLabel("Answer: ");
         answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         answerLabel.setOpaque(false);
 
+        answerAnswer = new JLabel(answer);
+        answerAnswer.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
+        answerAnswer.setOpaque(false);
+
         faggot = new JLabel("you're a faggot :)");
         faggot.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
+        faggot.setOpaque(false);
 
 
         add(questionLabel);
+        add(questionQuestion);
+
         add(answerLabel);
+        add(answerAnswer);
+
         add(faggot);
 
         addComponentListener(new ComponentAdapter() {
@@ -57,12 +72,19 @@ public class JCard extends JPanel {
         int sizeX = 400;
         int sizeY = 200;
         int x = (getWidth() - sizeX) / 2;
+        int x2 = getWidth() / 2;
+        int x3 =  ((getWidth() - sizeX) / 2) / (getWidth() / 2);
         int yQuestion = (getHeight() - sizeY) / 2;
         int yAnswer = yQuestion + sizeY;
 
-        questionLabel.setBounds(x, yQuestion, sizeX, sizeY);
+        questionLabel.setBounds(x2, yQuestion, sizeX, sizeY);
+        questionQuestion.setBounds(x2, yQuestion + 30, sizeX, sizeY);
+
         answerLabel.setBounds(x, yQuestion, sizeX, sizeY);
+        answerAnswer.setBounds(x, yQuestion, sizeX, sizeY);
+
         faggot.setBounds(x, yQuestion + 20, sizeX, sizeY);
+
 
         revalidate();
         repaint();
@@ -111,7 +133,7 @@ public class JCard extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentY -= 5; // Adjust this value to control the speed of movement
+                currentY -= 3; // Adjust this value to control the speed of movement
                 if (currentY <= targetY) {
                     currentY = targetY;
                     q.stop();
