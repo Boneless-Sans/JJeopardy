@@ -99,7 +99,7 @@ public class MainMenu extends ScrollGridPanel {
         };
         button.setFocusable(false);
         button.setFont(generateFont(15));
-        try { //im not sure why != null isn't working, but whatever this works
+        try {
             if (UUID == 0 && fileName.isEmpty()) { //disable start button if there is no current board file
                 button.setEnabled(false);
             }
@@ -112,7 +112,7 @@ public class MainMenu extends ScrollGridPanel {
             menuIsActive = true;
             switch (UUID){
                 case 0: { //start
-                    GAME_BOARD = new GameBoard(4);
+                    //GAME_BOARD = new GameBoard(4);
                     Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
                     JPanel teamChoosePanel = new JPanel(new GridBagLayout()){
                         @Override

@@ -9,6 +9,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 
+import static com.boneless.GameBoard.HeaderPanel.rightText;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -148,17 +149,17 @@ public class GameBoard extends JPanel {
         }
     }
 
-    static class HeaderPanel extends JPanel {
+    public static class HeaderPanel extends JPanel {
         public static JLabel leftText;
         public static JPanel rightPanel;
         public static JLabel rightText;
-        private JPanel rightInfoPanel;
-        private JPanel rightInfoParentPanel;
+        private static JPanel rightInfoPanel;
+        private static JPanel rightInfoParentPanel;
         public static int fontSize = 20;
 
         public HeaderPanel() {
             setBackground(mainColor);
-            setLayout(new BorderLayout());
+            setLayout(new GridLayout());
 
             leftText = new JLabel("Exit");
             leftText.setForeground(fontColor);
@@ -189,14 +190,19 @@ public class GameBoard extends JPanel {
 
             titlePanel.add(title, gbc);
 
-            rightPanel = createRightPanel(rightText, createHeaderButton("continue", false));
+            rightPanel = new JPanel();
+            rightPanel.setOpaque(false);
 
-            add(leftPanel, BorderLayout.WEST);
-            add(titlePanel, BorderLayout.CENTER);
-            add(createRightPanel(rightText, createHeaderButton("continue", false)), BorderLayout.EAST);
+            JPanel blank = new JPanel();
+            blank.setOpaque(true);
+            blank.setBackground(Color.cyan);
+
+            add(leftPanel);
+            add(titlePanel);
+            add(rightPanel);
         }
 
-        private JPanel createRightPanel(JLabel label, JButton button) {
+        private static JPanel createRightPanel(JLabel label, JButton button) {
             rightInfoParentPanel = new JPanel(null);
             rightInfoParentPanel.setBackground(mainColor);
 
@@ -261,7 +267,7 @@ public class GameBoard extends JPanel {
         private ActionListener listener() {
             return e -> {
                 HeaderPanel.leftText.setText("Back");
-
+                HeaderPanel.rightPanel = HeaderPanel.createRightPanel(rightText, HeaderPanel.createHeaderButton("continue", false));
                 JPanel parentPanel = (JPanel) getParent();
                 jCard = new JCard(question, answer);
                 jCardIsActive = true;
