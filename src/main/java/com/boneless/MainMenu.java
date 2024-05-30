@@ -32,11 +32,6 @@ public class MainMenu extends ScrollGridPanel {
         JPanel titlePanel = new JPanel(new GridBagLayout());
         titlePanel.setOpaque(false);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = 0;
-
         JLabel title = new JLabel("Jeopardy!");
         title.setFont(generateFont(150));
         title.setForeground(Color.white);
@@ -126,11 +121,6 @@ public class MainMenu extends ScrollGridPanel {
                             g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0));
                         }
                     };
-
-                    GridBagConstraints gbc = new GridBagConstraints();
-                    gbc.gridx = 0;
-                    gbc.gridy = 0;
-                    gbc.fill = 0;
 
                     //main body
                     JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));

@@ -8,7 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import static com.boneless.Main.MAIN_MENU;
+import static com.boneless.Main.*;
+import static com.boneless.util.GeneralUtils.*;
 
 @SuppressWarnings("ExtractMethodRecommender") //shut the fuck up
 public class Settings extends JPanel{
@@ -111,11 +112,6 @@ public class Settings extends JPanel{
         JPanel labelPanel = new JPanel(new GridBagLayout());
         labelPanel.setBackground(Color.lightGray);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = 0;
-
         JLabel label = new JLabel(text);
         label.setFont(new Font("Arial", Font.PLAIN, 25));
 
@@ -179,11 +175,6 @@ public class Settings extends JPanel{
             addKeyListener(this);
             setLocationRelativeTo(null);
             setLayout(new BorderLayout());
-
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.fill = 0;
 
             JPanel currentKey = new JPanel(new GridBagLayout());
             currentKey.setBackground(Color.lightGray);

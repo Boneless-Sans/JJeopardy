@@ -76,11 +76,6 @@ public class GameBoard extends JPanel {
         panel.setBorder(BorderFactory.createBevelBorder(0));
         panel.setBackground(mainColor);
 
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = 0;
-
         panel.add(new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index)), gbc);
         return panel;
     }
@@ -179,11 +174,6 @@ public class GameBoard extends JPanel {
             JPanel titlePanel = new JPanel(new GridBagLayout());
             titlePanel.setOpaque(false);
 
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.fill = 0;
-
             rightText = new JLabel("Reveal Correct Answer");
             rightText.setForeground(fontColor);
             rightText.setFont(generateFont(fontSize));
@@ -192,10 +182,6 @@ public class GameBoard extends JPanel {
 
             rightPanel = new JPanel();
             rightPanel.setOpaque(false);
-
-            JPanel blank = new JPanel();
-            blank.setOpaque(true);
-            blank.setBackground(Color.cyan);
 
             add(leftPanel);
             add(titlePanel);

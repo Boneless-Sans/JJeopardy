@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.boneless.util.GeneralUtils.gbc;
+
 public class Dev extends JFrame {
     public static void main(String[] args){
         new Dev();
@@ -20,7 +22,7 @@ public class Dev extends JFrame {
         setVisible(true);
     }
     private void init() {
-        JPanel testPanel = new JPanel(new BorderLayout());
+        JPanel testPanel = new JPanel(new GridBagLayout());
         testPanel.setBackground(Color.cyan);
         int factor = 10;
         int sizeX = getWidth() - (getWidth() / factor);
@@ -30,7 +32,7 @@ public class Dev extends JFrame {
         JLabel label = new JLabel("This is a very very interesting question");
         label.setFont(GeneralUtils.generateFont(50));
 
-        testPanel.add(label);
+        testPanel.add(label, gbc);
         add(testPanel);
 
         System.out.println(testPanel.getY() + " " + getHeight() / 5);

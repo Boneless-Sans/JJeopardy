@@ -9,6 +9,11 @@ import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.fileName;
 
 public class GeneralUtils {
+    public static final GridBagConstraints gbc = new GridBagConstraints(){{
+        gridx = 0;
+        gridy = 0;
+        fill = 0;
+    }};
 
     public static Color parseColor(String color){
         String[] split = color.split(",");
