@@ -5,15 +5,10 @@ import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
-import static com.boneless.GameBoard.HeaderPanel.createRightPanel;
-import static com.boneless.GameBoard.HeaderPanel.rightPanel;
-import static com.boneless.GameBoard.fontColor;
-import static com.boneless.GameBoard.mainColor;
+import static com.boneless.GameBoard.*;
+import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -176,7 +171,7 @@ public class JCard extends JPanel {
     }
 
     public void exit() {
-        GameBoard.HeaderPanel.leftText.setText("Exit");
+        leftText.setText("Exit");
         rightPanel.removeAll();
         rightPanel.add(createRightPanel(true));
         rightPanel.revalidate();
