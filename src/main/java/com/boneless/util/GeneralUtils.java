@@ -31,7 +31,7 @@ public class GeneralUtils {
         return new Color(red,green,blue,alpha);
     }
 
-    public static Color parseColorFadeComplete(){
+    public static Color parseColorFadeComplete() {
         return parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     }
 

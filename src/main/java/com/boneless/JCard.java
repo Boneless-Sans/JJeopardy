@@ -68,6 +68,7 @@ public class JCard extends JPanel {
         moron = new JLabel("you're a moron :)");
         moron.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         moron.setOpaque(false);
+        //bruh
 
         test.add(questionLabel, gbc);
         test2.add(questionQuestion, gbc);
