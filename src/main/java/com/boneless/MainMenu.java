@@ -155,7 +155,7 @@ public class MainMenu extends ScrollGridPanel {
 
         //main body
         JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        contentPane.setPreferredSize(new Dimension(300,200));
+        contentPane.setPreferredSize(new Dimension(320,230));
         contentPane.setBackground(Color.white);
 
         JLabel numTeamText = new JLabel("Number of Teams");
@@ -166,25 +166,39 @@ public class MainMenu extends ScrollGridPanel {
         dropDown.setFont(generateFont(20));
         dropDown.setFocusable(false);
 
+        //todo: add context text for the buttons via a JPanel parent
         contentPane.add(numTeamText);
         contentPane.add(createGap(20, null));
         contentPane.add(dropDown);
         contentPane.add(createGap(20, null));
 
-        ButtonIcon soundCheck = new ButtonIcon(50,false);
+        int buttonSize = 60;
+
+        ButtonIcon soundCheck = new ButtonIcon(buttonSize,false);
         soundCheck.addActionListener(a -> {
             soundCheck.toggleIcon();
             playAudio = soundCheck.isChecked();
             System.out.println(playAudio);
         });
 
-        ButtonIcon startGame = new ButtonIcon(50, ButtonIcon.START, ButtonIcon.GREEN);
+        ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
         startGame.addActionListener(a -> changeCurrentPanel(GAME_BOARD = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel));
 
-        contentPane.add(soundCheck);
-        contentPane.add(startGame);
+        contentPane.add(createTeamChooserButton(new ButtonIcon(buttonSize, ButtonIcon.BACK, ButtonIcon.RED), "Exit"));
+        contentPane.add(createTeamChooserButton(soundCheck, "Play Audio"));
+        contentPane.add(createTeamChooserButton(startGame, "Start"));
         teamChoosePanel.add(contentPane, gbc);
         changeCurrentPanel(teamChoosePanel, this);
+    }
+    private JPanel createTeamChooserButton(ButtonIcon icon, String text){
+        JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        panel.setPreferredSize(new Dimension(80,120));
+
+        panel.add(icon);
+        panel.add(new JLabel(text));
+
+        return panel;
     }
     private void changeFileName(String newFile){
         fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);

@@ -12,9 +12,10 @@ import javax.swing.text.DocumentFilter;
 import java.awt.*;
 
 import static com.boneless.Main.*;
+import static com.boneless.util.GeneralUtils.*;
 
 public class Team extends JPanel {
-    private static int teamCount;
+    public static int teamCount;
     private int score;
     private final JTextField scoreField;
 
@@ -34,6 +35,7 @@ public class Team extends JPanel {
         teamName.setBackground(null);
         teamName.setBorder(new RoundedEtchedBorder());
         teamName.setHorizontalAlignment(JTextField.CENTER);
+        teamName.setFont(generateFont(15));
 
         //div line
         JPanel line = new JPanel();
@@ -43,7 +45,7 @@ public class Team extends JPanel {
         //score field
 
         scoreField = new JTextField(String.valueOf(this.score));
-        scoreField.setFont(GeneralUtils.generateFont(15));
+        scoreField.setFont(generateFont(15));
         scoreField.setHorizontalAlignment(JTextField.CENTER);
         scoreField.setBorder(new RoundedEtchedBorder());
         scoreField.setBackground(null);

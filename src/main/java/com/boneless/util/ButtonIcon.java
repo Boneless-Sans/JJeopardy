@@ -10,6 +10,7 @@ public class ButtonIcon extends JButton {
     public static final int PLUS = 2;
     public static final int MINUS = 3;
     public static final int START = 4;
+    public static final int BACK = 5;
 
     public static final Color GREEN = new Color(64,155,76);
     public static final Color RED = new Color(201, 0, 0);
@@ -95,7 +96,7 @@ public class ButtonIcon extends JButton {
             g2d.drawLine(checkmarkStartX, checkmarkStartY, checkmarkMiddleX, checkmarkMiddleY); // .
             g2d.drawLine(checkmarkMiddleX, checkmarkMiddleY, checkmarkEndX, checkmarkEndY); // /
         } else if(iconID == CROSS) { //cross
-            int margin = 4;
+            int margin = 8;
             g2d.drawLine(centerX - (lineLength - margin), centerY - (lineLength - margin), centerX + (lineLength - margin), centerY + (lineLength - margin)); // \
             g2d.drawLine(centerX + (lineLength - margin), centerY - (lineLength - margin), centerX - (lineLength - margin), centerY + (lineLength - margin)); // /
         } else if(iconID == PLUS) { //plus
@@ -130,6 +131,27 @@ public class ButtonIcon extends JButton {
 
             //render
             g2d.fill(star);
+        } else if(iconID == BACK){ //back icon
+            int arrowLength = ovalDiameter / 3;
+            int arrowWidth = arrowLength / 2;
+            int bodyWidth = arrowLength / 3;
+            int bodyHeight = arrowWidth;
+
+            // Coordinates for the triangle (arrowhead)
+            int[] xPoints = {
+                    centerX - arrowLength, centerX, centerX - arrowLength
+            };
+            int[] yPoints = {
+                    centerY - arrowWidth, centerY, centerY + arrowWidth
+            };
+
+            // Draw the rectangle (arrow body)
+            int rectX = centerX - arrowLength;
+            int rectY = centerY - bodyHeight / 2;
+            g2d.fillRect(rectX, rectY, bodyWidth, bodyHeight);
+
+            // Draw the arrowhead
+            g2d.fillPolygon(xPoints, yPoints, 3);
         }
         else {
             System.err.println("Unknown icon ID: " + iconID);
