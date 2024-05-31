@@ -119,6 +119,7 @@ public class JCard extends JPanel {
         int sizeX = 400;
         int sizeY = 200;
         int x = (getWidth() - sizeX) / 2;
+        int x2 = getWidth() / 2;
         int x4 =  (getWidth() / 2) + ((getWidth() - sizeX) / 2);
         int x6 =  (x4 / 2) + 35;
         int yQuestion = (getHeight() - sizeY) / 2;
@@ -136,8 +137,8 @@ public class JCard extends JPanel {
                     q.stop();
                     fadeInAnswerAndQuestion();
                 }
-                questionLabel.setBounds(x6, currentY, sizeX, sizeY);
-                questionQuestion.setBounds(x6, currentY + 30, sizeX, sizeY);
+                questionLabel.setBounds(x, currentY, sizeX, sizeY);
+                questionQuestion.setBounds(x, currentY + 30, sizeX, sizeY);
                 revalidate();
                 repaint();
             }
