@@ -70,6 +70,7 @@ public class JCard extends JPanel {
         moron.setOpaque(false);
         //bruh
 
+
         test.add(questionLabel, gbc);
         test2.add(questionQuestion, gbc);
         test3.add(answerLabel, gbc);

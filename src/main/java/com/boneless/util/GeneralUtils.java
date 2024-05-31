@@ -35,6 +35,7 @@ public class GeneralUtils {
         return parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     }
 
+
     public static Font generateFont(int fontSize){
         try {
             if(fileName != null && !fileName.isEmpty()) {
