@@ -132,26 +132,26 @@ public class ButtonIcon extends JButton {
             //render
             g2d.fill(star);
         } else if(iconID == BACK){ //back icon
-            int arrowLength = ovalDiameter / 3;
-            int arrowWidth = arrowLength / 2;
-            int bodyWidth = arrowLength / 3;
-            int bodyHeight = arrowWidth;
+            int arrowSize = ovalDiameter / 2; // size of the arrow
+            int tailSeparation = 10; // separation distance between the two tails
+            int separation = 10; // separation distance between the chevron and the oval
 
-            // Coordinates for the triangle (arrowhead)
-            int[] xPoints = {
-                    centerX - arrowLength, centerX, centerX - arrowLength
-            };
-            int[] yPoints = {
-                    centerY - arrowWidth, centerY, centerY + arrowWidth
-            };
+            // Calculate the center point for the chevron
+            int chevronCenterX = centerX - arrowSize / 2 - separation;
+            int chevronCenterY = centerY;
 
-            // Draw the rectangle (arrow body)
-            int rectX = centerX - arrowLength;
-            int rectY = centerY - bodyHeight / 2;
-            g2d.fillRect(rectX, rectY, bodyWidth, bodyHeight);
+            // Calculate the coordinates for the tip and tails points
+            int tipX = chevronCenterX - arrowSize / 4;
+            int tipY = chevronCenterY;
+            int tailX1 = chevronCenterX + arrowSize / 4 - tailSeparation / 2;
+            int tailX2 = chevronCenterX + arrowSize / 4 + tailSeparation / 2;
+            int tailY1 = chevronCenterY - arrowSize / 4;
+            int tailY2 = chevronCenterY + arrowSize / 4;
 
-            // Draw the arrowhead
-            g2d.fillPolygon(xPoints, yPoints, 3);
+            // Draw the lines forming the chevron.left
+            g2d.drawLine(tipX, tipY, tailX1, tailY1);
+            g2d.drawLine(tailX1, tailY1, tipX, centerY);
+            g2d.drawLine(tailX2, tailY2, tipX, centerY);
         }
         else {
             System.err.println("Unknown icon ID: " + iconID);
