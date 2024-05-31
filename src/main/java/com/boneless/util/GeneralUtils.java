@@ -22,6 +22,7 @@ public class GeneralUtils {
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue);
     }
+
     public static Color parseColorFade(String color, int alpha){
         String[] split = color.split(",");
         int red = Integer.parseInt(split[0]);
@@ -29,6 +30,7 @@ public class GeneralUtils {
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue,alpha);
     }
+
     public static Font generateFont(int fontSize){
         try {
             if(fileName != null && !fileName.isEmpty()) {
@@ -43,8 +45,14 @@ public class GeneralUtils {
         }
         return new Font("Arial", Font.PLAIN, fontSize);
     }
+
     public static void changeCurrentPanel(JPanel panelToSet, JComponent self) {
         Container parent = self.getParent();
+
+        if(parent == null){
+            System.err.println("Warning: Parent is null! Panels will not change!");
+            return;
+        }
 
         parent.remove(self);
         parent.add(panelToSet);
@@ -52,23 +60,11 @@ public class GeneralUtils {
         parent.revalidate();
         parent.repaint();
     }
-    public static BufferedImage makeRoundedCorner(BufferedImage image, int cornerRadius) {
-        int w = image.getWidth();
-        int h = image.getHeight();
-        BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g2 = output.createGraphics();
-
-        g2.setComposite(AlphaComposite.Src);
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.WHITE);
-        g2.fill(new RoundRectangle2D.Float(0, 0, w, h, cornerRadius, cornerRadius));
-
-        g2.setComposite(AlphaComposite.SrcAtop);
-        g2.drawImage(image, 0, 0, null);
-
-        g2.dispose();
-
-        return output;
+    public static JPanel createGap(int size, Color color) {
+        JPanel panel = new JPanel();
+        panel.setBackground(color);
+        panel.setPreferredSize(new Dimension(size, size));
+        return panel;
     }
 }

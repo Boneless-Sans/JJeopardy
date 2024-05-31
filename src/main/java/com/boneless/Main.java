@@ -35,11 +35,12 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
     public static String fileName = "devBoard.json";
-    private boolean doFullScreen = false;
+    public boolean doFullScreen = false;
+    public static boolean playAudio = false;
 
     //init global panels
     public static final MainMenu MAIN_MENU = new MainMenu();
-    public static GameBoard GAME_BOARD;
+    public static GameBoard GAME_BOARD = new GameBoard(0);
     public static JCard jCard;
 
     public static void main(String[] args) throws IOException {
@@ -83,7 +84,7 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(MAIN_MENU);
         } else {
-            add(GAME_BOARD = new GameBoard(5));
+            add(GAME_BOARD = new GameBoard(4));
         }
     }
     private String parseKeyStrokeInput(String keyStrokeCode){

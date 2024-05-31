@@ -22,10 +22,10 @@ public class GameBoard extends JPanel {
     private final int teamCount;
     public int scoreToAdd = 0;
 
-    public GameBoard(int teamCount) {
+    public GameBoard(int teamCount){
+        this.teamCount = teamCount;
         GameIsActive = true;
         MAIN_MENU.menuIsActive = false;
-        this.teamCount = teamCount;
 
         setLayout(new BorderLayout());
         setBackground(mainColor);
@@ -103,10 +103,10 @@ public class GameBoard extends JPanel {
         }
 
         for (int i = 0; i < teamCount; i++) {
-            panel.add(gapPanel(dynamicGapSize));
+            panel.add(createGap(dynamicGapSize, mainColor));
             panel.add(new Team());
         }
-        panel.add(gapPanel(dynamicGapSize));
+        panel.add(createGap(dynamicGapSize, mainColor));
 
         HiddenScroller pane = new HiddenScroller(panel);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
@@ -115,13 +115,6 @@ public class GameBoard extends JPanel {
         pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         return pane;
-    }
-
-    public static JPanel gapPanel(int size) {
-        JPanel panel = new JPanel();
-        panel.setBackground(mainColor);
-        panel.setPreferredSize(new Dimension(size, size));
-        return panel;
     }
 
     public void exit() {

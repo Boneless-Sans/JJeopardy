@@ -12,8 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.boneless.Main.GAME_BOARD;
-import static com.boneless.Main.fileName;
+import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
@@ -107,45 +106,7 @@ public class MainMenu extends ScrollGridPanel {
             menuIsActive = true;
             switch (UUID){
                 case 0: { //start
-                    //GAME_BOARD = new GameBoard(4);
-                    Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
-                    JPanel teamChoosePanel = new JPanel(new GridBagLayout()){
-                        @Override
-                        protected void paintComponent(Graphics g) {
-                            super.paintComponent(g);
-                            Graphics2D g2d = (Graphics2D) g;
-
-                            //draw background
-                            GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
-                            g2d.setPaint(gradientPaint);
-                            g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0));
-                        }
-                    };
-
-                    //main body
-                    JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
-                    contentPane.setPreferredSize(new Dimension(300,200));
-                    contentPane.setBackground(Color.white);
-
-                    JLabel numTeamText = new JLabel("Number of Teams");
-                    numTeamText.setFont(generateFont(35));
-
-                    JComboBox<String> dropDown = new JComboBox<>(dropDownList);
-                    dropDown.setPreferredSize(new Dimension(200,40));
-                    dropDown.setFont(generateFont(20));
-                    dropDown.setFocusable(false);
-
-                    contentPane.add(numTeamText);
-                    contentPane.add(dropDown);
-//                    contentPane.add(getSoundOption(0,
-//                            new Color(70,200,58),
-//                            Color.white));
-//                    contentPane.add(getSoundOption(1,
-//                            new Color(230,40,58),
-//                            Color.white));
-                    contentPane.add(new ButtonIcon(false));
-                    teamChoosePanel.add(contentPane, gbc);
-                    changeCurrentPanel(teamChoosePanel, this);
+                    startGameUI();
                     break;
                 }
                 case 1: { //board file
@@ -177,6 +138,54 @@ public class MainMenu extends ScrollGridPanel {
         return button;
     }
 
+    private void startGameUI(){
+        Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
+        JPanel teamChoosePanel = new JPanel(new GridBagLayout()){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+
+                //draw background
+                GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
+                g2d.setPaint(gradientPaint);
+                g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0));
+            }
+        };
+
+        //main body
+        JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        contentPane.setPreferredSize(new Dimension(300,200));
+        contentPane.setBackground(Color.white);
+
+        JLabel numTeamText = new JLabel("Number of Teams");
+        numTeamText.setFont(generateFont(35));
+
+        JComboBox<String> dropDown = new JComboBox<>(dropDownList);
+        dropDown.setPreferredSize(new Dimension(200,40));
+        dropDown.setFont(generateFont(20));
+        dropDown.setFocusable(false);
+
+        contentPane.add(numTeamText);
+        contentPane.add(createGap(20, null));
+        contentPane.add(dropDown);
+        contentPane.add(createGap(20, null));
+
+        ButtonIcon soundCheck = new ButtonIcon(50,false);
+        soundCheck.addActionListener(a -> {
+            soundCheck.toggleIcon();
+            playAudio = soundCheck.isChecked();
+            System.out.println(playAudio);
+        });
+
+        ButtonIcon startGame = new ButtonIcon(50, ButtonIcon.START, ButtonIcon.GREEN);
+        startGame.addActionListener(a -> changeCurrentPanel(GAME_BOARD = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel));
+
+        contentPane.add(soundCheck);
+        contentPane.add(startGame);
+        teamChoosePanel.add(contentPane, gbc);
+        changeCurrentPanel(teamChoosePanel, this);
+    }
     private void changeFileName(String newFile){
         fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
         currentFile.setText("Current Board: " + fileName);

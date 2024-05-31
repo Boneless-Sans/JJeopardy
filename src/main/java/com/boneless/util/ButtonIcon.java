@@ -2,6 +2,7 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 
 public class ButtonIcon extends JButton {
     public static final int CHECKMARK = 0;
@@ -10,40 +11,48 @@ public class ButtonIcon extends JButton {
     public static final int MINUS = 3;
     public static final int START = 4;
 
+    public static final Color GREEN = new Color(64,155,76);
+    public static final Color RED = new Color(201, 0, 0);
 
-    private final Color color;
     private final Color color2 = Color.white;
 
     private int iconID;
-    private boolean isChecked = false;
+    private Color color;
+    private boolean isChecked;
 
-    public ButtonIcon(boolean startChecked) {
-        if(startChecked) {
-            color = new Color(64,155,76);
-        } else {
-            color = new Color(201, 0, 0);
-        }
-        addActionListener(e -> {
-            if(isChecked){
-                setIconID(1);
-                setBackground(color);
-                isChecked = false;
-            } else {
-                setIconID(0);
-                isChecked = true;
-            }
-        });
+    public ButtonIcon(int size, boolean startChecked) {
+        setPreferredSize(new Dimension(size, size));
+        setFocusable(false);
+        color = startChecked ? GREEN : RED;
+        iconID = startChecked ? CHECKMARK : CROSS;
+        isChecked = startChecked;
+        revalidate();
+        repaint();
     }
-    public ButtonIcon(int iconID, Color color, boolean isCheckBox) {
+    public ButtonIcon(int size, int iconID, Color color) {
         this.iconID = iconID;
         this.color = color;
+        setPreferredSize(new Dimension(size, size));
+        setFocusable(false);
     }
 
     public void setIconID(int iconID){
         this.iconID = iconID;
-        revalidate();
-        repaint();
     }
+
+    public void toggleIcon(){
+        if(isChecked){
+            color = RED;
+            isChecked = false;
+            setIconID(1);
+        } else {
+            color = GREEN;
+            isChecked = true;
+            setIconID(0);
+        }
+    }
+
+    public boolean isChecked() {return isChecked;}
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -73,7 +82,7 @@ public class ButtonIcon extends JButton {
         g2d.fillOval(ovalX, ovalY, ovalDiameter, ovalDiameter);
 
         g2d.setColor(color2);
-        if(iconID == 0) { //check
+        if(iconID == CHECKMARK) { //check
             int checkmarkSize = ovalDiameter / 3; //size
 
             int checkmarkStartX = centerX - checkmarkSize / 2;
@@ -85,41 +94,48 @@ public class ButtonIcon extends JButton {
 
             g2d.drawLine(checkmarkStartX, checkmarkStartY, checkmarkMiddleX, checkmarkMiddleY); // .
             g2d.drawLine(checkmarkMiddleX, checkmarkMiddleY, checkmarkEndX, checkmarkEndY); // /
-        } else if(iconID == 1) { //cross
+        } else if(iconID == CROSS) { //cross
             int margin = 4;
             g2d.drawLine(centerX - (lineLength - margin), centerY - (lineLength - margin), centerX + (lineLength - margin), centerY + (lineLength - margin)); // \
             g2d.drawLine(centerX + (lineLength - margin), centerY - (lineLength - margin), centerX - (lineLength - margin), centerY + (lineLength - margin)); // /
-        } else if(iconID == 2) { //plus
+        } else if(iconID == PLUS) { //plus
             g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength); // |
             g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY); // -
-        } else if(iconID == 3) { //minus
+        } else if(iconID == MINUS) { //minus
             g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY);
-        } else if(iconID == 4){ //start
+        } else if(iconID == START){ //start
             int numPoints = 3;
-            double outerRadius = (double) ovalDiameter / 2;
+            double outerRadius = (double) ovalDiameter / 3;
             double innerRadius = outerRadius / 2;
 
-            //hell :(
+            //array for cords
             int[] xPoints = new int[2 * numPoints];
             int[] yPoints = new int[2 * numPoints];
 
-            // calc cords
+            //calc cords
             for (int i = 0; i < 2 * numPoints; i++) {
                 double angle = Math.PI / numPoints * i;
                 double radius = (i % 2 == 0) ? outerRadius : innerRadius;
-                xPoints[i] = (int) (centerX + radius * Math.cos(angle));
-                yPoints[i] = (int) (centerY + radius * Math.sin(angle));
+                xPoints[i] = (int) Math.round(centerX + radius * Math.cos(angle));
+                yPoints[i] = (int) Math.round(centerY + radius * Math.sin(angle));
             }
 
-            //finally, draw
-            g2d.fillPolygon(xPoints, yPoints, 2 * numPoints);
+            //smooth
+            GeneralPath star = new GeneralPath();
+            star.moveTo(xPoints[0], yPoints[0]);
+            for (int i = 1; i < xPoints.length; i++) {
+                star.lineTo(xPoints[i], yPoints[i]);
+            }
+            star.closePath();
+
+            //render
+            g2d.fill(star);
         }
         else {
             System.err.println("Unknown icon ID: " + iconID);
 
             g2d.drawString(String.valueOf(iconID), centerX, centerY);
         }
-        g2d.dispose();
     }
 
     @Override
