@@ -59,6 +59,14 @@ public class Main extends JFrame implements KeyListener {
         setUndecorated(true);
         GeneralUtils.renderIcon();
 
+        //set icon
+        String OS = System.getProperty("os.name").toLowerCase();
+        if(OS.contains("mac")) {
+            Taskbar.getTaskbar().setIconImage(GeneralUtils.renderIcon());
+        } else {
+            setIconImage(GeneralUtils.renderIcon());
+        }
+
         init();
         setVisible(true);
         addKeyListener(this);

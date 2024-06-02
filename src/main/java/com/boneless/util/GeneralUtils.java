@@ -2,11 +2,8 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
-import static com.boneless.GameBoard.fontColor;
-import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.fileName;
 
 public class GeneralUtils {
@@ -16,7 +13,7 @@ public class GeneralUtils {
         fill = 0;
     }};
 
-    public static void renderIcon(){
+    public static BufferedImage renderIcon(){
         int size = 103;
         int posX = 12;
         int posY = 12;
@@ -57,7 +54,7 @@ public class GeneralUtils {
         g2d.setColor(fontColor);
         g2d.drawString(jeopardy, x, y);
 
-        Taskbar.getTaskbar().setIconImage(image);
+        return image;
     }
 
     public static Color parseColor(String color){
