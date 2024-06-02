@@ -23,8 +23,10 @@ public class JCard extends JPanel {
     private final static Color parseColorFadeComplete = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel test;
     private final JPanel test2;
+    private final JButton sourceButton;
 
-    public JCard(String question, String answer) {
+    public JCard(String question, String answer, JButton sourceButton) {
+        this.sourceButton = sourceButton;
         setLayout(null);
 
         setBackground(mainColor);
@@ -103,7 +105,7 @@ public class JCard extends JPanel {
         requestFocusInWindow();
     }
 
-    private void moveQuestion() {
+    private void moveQuestion() {//todo: on the right header panel, on advance text needs to change to continue
         if (hasFaded) {
             return;
         }
@@ -159,16 +161,20 @@ public class JCard extends JPanel {
         });
         j.start();
     }
-
+    private void advanceExit(){
+        exit();
+        sourceButton.setEnabled(false);
+    }
     public void exit() {
         leftText.setText("Exit");
         rightPanel.removeAll();
         rightPanel.add(createRightPanel(true));
         rightPanel.revalidate();
         rightPanel.repaint();
-        changeCurrentPanel(GAME_BOARD.boardPanel, this);
+        sourceButton.setEnabled(true);
         GAME_BOARD.jCardIsActive = false;
         GAME_BOARD.GameIsActive = true;
         hasFaded = false;
+        changeCurrentPanel(GAME_BOARD.boardPanel, this);
     }
 }

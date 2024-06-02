@@ -159,12 +159,8 @@ public class Settings extends JPanel{
         JsonFile.writeln("settings.json","keyBinds","fullscreen",fullScreenKeyBindButton.getText());
     }
     private void exitSettings(){
-        Container parent = getParent();
-        parent.remove(this);
-        parent.add(MAIN_MENU);
-
-        parent.revalidate();
-        parent.repaint();
+        MAIN_MENU.timer.start();
+        changeCurrentPanel(MAIN_MENU, this);
     }
     private static class keyBindSet extends JFrame implements KeyListener {
         private final JLabel keyBindText;

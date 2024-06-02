@@ -1,13 +1,15 @@
 {
   "data" : {
     "board_name": "Dev Board",
+    "icon_text": "Jeopardy!",
     "categories": 5,
     "rows": 5,
 
-    "font": "Comic Sans MS",
+    "font": "arial",
     "font_color": "255,255,255",
 
-    "global_color": "30,30,150"
+    "global_color": "20,20,255",
+    "disabled_button_color": "50,50,50"
   },
   "board": {
     "categories": {

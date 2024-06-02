@@ -1,7 +1,6 @@
 package com.boneless;
 
 import com.boneless.util.ButtonIcon;
-import com.boneless.util.GeneralUtils;
 
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
@@ -20,7 +19,6 @@ public class Team extends JPanel {
     private final JTextField scoreField;
 
     public Team(){
-        //value setup
         teamCount++;
         score = 0;
 
@@ -43,7 +41,6 @@ public class Team extends JPanel {
         line.setPreferredSize(new Dimension(130,1));
 
         //score field
-
         scoreField = new JTextField(String.valueOf(this.score));
         scoreField.setFont(generateFont(15));
         scoreField.setHorizontalAlignment(JTextField.CENTER);
@@ -56,22 +53,20 @@ public class Team extends JPanel {
         add(line);
         add(scoreField);
         ButtonIcon plusScore = new ButtonIcon(45, ButtonIcon.PLUS, ButtonIcon.GREEN);
-        plusScore.addActionListener(e -> {
-            addToScore(GAME_BOARD.scoreToAdd);
-        });
+        plusScore.addActionListener(e -> addToScore(GAME_BOARD.scoreToAdd));
         ButtonIcon minusScore = new ButtonIcon(45, ButtonIcon.MINUS, ButtonIcon.RED);
-        minusScore.addActionListener(e -> {
-            addToScore(-GAME_BOARD.scoreToAdd);
-        });
+        minusScore.addActionListener(e -> addToScore(-GAME_BOARD.scoreToAdd));
         add(plusScore);
         add(minusScore);
     }
+
     public void addToScore(int scoreToAdd){
         score += scoreToAdd;
         scoreField.setFocusable(false);
         scoreField.setText(String.valueOf(score));
         scoreField.setFocusable(true);
     }
+
     private static class NumberFilter extends DocumentFilter{
         @Override
         public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
@@ -107,6 +102,7 @@ public class Team extends JPanel {
             return true;
         }
     }
+
     private static class RoundedEtchedBorder extends AbstractBorder{
         private static final int DEFAULT_CORNER_RADIUS = 10;
         private final int cornerRadius;

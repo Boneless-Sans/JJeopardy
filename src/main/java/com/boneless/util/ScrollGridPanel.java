@@ -13,6 +13,7 @@ public class ScrollGridPanel extends JPanel {
     private final ArrayList<GradientSquare> squareList = new ArrayList<>();
     public static final int GAP = 1;
     public static final int SQUARE_SIZE = 70;
+    public Timer timer;
     private Color color1 = new Color(0,0,150);
     private Color color2 = new Color(20,20,255);
 
@@ -21,7 +22,7 @@ public class ScrollGridPanel extends JPanel {
         initializeSquares();
         setBackground(Color.black);
 
-        Timer timer = new Timer(20, e -> {
+        timer = new Timer(20, e -> {
             moveSquares();
             repaint();
         });
@@ -59,7 +60,7 @@ public class ScrollGridPanel extends JPanel {
     }
     private void moveSquares() {
         for (GradientSquare square : squareList) {
-            square.move((int) SCROLL_SPEED_X, (int) SCROLL_SPEED_Y, WIDTH, HEIGHT);
+            square.move((int) SCROLL_SPEED_X, (int) SCROLL_SPEED_Y, WIDTH, HEIGHT); //pause to optimize
         }
     }
     private void drawSquares(Graphics2D g2d) {

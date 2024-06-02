@@ -133,8 +133,8 @@ public class ButtonIcon extends JButton {
             g2d.fill(star);
         } else if(iconID == BACK){ //back icon
             int arrowSize = ovalDiameter / 2; // size of the arrow
-            int tailSeparation = 10; // separation distance between the two tails
-            int separation = 10; // separation distance between the chevron and the oval
+            int tailSeparation = 0; // separation distance between the two tails
+            int separation = 0; // separation distance between the chevron and the oval
 
             // Calculate the center point for the chevron
             int chevronCenterX = centerX - arrowSize / 2 - separation;
@@ -143,8 +143,8 @@ public class ButtonIcon extends JButton {
             // Calculate the coordinates for the tip and tails points
             int tipX = chevronCenterX - arrowSize / 4;
             int tipY = chevronCenterY;
-            int tailX1 = chevronCenterX + arrowSize / 4 - tailSeparation / 2;
-            int tailX2 = chevronCenterX + arrowSize / 4 + tailSeparation / 2;
+            int tailX1 = chevronCenterX + arrowSize / 4;
+            int tailX2 = chevronCenterX + arrowSize / 4;
             int tailY1 = chevronCenterY - arrowSize / 4;
             int tailY2 = chevronCenterY + arrowSize / 4;
 

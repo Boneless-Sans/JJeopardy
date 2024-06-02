@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 
+import static com.boneless.GameBoard.fontColor;
 import static com.boneless.GameBoard.mainColor;
 import static com.boneless.Main.fileName;
 
@@ -14,6 +15,50 @@ public class GeneralUtils {
         gridy = 0;
         fill = 0;
     }};
+
+    public static void renderIcon(){
+        int size = 103;
+        int posX = 12;
+        int posY = 12;
+        int arc = 40;
+        int fontSize = 18;
+        String jeopardy;
+        Color color;
+        Color fontColor;
+        Font font;
+
+        if(fileName == null){
+            jeopardy = "Jeopardy!";
+            color = new Color(20,20,255);
+            fontColor = Color.white;
+            font = new Font("New Roman Times", Font.PLAIN, fontSize);
+        } else {
+            jeopardy = JsonFile.read(fileName,"data","icon_text");
+            color = parseColor(JsonFile.read(fileName, "data", "global_color"));
+            fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+            font = generateFont(fontSize);
+        }
+
+        BufferedImage image = new BufferedImage(128,128, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = image.createGraphics();
+
+        g2d.setPaint(new GradientPaint(0,0,color,128,128,ScrollGridPanel.adjustColor(color)));
+        g2d.fillRoundRect(posX,posY,size,size,arc,arc);
+
+        g2d.setFont(font);
+
+        FontMetrics fm = g2d.getFontMetrics();
+        int textWidth = fm.stringWidth(jeopardy);
+        int textHeight = fm.getHeight();
+
+        int x = posX + (size - textWidth) / 2;
+        int y = posY + (size - textHeight) / 2 + fm.getAscent();
+
+        g2d.setColor(fontColor);
+        g2d.drawString(jeopardy, x, y);
+
+        Taskbar.getTaskbar().setIconImage(image);
+    }
 
     public static Color parseColor(String color){
         String[] split = color.split(",");
@@ -43,6 +88,7 @@ public class GeneralUtils {
         } catch (NullPointerException e){
             return new Font("Arial", Font.PLAIN, fontSize);
         }
+
         return new Font("Arial", Font.PLAIN, fontSize);
     }
 
@@ -53,7 +99,6 @@ public class GeneralUtils {
             System.err.println("Warning: Parent is null! Panels will not change!");
             return;
         }
-
         parent.remove(self);
         parent.add(panelToSet);
 

@@ -104,12 +104,14 @@ public class MainMenu extends ScrollGridPanel {
         buttonsList.add(button);
         button.addActionListener(e -> {
             menuIsActive = true;
+            timer.stop();
             switch (UUID){
                 case 0: { //start
                     startGameUI();
                     break;
                 }
                 case 1: { //board file
+                    timer.start();
                     JFileChooser chooser = new JFileChooser();
                     chooser.setFileFilter(new FileNameExtensionFilter("Json File", "json"));
 
@@ -117,11 +119,14 @@ public class MainMenu extends ScrollGridPanel {
                         File file = chooser.getSelectedFile();
                         changeFileName(String.valueOf(file));
                         changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
+                        renderIcon();
                     }
+
                     break;
                 }
                 case 2: { //board creator
-                    changeCurrentPanel(new BoardFactory(), this);
+                    //changeCurrentPanel(new BoardFactory(), this);
+                    renderIcon();
                     break;
                 }
                 case 3: { //settings
@@ -147,8 +152,7 @@ public class MainMenu extends ScrollGridPanel {
                 Graphics2D g2d = (Graphics2D) g;
 
                 //draw background
-                GradientPaint gradientPaint = new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color));
-                g2d.setPaint(gradientPaint);
+                g2d.setPaint(new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color)));
                 g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0));
             }
         };
@@ -166,13 +170,19 @@ public class MainMenu extends ScrollGridPanel {
         dropDown.setFont(generateFont(20));
         dropDown.setFocusable(false);
 
-        //todo: add context text for the buttons via a JPanel parent
+        int gapSize = 50; //should be fine to stay at 50, may break depending on font regardless of font size
         contentPane.add(numTeamText);
-        contentPane.add(createGap(20, null));
+        contentPane.add(createGap(gapSize, null));
         contentPane.add(dropDown);
-        contentPane.add(createGap(20, null));
+        contentPane.add(createGap(gapSize, null));
 
         int buttonSize = 60;
+
+        ButtonIcon exitButton = new ButtonIcon(buttonSize, ButtonIcon.BACK, ButtonIcon.RED);
+        exitButton.addActionListener(a -> {
+            timer.start();
+            changeCurrentPanel(MAIN_MENU, teamChoosePanel);
+        });
 
         ButtonIcon soundCheck = new ButtonIcon(buttonSize,false);
         soundCheck.addActionListener(a -> {
@@ -184,7 +194,7 @@ public class MainMenu extends ScrollGridPanel {
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
         startGame.addActionListener(a -> changeCurrentPanel(GAME_BOARD = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel));
 
-        contentPane.add(createTeamChooserButton(new ButtonIcon(buttonSize, ButtonIcon.BACK, ButtonIcon.RED), "Exit"));
+        contentPane.add(createTeamChooserButton(exitButton, "Exit"));
         contentPane.add(createTeamChooserButton(soundCheck, "Play Audio"));
         contentPane.add(createTeamChooserButton(startGame, "Start"));
         teamChoosePanel.add(contentPane, gbc);

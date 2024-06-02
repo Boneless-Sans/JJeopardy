@@ -19,8 +19,8 @@ public class GameBoard extends JPanel {
     public static final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
     public static final Color fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
     public final JPanel boardPanel;
-    private final int teamCount;
     public int scoreToAdd = 0;
+    private final int teamCount;
 
     public GameBoard(int teamCount){
         this.teamCount = teamCount;
@@ -53,23 +53,20 @@ public class GameBoard extends JPanel {
             panel.add(createCatPanel(i));
         }
 
+        //setup board
         for (int i = 0; i < boardY - 1; i++) {
             for (int j = 0; j < boardX; j++) {
-                try {
-                    String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
-                    int score = Integer.parseInt(scoreString);
-                    String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
-                    String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
+                String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
+                int score = Integer.parseInt(scoreString);
+                String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
+                String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                    BoardButton button = new BoardButton(score, question, answer, 0);
-                    button.setBackground(mainColor);
-                    button.setForeground(fontColor);
-                    button.setFont(generateFont(fontSize));
-                    button.setOpaque(true);
-                    panel.add(button);
-                } catch (Exception e) {
-                    // ignore
-                }
+                BoardButton button = new BoardButton(score, question, answer, 0);
+                button.setBackground(mainColor);
+                button.setForeground(fontColor);
+                button.setFont(generateFont(fontSize));
+                button.setOpaque(true);
+                panel.add(button);
             }
         }
         return panel;
@@ -87,6 +84,7 @@ public class GameBoard extends JPanel {
         panel.add(label, gbc);
         return panel;
     }
+
     private JScrollPane createTeamsPanel() {
         JPanel panel = new JPanel(new FlowLayout());
         panel.setBackground(mainColor);
@@ -143,7 +141,7 @@ public class GameBoard extends JPanel {
         String[] responses = {"Exit", "Resume"};
         int answer = JOptionPane.showOptionDialog(
                 null,
-                "Really gonna dip out?",
+                "Is your departure truly inevitable?",
                 "",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE,
@@ -151,10 +149,12 @@ public class GameBoard extends JPanel {
         if (answer == 0) {
             GAME_BOARD.GameIsActive = false;
             MAIN_MENU.menuIsActive = true;
+            MAIN_MENU.timer.start();
             Team.teamCount = 0;
             changeCurrentPanel(MAIN_MENU, GAME_BOARD);
         }
     }
+
     public static class HiddenScroller extends JScrollPane {
 
         public HiddenScroller(Component view) {
@@ -271,10 +271,11 @@ public class GameBoard extends JPanel {
                 rightPanel.repaint();
 
                 JPanel parentPanel = (JPanel) getParent();
-                jCard = new JCard(question, answer);
+                jCard = new JCard(question, answer, this);
                 jCardIsActive = true;
                 GameIsActive = false;
                 scoreToAdd = score;
+                setEnabled(false);
                 changeCurrentPanel(jCard, parentPanel);
             };
         }
@@ -291,7 +292,11 @@ public class GameBoard extends JPanel {
             g2d.fill(backgroundShape);
 
             // Text
-            g2d.setColor(getForeground());
+            if(isEnabled()) {
+                g2d.setColor(fontColor);
+            } else {
+                g2d.setColor(parseColor(JsonFile.read(fileName, "data", "disabled_button_color")));
+            }
             Font font = getFont();
             FontMetrics metrics = g2d.getFontMetrics(font);
             int x = (getWidth() - metrics.stringWidth(getText())) / 2;
