@@ -3,12 +3,10 @@ package com.boneless;
 import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 
 /*
@@ -56,7 +54,7 @@ public class Main extends JFrame implements KeyListener {
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setUndecorated(true);
+        //setUndecorated(true);
         GeneralUtils.renderIcon();
 
         //set icon
