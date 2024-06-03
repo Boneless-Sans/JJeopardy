@@ -41,12 +41,12 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -create right settings panel | X
             - !!moved to class!!
         -figure out more | √
-    Create Application Icon | √
+    Create Application Icon | √ todo: change icon to not use text. for reference, use https://developer.apple.com/design/human-interface-guidelines/app-icons
     Implement key binds and have them match settings.json | √ !!No ARG Only!!
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
-    public static String fileName = "template.json";
+    public static String fileName;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 
@@ -68,7 +68,9 @@ public class Main extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
+
         GeneralUtils.renderIcon();
+
 
         //set icon
         String OS = System.getProperty("os.name").toLowerCase();

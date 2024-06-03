@@ -18,6 +18,7 @@ public class BoardFactory extends JPanel {
     private Color mainColor = new Color(255, 255, 255);
     private Color fontColor = Color.black;
     private final int fontSize = 20;
+    private final String tempDir = System.getProperty("java.io.tmpdir");
 
     public BoardFactory(JFrame parent){
         setLayout(new BorderLayout());
@@ -33,7 +34,7 @@ public class BoardFactory extends JPanel {
     private JMenuBar menuBar(){
         //use macOS's system menu bar instead of a frame. Windows will default
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //dont think this works
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //don't think this works
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -54,7 +55,7 @@ public class BoardFactory extends JPanel {
             int userInput = JOptionPane.showConfirmDialog(null, fileNamePanel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if(userInput == JOptionPane.OK_OPTION){
-                //
+                System.out.println("Insert code for creating a new file in temp dir\n" + tempDir);
             }
         });
 
