@@ -52,9 +52,9 @@ public class Team extends JPanel {
         add(line);
         add(scoreField);
         ButtonIcon plusScore = new ButtonIcon(45, ButtonIcon.PLUS, ButtonIcon.GREEN);
-        plusScore.addActionListener(e -> addToScore(GAME_BOARD.scoreToAdd));
+        plusScore.addActionListener(e -> addToScore(gameBoard.scoreToAdd));
         ButtonIcon minusScore = new ButtonIcon(45, ButtonIcon.MINUS, ButtonIcon.RED);
-        minusScore.addActionListener(e -> addToScore(-GAME_BOARD.scoreToAdd));
+        minusScore.addActionListener(e -> addToScore(-gameBoard.scoreToAdd));
         add(plusScore);
         add(minusScore);
     }

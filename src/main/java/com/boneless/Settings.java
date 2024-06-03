@@ -171,8 +171,8 @@ public class Settings extends JPanel{
     }
 
     private void exitSettings(){
-        MAIN_MENU.timer.start();
-        changeCurrentPanel(MAIN_MENU, this);
+        mainMenu.timer.start();
+        changeCurrentPanel(mainMenu, this);
     }
 
     private static class keyBindSet extends JFrame implements KeyListener {

@@ -18,6 +18,7 @@ public class GameBoard extends JPanel {
     public boolean jCardIsActive = false;
     public static final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
     public static final Color fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+    public static int fontSize = 20;
     public final JPanel boardPanel;
     public int scoreToAdd = 0;
     private final int teamCount;
@@ -25,7 +26,7 @@ public class GameBoard extends JPanel {
     public GameBoard(int teamCount){
         this.teamCount = teamCount;
         GameIsActive = true;
-        MAIN_MENU.menuIsActive = false;
+        mainMenu.menuIsActive = false;
 
         setLayout(new BorderLayout());
         setBackground(mainColor);
@@ -34,7 +35,7 @@ public class GameBoard extends JPanel {
         add(headerPanel, BorderLayout.NORTH);
         boardPanel = mainBoard();
         add(boardPanel, BorderLayout.CENTER);
-        add(createTeamsPanel(), BorderLayout.SOUTH);
+        if(teamCount > 0) add(createTeamsPanel(), BorderLayout.SOUTH);
 
         revalidate();
         repaint();
@@ -147,11 +148,11 @@ public class GameBoard extends JPanel {
                 JOptionPane.QUESTION_MESSAGE,
                 new ImageIcon(bufferedImage), responses, 0);
         if (answer == 0) {
-            GAME_BOARD.GameIsActive = false;
-            MAIN_MENU.menuIsActive = true;
-            MAIN_MENU.timer.start();
+            gameBoard.GameIsActive = false;
+            mainMenu.menuIsActive = true;
+            mainMenu.timer.start();
             Team.teamCount = 0;
-            changeCurrentPanel(MAIN_MENU, GAME_BOARD);
+            changeCurrentPanel(mainMenu, gameBoard);
         }
     }
 
@@ -176,7 +177,6 @@ public class GameBoard extends JPanel {
     public static class HeaderPanel extends JPanel {
         public static JLabel leftText;
         public static JPanel rightPanel;
-        public static int fontSize = 20;
 
         public HeaderPanel() {
             setBackground(mainColor);
@@ -232,8 +232,8 @@ public class GameBoard extends JPanel {
             button.setFont(generateFont(20));
             button.addActionListener(e -> {
                 if (isExit) {
-                    if (GAME_BOARD.GameIsActive)
-                        GAME_BOARD.exit();
+                    if (gameBoard.GameIsActive)
+                        gameBoard.exit();
                     else
                         jCard.exit();
                 } else {

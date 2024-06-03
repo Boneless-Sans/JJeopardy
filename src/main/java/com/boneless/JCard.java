@@ -173,9 +173,9 @@ public class JCard extends JPanel {
         rightPanel.revalidate();
         rightPanel.repaint();
         sourceButton.setEnabled(true);
-        GAME_BOARD.jCardIsActive = false;
-        GAME_BOARD.GameIsActive = true;
+        gameBoard.jCardIsActive = false;
+        gameBoard.GameIsActive = true;
         hasFaded = false;
-        changeCurrentPanel(GAME_BOARD.boardPanel, this);
+        changeCurrentPanel(gameBoard.boardPanel, this);
     }
 }

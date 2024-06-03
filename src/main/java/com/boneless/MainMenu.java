@@ -16,6 +16,7 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
+    private JFrame parent;
     public boolean menuIsActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
@@ -23,7 +24,8 @@ public class MainMenu extends ScrollGridPanel {
             "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams"
     };
 
-    public MainMenu(){
+    public MainMenu(JFrame parent){
+        this.parent = parent;
         menuIsActive = true;
         setLayout(new BorderLayout());
 
@@ -129,7 +131,7 @@ public class MainMenu extends ScrollGridPanel {
                     break;
                 }
                 case 2: { //board creator
-                    changeCurrentPanel(new BoardFactory(), this);
+                    changeCurrentPanel(new BoardFactory(parent), this);
                     break;
                 }
                 case 3: { //settings
@@ -184,7 +186,7 @@ public class MainMenu extends ScrollGridPanel {
         ButtonIcon exitButton = new ButtonIcon(buttonSize, ButtonIcon.BACK, ButtonIcon.RED);
         exitButton.addActionListener(a -> {
             timer.start();
-            changeCurrentPanel(MAIN_MENU, teamChoosePanel);
+            changeCurrentPanel(mainMenu, teamChoosePanel);
         });
 
         ButtonIcon soundCheck = new ButtonIcon(buttonSize,false);
@@ -195,7 +197,7 @@ public class MainMenu extends ScrollGridPanel {
         });
 
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
-        startGame.addActionListener(a -> changeCurrentPanel(GAME_BOARD = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel));
+        startGame.addActionListener(a -> changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel));
 
         contentPane.add(createTeamChooserButton(exitButton, "Exit"));
         contentPane.add(createTeamChooserButton(soundCheck, "Play Audio"));

@@ -25,9 +25,20 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -animations | X
     Create board factory | X
         -figure out the layout | √
+        -create context header
+            -File
+                -New
+                -Open
+                -Save
+                -Exit
+            -Help?
         -create left board panel | X
+            -Emulate GameBoard
+            -Functionality with fakeCard
+            -Update board when updates are made with right panel
         -create right settings panel | X
-        -figure out more | X
+            - !!in mini road map!!
+        -figure out more | √
     Create Application Icon | √
     Implement key binds and have them match settings.json | √ !!No ARG Only!!
  */
@@ -38,15 +49,15 @@ public class Main extends JFrame implements KeyListener {
     public static boolean playAudio = false;
 
     //init global panels
-    public static final MainMenu MAIN_MENU = new MainMenu();
-    public static GameBoard GAME_BOARD = new GameBoard(0);
+    public static MainMenu mainMenu;
+    public static GameBoard gameBoard;
     public static JCard jCard;
 
     public static void main(String[] args) throws IOException {
         if(args != null && args.length > 0){
             isDev = args[0].contains("dev");
         }
-        new Main();
+        SwingUtilities.invokeLater(Main::new);
     }
 
     public Main(){
@@ -54,7 +65,7 @@ public class Main extends JFrame implements KeyListener {
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //setUndecorated(true);
+        setUndecorated(true);
         GeneralUtils.renderIcon();
 
         //set icon
@@ -64,6 +75,8 @@ public class Main extends JFrame implements KeyListener {
         } else {
             setIconImage(GeneralUtils.renderIcon());
         }
+
+        mainMenu = new MainMenu(this);
 
         init();
         setVisible(true);
@@ -76,9 +89,9 @@ public class Main extends JFrame implements KeyListener {
 
     private void init(){
         if(!isDev) {
-            add(MAIN_MENU);
+            add(mainMenu);
         } else {
-            add(GAME_BOARD = new GameBoard(4));
+            add(gameBoard = new GameBoard(4));
         }
     }
 
@@ -109,20 +122,20 @@ public class Main extends JFrame implements KeyListener {
 
         //esc handler
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))) {
-            if(MAIN_MENU.menuIsActive) { //menu
+            if(mainMenu.menuIsActive) { //menu
                 System.exit(0);
             }
-            else if (GAME_BOARD.GameIsActive) { //game board
-              GAME_BOARD.exit();
+            else if (gameBoard.GameIsActive) { //game board
+              gameBoard.exit();
             }
-            else if(GAME_BOARD.jCardIsActive) { //jCard
+            else if(gameBoard.jCardIsActive) { //jCard
                 jCard.exit();
             }
         }
 
         //continue handler - Dante
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "continue")))) {
-            if(GAME_BOARD.jCardIsActive) {
+            if(gameBoard.jCardIsActive) {
                 //jCard.advance();
             }
         }
@@ -134,9 +147,9 @@ public class Main extends JFrame implements KeyListener {
     }
 
     public static void reset(){
-        MAIN_MENU.menuIsActive = true;
-        GAME_BOARD.GameIsActive = false;
-        GAME_BOARD.jCardIsActive = false;
+        mainMenu.menuIsActive = true;
+        gameBoard.GameIsActive = false;
+        gameBoard.jCardIsActive = false;
         new Main();
     }
     @Override public void keyPressed(KeyEvent e) {}
