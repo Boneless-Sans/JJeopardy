@@ -58,6 +58,7 @@ public class MainMenu extends ScrollGridPanel {
 
         add(menuParentPanel, BorderLayout.CENTER);
 
+        //file select text
         currentFile = new JLabel(fileName == null ? "No Board Selected" : "Current Board: " + fileName);
         currentFile.setFont(generateFont(15));
         currentFile.setForeground(Color.white);
@@ -68,14 +69,17 @@ public class MainMenu extends ScrollGridPanel {
 
         add(filePanel, BorderLayout.SOUTH);
     }
+
     private JButton createMenuButton(String text, int UUID){
-        JButton button = new JButton(text){
+        JButton button = new JButton(text) {
             @Override
             public Dimension getPreferredSize() {
                 Dimension size = super.getPreferredSize();
-                size.width = 170;
+                size.width = 160;
+                size.height = 40;
                 return size;
             }
+
             @Override
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -199,6 +203,7 @@ public class MainMenu extends ScrollGridPanel {
         teamChoosePanel.add(contentPane, gbc);
         changeCurrentPanel(teamChoosePanel, this);
     }
+
     private JPanel createTeamChooserButton(ButtonIcon icon, String text){
         JPanel panel = new JPanel();
         panel.setOpaque(false);
@@ -209,6 +214,7 @@ public class MainMenu extends ScrollGridPanel {
 
         return panel;
     }
+
     private void changeFileName(String newFile){
         fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
         currentFile.setText("Current Board: " + fileName);

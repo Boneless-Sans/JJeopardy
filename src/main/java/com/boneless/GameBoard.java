@@ -172,6 +172,7 @@ public class GameBoard extends JPanel {
             @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
         }
     }
+
     public static class HeaderPanel extends JPanel {
         public static JLabel leftText;
         public static JPanel rightPanel;

@@ -30,6 +30,7 @@ public class ButtonIcon extends JButton {
         revalidate();
         repaint();
     }
+
     public ButtonIcon(int size, int iconID, Color color) {
         this.iconID = iconID;
         this.color = color;
@@ -132,26 +133,19 @@ public class ButtonIcon extends JButton {
             //render
             g2d.fill(star);
         } else if(iconID == BACK){ //back icon
-            int arrowSize = ovalDiameter / 2; // size of the arrow
-            int tailSeparation = 0; // separation distance between the two tails
-            int separation = 0; // separation distance between the chevron and the oval
+            int separationOffset = 2;
+            int offsetX = 2;
 
-            // Calculate the center point for the chevron
-            int chevronCenterX = centerX - arrowSize / 2 - separation;
-            int chevronCenterY = centerY;
+            int tipX = (centerX - centerX / 4) - offsetX;
 
-            // Calculate the coordinates for the tip and tails points
-            int tipX = chevronCenterX - arrowSize / 4;
-            int tipY = chevronCenterY;
-            int tailX1 = chevronCenterX + arrowSize / 4;
-            int tailX2 = chevronCenterX + arrowSize / 4;
-            int tailY1 = chevronCenterY - arrowSize / 4;
-            int tailY2 = chevronCenterY + arrowSize / 4;
+            int topTailX = (centerX + centerX / 4) - offsetX;
+            int topTailY = (centerY - centerY / 4) - separationOffset;
 
-            // Draw the lines forming the chevron.left
-            g2d.drawLine(tipX, tipY, tailX1, tailY1);
-            g2d.drawLine(tailX1, tailY1, tipX, centerY);
-            g2d.drawLine(tailX2, tailY2, tipX, centerY);
+            int botTailX = (centerX + centerX / 4) - offsetX;
+            int botTailY = (centerY + centerY / 4) + separationOffset;
+
+            g2d.drawLine(tipX,centerY,topTailX,topTailY);
+            g2d.drawLine(tipX,centerY,botTailX,botTailY);
         }
         else {
             System.err.println("Unknown icon ID: " + iconID);

@@ -11,13 +11,13 @@ import java.awt.event.KeyListener;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
-@SuppressWarnings("ExtractMethodRecommender") //shut the fuck up
 public class Settings extends JPanel{
     private boolean changedSettings = false;
     private final String[] buttonOptions = {"Yes","No","Save"};
     private static JButton exitKeyBindButton = null;
     private static JButton continueKeyBindButton = null;
     private static JButton fullScreenKeyBindButton = null;
+
     public Settings(){
         setLayout(new BorderLayout());
 
@@ -51,6 +51,15 @@ public class Settings extends JPanel{
 
         JScrollPane mainPane = new JScrollPane(mainPanel);
 
+        JPanel bottomPanel = createBottomPanel();
+
+        add(title, BorderLayout.NORTH);
+        add(mainPane, BorderLayout.CENTER);
+        add(bottomPanel, BorderLayout.SOUTH);
+        setVisible(true);
+    }
+
+    private JPanel createBottomPanel() {
         JPanel bottomPanel = new JPanel(new FlowLayout());
 
         JButton save = new JButton("Save Settings");
@@ -88,12 +97,9 @@ public class Settings extends JPanel{
 
         bottomPanel.add(save);
         bottomPanel.add(exit);
-
-        add(title, BorderLayout.NORTH);
-        add(mainPane, BorderLayout.CENTER);
-        add(bottomPanel, BorderLayout.SOUTH);
-        setVisible(true);
+        return bottomPanel;
     }
+
     private JPanel createHeaderText(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEADING));
         panel.setPreferredSize(new Dimension(0,0));
@@ -104,6 +110,7 @@ public class Settings extends JPanel{
         panel.add(label);
         return panel;
     }
+
     private JPanel createKeyBindPanel(String text, JButton button) {
         JPanel panel = new JPanel(new GridLayout(1, 2));
         panel.setBackground(Color.lightGray);
@@ -126,6 +133,7 @@ public class Settings extends JPanel{
         panel.add(keyBindPanel);
         return panel;
     }
+
     private JButton createKeyBindButton(String keyBind){
         String rawKeyBind = JsonFile.read("settings.json", "keyBinds", keyBind);
         String keyBindText = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
@@ -136,6 +144,7 @@ public class Settings extends JPanel{
         keyBindButton.setFocusable(false);
         return keyBindButton;
     }
+
     private ActionListener keyBindButtonListener(String keyBind){
         return e -> {
             changedSettings = true;
@@ -146,11 +155,13 @@ public class Settings extends JPanel{
             new keyBindSet(button, keyBind);
         };
     }
+
     private static void setKeyBindButtons(boolean enable){
         exitKeyBindButton.setEnabled(enable);
         continueKeyBindButton.setEnabled(enable);
         fullScreenKeyBindButton.setEnabled(enable);
     }
+
     private void save(){
         changedSettings = false;
         //Key Binds
@@ -158,12 +169,15 @@ public class Settings extends JPanel{
         JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());
         JsonFile.writeln("settings.json","keyBinds","fullscreen",fullScreenKeyBindButton.getText());
     }
+
     private void exitSettings(){
         MAIN_MENU.timer.start();
         changeCurrentPanel(MAIN_MENU, this);
     }
+
     private static class keyBindSet extends JFrame implements KeyListener {
         private final JLabel keyBindText;
+
         public keyBindSet(JButton button, String keyBind){
             setTitle("Press any key...");
             setUndecorated(true);
@@ -188,6 +202,15 @@ public class Settings extends JPanel{
 
             keyBindPanel.add(keyBindText, gbc);
 
+            JPanel buttonsPanel = createButtonsPanel(button);
+
+            add(currentKey, BorderLayout.NORTH);
+            add(keyBindPanel, BorderLayout.CENTER);
+            add(buttonsPanel, BorderLayout.SOUTH);
+            setVisible(true);
+        }
+
+        private JPanel createButtonsPanel(JButton button) {
             JPanel buttonsPanel = new JPanel(new FlowLayout());
             buttonsPanel.setBackground(Color.lightGray);
 
@@ -208,15 +231,13 @@ public class Settings extends JPanel{
 
             buttonsPanel.add(cancelButton);
             buttonsPanel.add(saveButton);
-
-            add(currentKey, BorderLayout.NORTH);
-            add(keyBindPanel, BorderLayout.CENTER);
-            add(buttonsPanel, BorderLayout.SOUTH);
-            setVisible(true);
+            return buttonsPanel;
         }
+
         private String toUpperCase(String text){
             return text.substring(0, 1).toUpperCase() + text.substring(1);
         }
+
         @Override
         public void keyTyped(KeyEvent e) {
             switch(e.getKeyChar()){

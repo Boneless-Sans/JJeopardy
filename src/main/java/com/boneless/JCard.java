@@ -107,6 +107,7 @@ public class JCard extends JPanel {
 
     private void moveQuestion() {//todo: on the right header panel, on advance text needs to change to continue
         if (hasFaded) {
+            advanceExit();
             return;
         }
         hasFaded = true;

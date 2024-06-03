@@ -30,12 +30,12 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -create left board panel | X
         -create right settings panel | X
         -figure out more | X
-    Create Application Icon | X
+    Create Application Icon | √
     Implement key binds and have them match settings.json | √ !!No ARG Only!!
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
-    public static String fileName;
+    public static String fileName = "devBoard.json";
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 
