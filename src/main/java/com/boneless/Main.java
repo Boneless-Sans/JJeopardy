@@ -25,26 +25,28 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -animations | X
     Create board factory | X
         -figure out the layout | √
-        -create context header
-            -File
-                -New
-                -Open
-                -Save
-                -Exit
-            -Help?
+        -create context header | X
+            -File | X
+                -New | X
+                -Open | X
+                -Save | X
+                -Exit | X
+            -Help | X
+                -Not sure | X
+                -Redirect to joke site | X
         -create left board panel | X
             -Emulate GameBoard
             -Functionality with fakeCard
             -Update board when updates are made with right panel
         -create right settings panel | X
-            - !!in mini road map!!
+            - !!moved to class!!
         -figure out more | √
     Create Application Icon | √
     Implement key binds and have them match settings.json | √ !!No ARG Only!!
  */
 public class Main extends JFrame implements KeyListener {
     private static boolean isDev = false;
-    public static String fileName = "devBoard.json";
+    public static String fileName = "template.json";
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 
@@ -91,7 +93,8 @@ public class Main extends JFrame implements KeyListener {
         if(!isDev) {
             add(mainMenu);
         } else {
-            add(gameBoard = new GameBoard(4));
+            //add(gameBoard = new GameBoard(4));
+            add(new BoardFactory(this));
         }
     }
 
@@ -126,7 +129,7 @@ public class Main extends JFrame implements KeyListener {
                 System.exit(0);
             }
             else if (gameBoard.GameIsActive) { //game board
-              gameBoard.exit();
+                gameBoard.exit();
             }
             else if(gameBoard.jCardIsActive) { //jCard
                 jCard.exit();
@@ -136,7 +139,7 @@ public class Main extends JFrame implements KeyListener {
         //continue handler - Dante
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "continue")))) {
             if(gameBoard.jCardIsActive) {
-                //jCard.advance();
+                jCard.advance();
             }
         }
 

@@ -16,7 +16,7 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
-    private JFrame parent;
+    private final JFrame parent; //only needed for board factory, sadly, no other way to do this
     public boolean menuIsActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;

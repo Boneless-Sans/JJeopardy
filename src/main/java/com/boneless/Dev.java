@@ -29,6 +29,8 @@ public class Dev extends JFrame {
         setVisible(true);
     }
     private void init() {
+        System.out.println(System.getProperty("java.io.tmpdir"));
+
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         String[] fonts = ge.getAvailableFontFamilyNames();
