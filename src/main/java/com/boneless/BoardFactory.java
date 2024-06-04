@@ -15,6 +15,7 @@ import static com.boneless.Main.mainMenu;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
+    private boolean hasLoadedFile = false;
     private Color mainColor = new Color(255, 255, 255);
     private Color fontColor = Color.black;
     private final int fontSize = 20;
@@ -24,11 +25,22 @@ public class BoardFactory extends JPanel {
         setLayout(new BorderLayout());
 
         parent.setJMenuBar(menuBar());
-        add(boardPanel(), BorderLayout.CENTER);
-        add(controlPanel(), BorderLayout.EAST);
+
+        if(hasLoadedFile) {
+            add(noLoadedFilePanel());
+        } else {
+            add(boardPanel(), BorderLayout.CENTER);
+            add(controlPanel(), BorderLayout.EAST);
+        }
 
         parent.revalidate();
         parent.repaint();
+    }
+
+    private JPanel noLoadedFilePanel(){
+        JPanel panel = new JPanel(new BorderLayout());
+
+        return panel;
     }
 
     private JMenuBar menuBar(){
@@ -149,7 +161,7 @@ public class BoardFactory extends JPanel {
         return panel;
     }
 
-    private JPanel controlPanel(){
+    private JScrollPane controlPanel(){
         /*
         Sub-roadmap
             -Board name | X
@@ -165,7 +177,12 @@ public class BoardFactory extends JPanel {
          */
         JPanel panel = new JPanel();
         panel.setBackground(Color.red);
-        return panel;
+        panel.setPreferredSize(new Dimension(120,getHeight()));
+
+
+        HiddenScroller scroller = new HiddenScroller(panel, false);
+        scroller.setPreferredSize(new Dimension(120, getHeight()));
+        return scroller;
     }
 
     private void showAboutPanel(){

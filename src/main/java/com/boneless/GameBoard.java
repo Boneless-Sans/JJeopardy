@@ -35,7 +35,7 @@ public class GameBoard extends JPanel {
         add(headerPanel, BorderLayout.NORTH);
         boardPanel = mainBoard();
         add(boardPanel, BorderLayout.CENTER);
-        if(teamCount > 0) add(createTeamsPanel(), BorderLayout.SOUTH);
+        add(createTeamsPanel(), BorderLayout.SOUTH);
 
         revalidate();
         repaint();
@@ -107,11 +107,11 @@ public class GameBoard extends JPanel {
         }
         panel.add(createGap(dynamicGapSize, mainColor));
 
-        HiddenScroller pane = new HiddenScroller(panel);
+        HiddenScroller pane = new HiddenScroller(panel, true);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
         pane.setBorder(null);
-        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+//        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+//        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         return pane;
     }
@@ -153,24 +153,6 @@ public class GameBoard extends JPanel {
             mainMenu.timer.start();
             Team.teamCount = 0;
             changeCurrentPanel(mainMenu, gameBoard);
-        }
-    }
-
-    public static class HiddenScroller extends JScrollPane {
-
-        public HiddenScroller(Component view) {
-            super(view);
-            setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            JScrollBar horizontalScrollBar = getHorizontalScrollBar();
-            horizontalScrollBar.setUI(new HiddenScrollUI());
-            horizontalScrollBar.setPreferredSize(new Dimension(0, 0)); //hide
-        }
-
-        // Custom ScrollBarUI to customize scrollbar appearance
-        private static class HiddenScrollUI extends BasicScrollBarUI {
-            @Override protected void configureScrollBarColors() {}
-            @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
-            @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
         }
     }
 
