@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 /*
 √  - √
@@ -56,18 +57,18 @@ public class Main extends JFrame implements KeyListener {
     public static BoardFactory boardFactory;
 
     public static void main(String[] args) throws IOException {
-        SwingUtilities.invokeLater(() -> new Main(args[0]));
+        SwingUtilities.invokeLater(() -> new Main(args));
     }
 
-    public Main(String arg){
+    public Main(String... arg){
         setTitle("Jeopardy!");
         setSize(1200,700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
 
+        assert arg != null;
         GeneralUtils.renderIcon();
-
 
         //set icon
         String OS = System.getProperty("os.name").toLowerCase();
@@ -79,7 +80,7 @@ public class Main extends JFrame implements KeyListener {
 
         mainMenu = new MainMenu(this);
 
-        init();
+        init(Arrays.toString(arg));
         setVisible(true);
         addKeyListener(this);
     }
@@ -90,13 +91,17 @@ public class Main extends JFrame implements KeyListener {
 
     private void init(String args){
         switch (args){
-            //
-        }
-        if(!isDev) {
-            add(mainMenu);
-        } else {
-            //add(gameBoard = new GameBoard(4));
-            add(new BoardFactory(this));
+            case "[-card]": { //for some reason, substring won't let me remove the brackets and only returns the brackets
+                add(gameBoard = new GameBoard(4));
+                break;
+            }
+            case "[-board]": {
+                add(boardFactory = new BoardFactory(this));
+                break;
+            }
+            default: {
+                add(mainMenu = new MainMenu(this));
+            }
         }
     }
 

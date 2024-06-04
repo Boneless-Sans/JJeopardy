@@ -30,17 +30,21 @@ public class BoardFactory extends JPanel {
         this.parent = parent;
 
         if(fileName != null){
-            mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
-            fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+            loadColors();
         } else {
             System.out.println("File is null, resetting with new template...");
-            fileName = createNewFile().getAbsolutePath();
+            fileName = createNewFile("temp").getAbsolutePath();
             System.out.println("File Name: " + fileName);
+            loadColors();
         }
         setLayout(new BorderLayout());
         parent.setJMenuBar(menuBar());
 
         reload();
+    }
+    private void loadColors(){ //not really needed, but its cleaner
+        mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+        fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
     }
 
     private void reload(){
@@ -55,7 +59,7 @@ public class BoardFactory extends JPanel {
     private JMenuBar menuBar(){
         //use macOS's system menu bar instead of a frame. Windows will default
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //don "t think this works
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //don't think this works
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -83,6 +87,17 @@ public class BoardFactory extends JPanel {
         JMenuItem openItem = new JMenuItem("Open Board");
         openItem.addActionListener(e -> {
             //open dialog > load file()
+            JPanel panel = new JPanel();
+
+            JTextField textField = new JTextField(10);
+
+            panel.add(textField);
+
+            int userInput = JOptionPane.showConfirmDialog(null, panel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+            if(userInput == JOptionPane.OK_OPTION){
+                createNewFile(textField.getText());
+            }
         });
 
         JMenuItem saveItem = new JMenuItem("Save Board");
@@ -181,12 +196,10 @@ public class BoardFactory extends JPanel {
             -cols | X
             -scores? | X
                 -for rows, create a section with text fields for scores
-
-            -have MockButton go to a emulated JCard with text fields instead. no animations, just show question / answer
          */
         JPanel panel = new JPanel();
         panel.setBackground(Color.red);
-        panel.setPreferredSize(new Dimension(120,getHeight()));
+        panel.setPreferredSize(new Dimension(500,getHeight()));
 
 
         HiddenScroller scroller = new HiddenScroller(panel, false);
@@ -196,15 +209,15 @@ public class BoardFactory extends JPanel {
 
     private void showAboutPanel(){
         JFrame frame = new JFrame("About");
-        frame.setSize(280, 520); //replicate macOS "s about panel
+        frame.setSize(280, 520); //replicate macOS's about panel
         frame.setLocationRelativeTo(null);
 
         //todo: fill out this section
         frame.setVisible(true);
     }
 
-    private File createNewFile(){
-        File file = new File(tempDir + "/test.json");
+    private File createNewFile(String fileName){
+        File file = new File(tempDir + "/" + fileName + ".json");
 
         try {
             if(!file.exists() && file.createNewFile()){
