@@ -11,12 +11,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Random;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
     public boolean factoryIsActive;
+    private final JFrame parent;
     private Color mainColor;
     private Color fontColor;
     private boolean changesMade;
@@ -25,6 +27,7 @@ public class BoardFactory extends JPanel {
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
+        this.parent = parent;
 
         if(fileName != null){
             mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
@@ -32,21 +35,27 @@ public class BoardFactory extends JPanel {
         } else {
             System.out.println("File is null, resetting with new template...");
             fileName = createNewFile().getAbsolutePath();
-            fileName = fileName.substring(fileName.indexOf("/var/"));
-            System.out.println(fileName);
+            System.out.println("File Name: " + fileName);
         }
         setLayout(new BorderLayout());
         parent.setJMenuBar(menuBar());
 
+        reload();
+    }
+
+    private void reload(){
+        removeAll();
+
+        add(boardPanel(), BorderLayout.CENTER);
+        add(controlPanel(), BorderLayout.EAST);
 
         parent.revalidate();
         parent.repaint();
     }
-
     private JMenuBar menuBar(){
         //use macOS's system menu bar instead of a frame. Windows will default
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //don't think this works
+        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //don "t think this works
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -94,7 +103,7 @@ public class BoardFactory extends JPanel {
         JMenuItem helpItem = new JMenuItem("Get Help");
         helpItem.addActionListener(e -> {
             try {
-                Desktop.getDesktop().browse(new URI("https://screamintothevoid.com/"));
+                Desktop.getDesktop().browse(new URI(getRandomWebsite()));
             } catch (IOException | URISyntaxException ex) {
                 throw new RuntimeException(ex);
             }
@@ -187,7 +196,7 @@ public class BoardFactory extends JPanel {
 
     private void showAboutPanel(){
         JFrame frame = new JFrame("About");
-        frame.setSize(280, 520); //replicate macOS's about panel
+        frame.setSize(280, 520); //replicate macOS "s about panel
         frame.setLocationRelativeTo(null);
 
         //todo: fill out this section
@@ -228,8 +237,38 @@ public class BoardFactory extends JPanel {
         //
     }
 
-    void exit(){
+    public void exit(){
         changeCurrentPanel(mainMenu, this);
+    }
+    
+    private String getRandomWebsite(){
+        String[] siteIndex = { //useless web mega list
+                 "https://sliding.toys/mystic-square/8-puzzle/daily/","https://longdogechallenge.com/","https://maze.toys/mazes/mini/daily/",
+                "https://optical.toys ","https://paint.toys/","https://puginarug.com ","https://alwaysjudgeabookbyitscover.com ",
+                "https://clicking.toys/flip-grid/neat-nine/3-holes/","https://weirdorconfusing.com/","https://checkbox.toys/scale/",
+                "https://memory.toys/classic/easy/","https://binarypiano.com/","https://mondrianandme.com/","https://onesquareminesweeper.com/",
+                "https://cursoreffects.com ","https://floatingqrcode.com/","https://thatsthefinger.com/","https://cant-not-tweet-this.com/",
+                "https://heeeeeeeey.com/","https://corndog.io/","https://eelslap.com/","https://www.staggeringbeauty.com/","https://burymewithmymoney.com/",
+                "https://smashthewalls.com/","https://jacksonpollock.org/","https://endless.horse/","https://drawing.garden/","https://www.trypap.com/",
+                "https://www.republiquedesmangues.fr/","https://www.movenowthinklater.com/","https://sliding.toys/klotski/easy-street/",
+                "https://paint.toys/calligram/","https://checkboxrace.com/","https://www.rrrgggbbb.com/","https://www.koalastothemax.com/",
+                "https://rotatingsandwiches.com/","https://www.everydayim.com/","https://randomcolour.com/","https://maninthedark.com/",
+                "https://cat-bounce.com/","https://chrismckenzie.com/","https://thezen.zone/","https://ninjaflex.com/","https://ihasabucket.com/",
+                "https://corndogoncorndog.com/","https://www.hackertyper.com/","https://pointerpointer.com ","https://imaninja.com/",
+                "https://www.partridgegetslucky.com/","https://www.ismycomputeron.com/","https://www.nullingthevoid.com/",
+                "https://www.muchbetterthanthis.com/","https://www.yesnoif.com/","https://lacquerlacquer.com ","https://potatoortomato.com/",
+                "https://iamawesome.com/","https://strobe.cool/","https://thisisnotajumpscare.com/","https://doughnutkitten.com/","https://crouton.net/",
+                "https://corgiorgy.com/","https://www.wutdafuk.com/","https://unicodesnowmanforyou.com/","https://chillestmonkey.com/",
+                "https://scroll-o-meter.club/","https://www.crossdivisions.com/","https://tencents.info/","https://boringboringboring.com/",
+                "https://www.patience-is-a-virtue.org/","https://pixelsfighting.com/","https://isitwhite.com/","https://existentialcrisis.com/",
+                "https://onemillionlols.com/","https://www.omfgdogs.com/","https://oct82.com/","https://chihuahuaspin.com/","https://www.blankwindows.com/",
+                "https://tunnelsnakes.com/","https://www.trashloop.com/","https://spaceis.cool/","https://www.doublepressure.com/",
+                "https://www.donothingfor2minutes.com/","https://buildshruggie.com/","https://yeahlemons.com/","https://wowenwilsonquiz.com ",
+                "https://notdayoftheweek.com/","https://www.amialright.com/","https://optical.toys/thatcher-effect/","https://greatbignothing.com/",
+                "https://zoomquilt.org/","https://dadlaughbutton.com/","https://remoji.com/","https://papertoilet.com/","https://loopedforinfinity.com/",
+                "https://end.city/","https://www.bouncingdvdlogo.com/", "https://clicking.toys/peg-solitaire/english/","https://toms.toys "
+        };
+        return siteIndex[new Random().nextInt(siteIndex.length)];
     }
     private class MockBoardButton extends JButton {
         public MockBoardButton(int score, String question, String answer){
