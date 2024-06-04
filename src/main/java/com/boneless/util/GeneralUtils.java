@@ -2,6 +2,7 @@ package com.boneless.util;
 
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -155,6 +156,29 @@ public class GeneralUtils {
             insets.right = 8;
             insets.bottom = 4;
             return insets;
+        }
+    }
+
+    public static class HiddenScroller extends JScrollPane {
+        public HiddenScroller(Component view, boolean doHorizontal) {
+            super(view);
+            if(doHorizontal) {
+                setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+                setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+            } else {
+                setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+                setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+            }
+            JScrollBar horizontalScrollBar = getHorizontalScrollBar();
+            horizontalScrollBar.setUI(new HiddenScrollUI());
+            horizontalScrollBar.setPreferredSize(new Dimension(0, 0)); //hide
+        }
+
+        // Custom ScrollBarUI to customize scrollbar appearance
+        private static class HiddenScrollUI extends BasicScrollBarUI { //todo: fix sluggish scrolling
+            @Override protected void configureScrollBarColors() {}
+            @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
+            @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
         }
     }
 }
