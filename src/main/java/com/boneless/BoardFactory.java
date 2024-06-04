@@ -25,6 +25,7 @@ public class BoardFactory extends JPanel {
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
+
         if(fileName != null){
             mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
             fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
@@ -36,8 +37,7 @@ public class BoardFactory extends JPanel {
         }
         setLayout(new BorderLayout());
         parent.setJMenuBar(menuBar());
-        add(boardPanel(), BorderLayout.CENTER);
-        add(controlPanel(), BorderLayout.EAST);
+
 
         parent.revalidate();
         parent.repaint();
@@ -161,7 +161,7 @@ public class BoardFactory extends JPanel {
         return panel;
     }
 
-    private JPanel controlPanel(){
+    private JScrollPane controlPanel(){
         /*
         Sub-roadmap
             -Board name | X
@@ -177,7 +177,12 @@ public class BoardFactory extends JPanel {
          */
         JPanel panel = new JPanel();
         panel.setBackground(Color.red);
-        return panel;
+        panel.setPreferredSize(new Dimension(120,getHeight()));
+
+
+        HiddenScroller scroller = new HiddenScroller(panel, false);
+        scroller.setPreferredSize(new Dimension(120, getHeight()));
+        return scroller;
     }
 
     private void showAboutPanel(){
