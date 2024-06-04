@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run - Dev" type="Application" factoryName="Application">
+  <configuration default="false" name="Run - JCard" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="com.boneless.Main" />
     <module name="APCompFinalProject.main" />
-    <option name="PROGRAM_PARAMETERS" value="-dev" />
+    <option name="PROGRAM_PARAMETERS" value="-card" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

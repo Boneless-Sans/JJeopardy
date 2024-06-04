@@ -45,7 +45,6 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
     Implement key binds and have them match settings.json | √ !!No ARG Only!!
  */
 public class Main extends JFrame implements KeyListener {
-    private static boolean isDev = false;
     public static String fileName;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
@@ -57,13 +56,10 @@ public class Main extends JFrame implements KeyListener {
     public static BoardFactory boardFactory;
 
     public static void main(String[] args) throws IOException {
-        if(args != null && args.length > 0){
-            isDev = args[0].contains("dev");
-        }
-        SwingUtilities.invokeLater(Main::new);
+        SwingUtilities.invokeLater(() -> new Main(args[0]));
     }
 
-    public Main(){
+    public Main(String arg){
         setTitle("Jeopardy!");
         setSize(1200,700);
         setLocationRelativeTo(null);
@@ -92,7 +88,10 @@ public class Main extends JFrame implements KeyListener {
         setTitle(newName);
     }
 
-    private void init(){
+    private void init(String args){
+        switch (args){
+            //
+        }
         if(!isDev) {
             add(mainMenu);
         } else {

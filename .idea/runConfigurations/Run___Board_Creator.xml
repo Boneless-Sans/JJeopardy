@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run - Board Creator" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.boneless.Main" />
+    <module name="APCompFinalProject.main" />
+    <option name="PROGRAM_PARAMETERS" value="-board" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

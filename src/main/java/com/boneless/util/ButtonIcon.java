@@ -2,7 +2,6 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.GeneralPath;
 
 public class ButtonIcon extends JButton {
     public static final int CHECKMARK = 0;
@@ -63,19 +62,18 @@ public class ButtonIcon extends JButton {
         // Enable antialiasing
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        //calc
         int width = getWidth();
         int height = getHeight();
-
         int centerX = width / 2;
         int centerY = height / 2;
-
         int lineThickness = 4;
-
         int lineLength = Math.min(width, height) / 4; //sets line length, higher is smaller
-
         int ovalDiameter = (Math.min(width, height) / 2) + 10;
         int ovalX = centerX - ovalDiameter / 2;
         int ovalY = centerY - ovalDiameter / 2;
+        int separationOffset = 2;
+        int offsetX = 2;
 
         g2d.setStroke(new BasicStroke(lineThickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
@@ -85,8 +83,8 @@ public class ButtonIcon extends JButton {
 
         g2d.setColor(color2);
         if(iconID == CHECKMARK) { //check
+            //calc
             int checkmarkSize = ovalDiameter / 3; //size
-
             int checkmarkStartX = centerX - checkmarkSize / 2;
             int checkmarkStartY = centerY + checkmarkSize / 4;
             int checkmarkMiddleX = centerX - checkmarkSize / 8;
@@ -94,6 +92,7 @@ public class ButtonIcon extends JButton {
             int checkmarkEndX = centerX + checkmarkSize / 2;
             int checkmarkEndY = centerY - checkmarkSize / 2;
 
+            //draw
             g2d.drawLine(checkmarkStartX, checkmarkStartY, checkmarkMiddleX, checkmarkMiddleY); // .
             g2d.drawLine(checkmarkMiddleX, checkmarkMiddleY, checkmarkEndX, checkmarkEndY); // /
         } else if(iconID == CROSS) { //cross
@@ -104,48 +103,30 @@ public class ButtonIcon extends JButton {
             g2d.drawLine(centerX, centerY - lineLength, centerX, centerY + lineLength); // |
             g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY); // -
         } else if(iconID == MINUS) { //minus
-            g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY);
+            g2d.drawLine(centerX - lineLength, centerY, centerX + lineLength, centerY); // -
         } else if(iconID == START){ //start
-            int numPoints = 3;
-            double outerRadius = (double) ovalDiameter / 3;
-            double innerRadius = outerRadius / 2;
+            //calc
+            int tipX = centerX + (centerX / 4) + offsetX;
+            int topTailX = centerX - (centerX / 4) + offsetX;
+            int topTailY = centerY - (centerY / 4) - separationOffset;
+            int botTailX = centerX - (centerX / 4) + offsetX;
+            int botTailY = centerY + (centerY / 4) + separationOffset;
 
-            //array for cords
-            int[] xPoints = new int[2 * numPoints];
-            int[] yPoints = new int[2 * numPoints];
+            //draw
+            g2d.drawLine(tipX, centerY, topTailX, topTailY); // \
+            g2d.drawLine(tipX, centerY, botTailX, botTailY); // /
 
-            //calc cords
-            for (int i = 0; i < 2 * numPoints; i++) {
-                double angle = Math.PI / numPoints * i;
-                double radius = (i % 2 == 0) ? outerRadius : innerRadius;
-                xPoints[i] = (int) Math.round(centerX + radius * Math.cos(angle));
-                yPoints[i] = (int) Math.round(centerY + radius * Math.sin(angle));
-            }
+        } else if (iconID == BACK) { //back icon
+            //calc
+            int tipX = centerX - (centerX / 4) - offsetX;
+            int topTailX = centerX + (centerX / 4) - offsetX;
+            int topTailY = centerY - (centerY / 4) - separationOffset;
+            int botTailX = centerX + (centerX / 4) - offsetX;
+            int botTailY = centerY + (centerY / 4) + separationOffset;
 
-            //smooth
-            GeneralPath star = new GeneralPath();
-            star.moveTo(xPoints[0], yPoints[0]);
-            for (int i = 1; i < xPoints.length; i++) {
-                star.lineTo(xPoints[i], yPoints[i]);
-            }
-            star.closePath();
-
-            //render
-            g2d.fill(star);
-        } else if(iconID == BACK){ //back icon
-            int separationOffset = 2;
-            int offsetX = 2;
-
-            int tipX = (centerX - centerX / 4) - offsetX;
-
-            int topTailX = (centerX + centerX / 4) - offsetX;
-            int topTailY = (centerY - centerY / 4) - separationOffset;
-
-            int botTailX = (centerX + centerX / 4) - offsetX;
-            int botTailY = (centerY + centerY / 4) + separationOffset;
-
-            g2d.drawLine(tipX,centerY,topTailX,topTailY);
-            g2d.drawLine(tipX,centerY,botTailX,botTailY);
+            //draw
+            g2d.drawLine(tipX, centerY, topTailX, topTailY); // /
+            g2d.drawLine(tipX, centerY, botTailX, botTailY); // \
         }
         else {
             System.err.println("Unknown icon ID: " + iconID);
@@ -153,9 +134,5 @@ public class ButtonIcon extends JButton {
             g2d.drawString(String.valueOf(iconID), centerX, centerY);
         }
     }
-
-    @Override
-    protected void paintBorder(Graphics g) {
-        //disable
-    }
+    @Override protected void paintBorder(Graphics g) {} //disable, !! MAY CAUSE THE RENDERING ISSUE !!
 }

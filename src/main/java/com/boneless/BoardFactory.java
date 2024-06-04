@@ -243,7 +243,7 @@ public class BoardFactory extends JPanel {
     
     private String getRandomWebsite(){
         String[] siteIndex = { //useless web mega list
-                 "https://sliding.toys/mystic-square/8-puzzle/daily/","https://longdogechallenge.com/","https://maze.toys/mazes/mini/daily/",
+                "https://sliding.toys/mystic-square/8-puzzle/daily/","https://longdogechallenge.com/","https://maze.toys/mazes/mini/daily/",
                 "https://optical.toys ","https://paint.toys/","https://puginarug.com ","https://alwaysjudgeabookbyitscover.com ",
                 "https://clicking.toys/flip-grid/neat-nine/3-holes/","https://weirdorconfusing.com/","https://checkbox.toys/scale/",
                 "https://memory.toys/classic/easy/","https://binarypiano.com/","https://mondrianandme.com/","https://onesquareminesweeper.com/",
