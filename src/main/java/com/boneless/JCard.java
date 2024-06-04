@@ -21,8 +21,8 @@ public class JCard extends JPanel {
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
     private final static Color parseColorFadeComplete = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
-    private final JPanel test;
-    private final JPanel test2;
+    private final JPanel moversPanel;
+    private final JPanel fadePanel;
     private final JButton sourceButton;
 
     public JCard(String question, String answer, JButton sourceButton) {
@@ -31,11 +31,11 @@ public class JCard extends JPanel {
 
         setBackground(mainColor);
 
-        test = new JPanel(new GridBagLayout());
-        test.setBackground(mainColor);
+        moversPanel = new JPanel(new GridBagLayout());
+        moversPanel.setBackground(mainColor);
 
-        test2 = new JPanel(new GridBagLayout());
-        test2.setBackground(mainColor);
+        fadePanel = new JPanel(new GridBagLayout());
+        fadePanel.setBackground(mainColor);
 
         questionLabel = new JLabel(question);
         questionLabel.setForeground(fontColor);
@@ -49,10 +49,10 @@ public class JCard extends JPanel {
         moron.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
         moron.setOpaque(false);
 
-        test.add(questionLabel);
-        test2.add(answerLabel);
-        add(test);
-        add(test2);
+        moversPanel.add(questionLabel);
+        fadePanel.add(answerLabel);
+        add(moversPanel);
+        add(fadePanel);
 
 
         centerTestPanel();
@@ -75,7 +75,9 @@ public class JCard extends JPanel {
         int sizeY = (getHeight() - (getHeight() / factor)) / factor;
         int x = (getWidth() / 2) - (sizeX2 / 2);
         int y = (getHeight() / 2) - (sizeY / 2);
-        test.setBounds(x, y, sizeX2, sizeY);
+        int sixth = (getHeight() - (getHeight() / 2)) / 6;
+        moversPanel.setBounds(x, y, sizeX2, sizeY);
+        fadePanel.setBounds(x, y + sixth, sizeX2, sizeY);
         revalidate();
         repaint();
     }
@@ -118,19 +120,19 @@ public class JCard extends JPanel {
         int yQuestion = (getHeight() - sizeY) / 2;
         int targetY = 50; // Target Y position for question label
 
-        Timer q = new Timer(50, null);
+        Timer q = new Timer(7, null);
         q.addActionListener(new ActionListener() {
             private int currentY = yQuestion;
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentY -= 3; // Adjust this value to control the speed of movement
+                currentY -= 1; // Adjust this value to control the speed of movement
                 if (currentY <= targetY) {
                     currentY = targetY;
                     q.stop();
-                    fadeInAnswerAndQuestion();
+                    fadeInAnswer();
                 }
-                questionLabel.setBounds(x, currentY, sizeX, sizeY);
+                moversPanel.setBounds(x, currentY, sizeX, sizeY);
                 revalidate();
                 repaint();
             }
@@ -138,7 +140,7 @@ public class JCard extends JPanel {
         q.start();
     }
 
-    private void fadeInAnswerAndQuestion() {
+    private void fadeInAnswer() {
         if (!hasFadedIn) {
             return;
         }
@@ -155,13 +157,18 @@ public class JCard extends JPanel {
                     opacity2 = 1.0f;
                     j.stop();
                 }
-                answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
-                moron.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data","font_color"),(int)(opacity2 * 255)));
+
+                Color fadedColor = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
+                answerLabel.setForeground(fadedColor);
+                System.out.println("Opacity: " + opacity2 + ", Color: " + fadedColor);
+
+                revalidate();
                 repaint();
             }
         });
         j.start();
     }
+
     private void advanceExit(){
         exit();
         sourceButton.setEnabled(false);
