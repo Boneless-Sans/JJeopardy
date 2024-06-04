@@ -6,23 +6,35 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static com.boneless.Main.fileName;
-import static com.boneless.Main.mainMenu;
+import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
-    private Color mainColor = new Color(255, 255, 255);
-    private Color fontColor = Color.black;
+    public boolean factoryIsActive;
+    private Color mainColor;
+    private Color fontColor;
+    private boolean changesMade;
     private final int fontSize = 20;
     private final String tempDir = System.getProperty("java.io.tmpdir");
 
     public BoardFactory(JFrame parent){
+        factoryIsActive = true;
+        if(fileName != null){
+            mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+            fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+        } else {
+            System.out.println("File is null, resetting with new template...");
+            fileName = createNewFile().getAbsolutePath();
+            fileName = fileName.substring(fileName.indexOf("/var/"));
+            System.out.println(fileName);
+        }
         setLayout(new BorderLayout());
-
         parent.setJMenuBar(menuBar());
         add(boardPanel(), BorderLayout.CENTER);
         add(controlPanel(), BorderLayout.EAST);
@@ -45,7 +57,7 @@ public class BoardFactory extends JPanel {
         //sub tabs - file
         JMenuItem newItem = new JMenuItem("New Board");
         newItem.addActionListener(e -> {
-            //text field pop for name > create file via template (use devBoard?) > save file() > load file()
+            //text if changes have been made, use checkPop > field pop for name > create file via template (use devBoard?) > save file() > load file()
             JPanel fileNamePanel = new JPanel();
 
             JTextField textField = new JTextField(10);
@@ -125,7 +137,7 @@ public class BoardFactory extends JPanel {
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                MockBoardButton button = new MockBoardButton();
+                MockBoardButton button = new MockBoardButton(score, question, answer);
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
@@ -170,10 +182,37 @@ public class BoardFactory extends JPanel {
 
     private void showAboutPanel(){
         JFrame frame = new JFrame("About");
-        frame.setSize(280, 520);
+        frame.setSize(280, 520); //replicate macOS's about panel
         frame.setLocationRelativeTo(null);
 
+        //todo: fill out this section
         frame.setVisible(true);
+    }
+
+    private File createNewFile(){
+        File file = new File(tempDir + "/test.json");
+
+        try {
+            if(!file.exists() && file.createNewFile()){
+                System.out.println("File created at: " + file.getAbsoluteFile());
+            }
+
+            try (FileWriter writer = new FileWriter(file)){
+                FileReader reader = new FileReader("src/main/resources/data/template.json");
+
+                int character;
+                while((character = reader.read()) != -1){
+                    writer.write(character);
+                }
+
+                writer.close();
+                reader.close();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating or writing to file: " + file.getAbsoluteFile(), e);
+        }
+
+        return file;
     }
 
     private void save(){
@@ -184,12 +223,13 @@ public class BoardFactory extends JPanel {
         //
     }
 
-    private void exit(){
+    void exit(){
         changeCurrentPanel(mainMenu, this);
     }
     private class MockBoardButton extends JButton {
-        public MockBoardButton(){
-            //not sure what to do here yet
+        public MockBoardButton(int score, String question, String answer){
+            setText(String.valueOf(score));
+            addActionListener(e -> changeCurrentPanel(new MockJCard(question, answer), boardPanel()));
         }
         @Override
         protected void paintComponent(Graphics g) {
@@ -229,6 +269,11 @@ public class BoardFactory extends JPanel {
             g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 0,0);
 
             g2d.dispose();
+        }
+    }
+    private static class MockJCard extends JPanel {
+        public MockJCard(String question, String answer){
+            //
         }
     }
 }

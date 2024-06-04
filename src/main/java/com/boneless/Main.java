@@ -54,6 +54,7 @@ public class Main extends JFrame implements KeyListener {
     public static MainMenu mainMenu;
     public static GameBoard gameBoard;
     public static JCard jCard;
+    public static BoardFactory boardFactory;
 
     public static void main(String[] args) throws IOException {
         if(args != null && args.length > 0){
@@ -135,6 +136,9 @@ public class Main extends JFrame implements KeyListener {
             }
             else if(gameBoard.jCardIsActive) { //jCard
                 jCard.exit();
+            }
+            else if(boardFactory.factoryIsActive) {
+                boardFactory.exit();
             }
         }
 

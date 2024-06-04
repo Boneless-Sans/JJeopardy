@@ -5,11 +5,11 @@
     "categories": 5,
     "rows": 5,
 
-    "font": "Comic Sans MS",
+    "font": "Arial",
     "font_color": "255,255,255",
 
     "global_color": "20,20,255",
-    "disabled_button_color": "50,50,50"
+    "disabled_button_color": "80,80,80"
   },
   "board": {
     "categories": {

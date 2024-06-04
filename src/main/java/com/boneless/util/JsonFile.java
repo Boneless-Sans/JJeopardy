@@ -303,7 +303,7 @@ public class JsonFile {
         filename = (filename == null) ? "template.json" : filename;
         String directory;
         String OS = System.getProperty("os.name").toLowerCase();
-        if (OS.contains("windows") && filename.contains("C:\\") || OS.contains("mac") && filename.contains("/Users/")) {
+        if (OS.contains("windows") && filename.contains("C:\\") || OS.contains("mac") && (filename.contains("/Users/") || filename.contains("/var/"))) {
             directory = filename;
         } else {
             File file = new File("src/main/resources/data/" + filename);
