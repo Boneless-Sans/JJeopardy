@@ -3,6 +3,8 @@ package com.boneless.util;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
+import java.awt.font.TextLayout;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import static com.boneless.Main.fileName;
@@ -27,18 +29,15 @@ public class GeneralUtils {
         int fontSize = 80;
         String jeopardy;
         Color color;
-        Color fontColor;
         Font font;
 
         if(fileName == null) {
             jeopardy = "J";
             color = new Color(70,70,255);
-            fontColor = Color.white;
-            font = new Font("Arial", Font.PLAIN, fontSize);
+            font = new Font("Comic Sans MS", Font.PLAIN, fontSize);
         } else {
             jeopardy = JsonFile.read(fileName,"data","icon_text");
             color = parseColor(JsonFile.read(fileName, "data", "global_color"));
-            fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
             font = generateFont(fontSize);
         }
 
@@ -59,15 +58,30 @@ public class GeneralUtils {
 
         g2d.setFont(font);
 
-        FontMetrics fm = g2d.getFontMetrics();
-        int textWidth = fm.stringWidth(jeopardy);
-        int textHeight = fm.getHeight();
+        FontMetrics fmB = g2d.getFontMetrics();
+        int textWidthBackground = fmB.stringWidth(jeopardy);
+        int textHeightBackground = fmB.getHeight();
 
-        int x = posX + (size - textWidth) / 2;
-        int y = posY + (size - textHeight) / 2 + fm.getAscent();
+        int xB = posX + (size - textWidthBackground) / 2;
+        int yB = posY + (size - textHeightBackground) / 2 + fmB.getAscent();
 
-        g2d.setColor(fontColor);
-        g2d.drawString(jeopardy, x, y);
+        g2d.setColor(new Color(0,0,0,70));
+        g2d.drawString(jeopardy, xB + 2, yB + 7);
+
+        g2d.setFont(new Font(font.getFontName(), font.getStyle(), font.getSize() + 10));
+
+        FontMetrics fmF = g2d.getFontMetrics();
+        int textWidthForeground = fmF.stringWidth(jeopardy);
+        int textHeightForeground = fmF.getHeight();
+
+        int xF = posX + (size - textWidthForeground) / 2;
+        int yF = posY + (size - textHeightForeground) / 2 + fmF.getAscent();
+
+        g2d.setFont(font);
+        g2d.setColor(Color.white);
+        g2d.drawString(jeopardy, xF, yF);
+
+        g2d.dispose();
 
         return image;
     }

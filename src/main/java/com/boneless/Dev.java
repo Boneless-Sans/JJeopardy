@@ -33,22 +33,24 @@ public class Dev extends JFrame implements KeyListener {
     }
 
     private void init() {
-        JPanel panel = new JPanel(){
+        JPanel panel = new JPanel() {
             @Override
-            protected void paintComponent(Graphics g){
+            protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(GeneralUtils.renderIcon(),0,0,null);
+                g.drawImage(GeneralUtils.renderIcon(), 0, 0, null);
             }
         };
         add(panel);
 
-        BufferedImage icon = GeneralUtils.renderIcon();
-        File output = new File(System.getProperty("user.home") + "/Desktop/icon.png");
-        try {
-            ImageIO.write(icon, "png", output);
-            System.out.println("Image saved!");
-        } catch (IOException e) {
-            System.out.println("Error saving image: " + e.getMessage());
+        if (!panel.isEnabled()) {
+            BufferedImage icon = GeneralUtils.renderIcon();
+            File output = new File(System.getProperty("user.home") + "/Desktop/icon.png");
+            try {
+                ImageIO.write(icon, "png", output);
+                System.out.println("Image saved!");
+            } catch (IOException e) {
+                System.out.println("Error saving image: " + e.getMessage());
+            }
         }
     }
 

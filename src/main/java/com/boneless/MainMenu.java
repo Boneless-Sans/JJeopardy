@@ -8,11 +8,11 @@ import com.boneless.util.ScrollGridPanel;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.boneless.GameBoard.fontColor;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -47,13 +47,13 @@ public class MainMenu extends ScrollGridPanel {
 
         JPanel buttonsPanel = new JPanel(new FlowLayout());
         buttonsPanel.setOpaque(false);
-        buttonsPanel.setPreferredSize(new Dimension(150,250));
+        buttonsPanel.setPreferredSize(new Dimension(180,250));
 
-        buttonsPanel.add(createMenuButton("Start Game", 0));
-        buttonsPanel.add(createMenuButton("Choose Board File", 1));
-        buttonsPanel.add(createMenuButton("Board Creator", 2));
-        buttonsPanel.add(createMenuButton("Settings", 3));
-        buttonsPanel.add(createMenuButton("Exit", 4));
+        buttonsPanel.add(new MenuButton("Start Game", 0));
+        buttonsPanel.add(new MenuButton("Choose Board File", 1));
+        buttonsPanel.add(new MenuButton("Board Creator", 2));
+        buttonsPanel.add(new MenuButton("Settings", 3));
+        buttonsPanel.add(new MenuButton("Exit", 4));
 
         add(titlePanel, BorderLayout.NORTH);
 
@@ -71,121 +71,6 @@ public class MainMenu extends ScrollGridPanel {
         filePanel.add(currentFile);
 
         add(filePanel, BorderLayout.SOUTH);
-    }
-
-    private JButton createMenuButton(String text, int UUID){
-        JButton button = new JButton(text) {
-            @Override
-            public Dimension getPreferredSize() {
-                Dimension size = super.getPreferredSize();
-                size.width = 160;
-                size.height = 40;
-                return size;
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                if (!isEnabled()) {
-                    g.setColor(Color.lightGray);
-                    g.setFont(getFont());
-                    FontMetrics fm = g.getFontMetrics();
-                    int textWidth = fm.stringWidth(getText());
-                    int textHeight = fm.getAscent();
-                    int x = (getWidth() - textWidth) / 2;
-                    int y = (getHeight() + textHeight) / 2 - 4;
-                    g.drawString(getText(), x, y);
-                }
-
-                Graphics2D g2d = (Graphics2D) g.create();
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Background
-                int arcSize = 45;
-                g2d.setColor(getBackground());
-                Shape backgroundShape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), arcSize, arcSize);
-                g2d.fill(backgroundShape);
-
-                // Text
-                if(isEnabled()) {
-                    g2d.setColor(Color.black);
-                } else {
-                    g2d.setColor(parseColor(JsonFile.read(fileName, "data", "disabled_button_color")));
-                }
-                Font font = getFont();
-                FontMetrics metrics = g2d.getFontMetrics(font);
-                int x = (getWidth() - metrics.stringWidth(getText())) / 2;
-                int y = ((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
-                g2d.setFont(font);
-                g2d.drawString(getText(), x, y);
-
-                g2d.dispose();
-            }
-
-            @Override
-            protected void paintBorder(Graphics g) {
-                super.paintBorder(g);
-                Graphics2D g2d = (Graphics2D) g.create();
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Border
-                int arcSize = 10;
-                g2d.setColor(Color.black);
-                g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcSize, arcSize);
-
-                g2d.dispose();
-            }
-        };
-        button.setFocusable(false);
-        button.setFont(generateFont(15));
-        try {
-            if (UUID == 0 && fileName.isEmpty()) { //disable start button if there is no current board file
-                button.setEnabled(false);
-            }
-        } catch (NullPointerException ignore){
-            System.out.println("File is null, using defaults...");
-            button.setEnabled(false);
-        }
-        buttonsList.add(button);
-        button.addActionListener(e -> {
-            menuIsActive = true;
-            timer.stop();
-            switch (UUID){
-                case 0: { //start
-                    startGameUI();
-                    break;
-                }
-                case 1: { //board file
-                    timer.start();
-                    JFileChooser chooser = new JFileChooser();
-                    chooser.setFileFilter(new FileNameExtensionFilter("Json File", "json"));
-
-                    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                        File file = chooser.getSelectedFile();
-                        changeFileName(String.valueOf(file));
-                        changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
-                        renderIcon();
-                    }
-
-                    break;
-                }
-                case 2: { //board creator
-                    changeCurrentPanel(boardFactory = new BoardFactory(parent), this);
-                    break;
-                }
-                case 3: { //settings
-                    changeCurrentPanel(new Settings(), this);
-                    break;
-                }
-                case 4: { //exit
-                    System.exit(0);
-                    break;
-                }
-            }
-        });
-
-        return button;
     }
 
     private void startGameUI(){
@@ -261,5 +146,117 @@ public class MainMenu extends ScrollGridPanel {
         fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
         currentFile.setText("Current Board: " + fileName);
         buttonsList.get(0).setEnabled(!fileName.isEmpty());
+    }
+
+    private ActionListener listener(int UUID){
+        return e -> {
+            menuIsActive = true;
+            timer.stop();
+            switch (UUID){
+                case 0: { //start
+                    startGameUI();
+                    break;
+                }
+                case 1: { //board file
+                    timer.start();
+                    JFileChooser chooser = new JFileChooser();
+                    chooser.setFileFilter(new FileNameExtensionFilter("Json File", "json"));
+
+                    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                        File file = chooser.getSelectedFile();
+                        changeFileName(String.valueOf(file));
+                        changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
+                        renderIcon();
+                    }
+
+                    break;
+                }
+                case 2: { //board creator
+                    changeCurrentPanel(boardFactory = new BoardFactory(parent), this);
+                    break;
+                }
+                case 3: { //settings
+                    changeCurrentPanel(new Settings(), this);
+                    break;
+                }
+                case 4: { //exit
+                    System.exit(0);
+                    break;
+                }
+            }
+        };
+    }
+
+    private class MenuButton extends JButton{
+        public MenuButton(String text, int UUID){
+
+            setFocusable(false);
+            setFont(generateFont(15));
+            setBorderPainted(false);
+            try {
+                if (UUID == 0 && fileName.isEmpty()) { //disable start button if there is no current board file
+                    setEnabled(false);
+                }
+            } catch (NullPointerException ignore){
+                System.out.println("File is null, using defaults...");
+                setEnabled(false);
+            }
+            buttonsList.add(this);
+
+            setText(text);
+            addActionListener(listener(UUID));
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            Dimension size = super.getPreferredSize();
+            size.width = 160;
+            size.height = 40;
+            return size;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+
+            if (!isEnabled()) {
+                g.setColor(Color.lightGray);
+                g.setFont(getFont());
+                FontMetrics fm = g.getFontMetrics();
+                int textWidth = fm.stringWidth(getText());
+                int textHeight = fm.getAscent();
+                int x = (getWidth() - textWidth) / 2;
+                int y = (getHeight() + textHeight) / 2 - 4;
+                g.drawString(getText(), x, y);
+            }
+
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            // Background
+            int arcSize = 45;
+            g2d.setColor(getBackground());
+            Shape backgroundShape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), arcSize, arcSize);
+            g2d.fill(backgroundShape);
+
+            // Text
+            if(isEnabled()) {
+                g2d.setColor(Color.black);
+            } else {
+                g2d.setColor(parseColor(JsonFile.read(fileName, "data", "disabled_button_color")));
+            }
+
+            Font font = getFont();
+            FontMetrics metrics = g2d.getFontMetrics(font);
+            int x = (getWidth() - metrics.stringWidth(getText())) / 2;
+            int y = ((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
+            g2d.setFont(font);
+
+            g2d.drawString(getText(), x, y);
+
+            g2d.dispose();
+        }
+
+        @Override protected void paintBorder(Graphics g) {}
     }
 }
