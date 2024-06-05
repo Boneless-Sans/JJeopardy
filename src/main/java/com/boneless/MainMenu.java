@@ -12,6 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 
+import static com.boneless.GameBoard.fontColor;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
@@ -83,8 +84,9 @@ public class MainMenu extends ScrollGridPanel {
             }
 
             @Override
-            public void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+
                 if (!isEnabled()) {
                     g.setColor(Color.lightGray);
                     g.setFont(getFont());
@@ -95,6 +97,44 @@ public class MainMenu extends ScrollGridPanel {
                     int y = (getHeight() + textHeight) / 2 - 4;
                     g.drawString(getText(), x, y);
                 }
+
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Background
+                int arcSize = 45;
+                g2d.setColor(getBackground());
+                Shape backgroundShape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), arcSize, arcSize);
+                g2d.fill(backgroundShape);
+
+                // Text
+                if(isEnabled()) {
+                    g2d.setColor(Color.black);
+                } else {
+                    g2d.setColor(parseColor(JsonFile.read(fileName, "data", "disabled_button_color")));
+                }
+                Font font = getFont();
+                FontMetrics metrics = g2d.getFontMetrics(font);
+                int x = (getWidth() - metrics.stringWidth(getText())) / 2;
+                int y = ((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
+                g2d.setFont(font);
+                g2d.drawString(getText(), x, y);
+
+                g2d.dispose();
+            }
+
+            @Override
+            protected void paintBorder(Graphics g) {
+                super.paintBorder(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                // Border
+                int arcSize = 10;
+                g2d.setColor(Color.black);
+                g2d.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcSize, arcSize);
+
+                g2d.dispose();
             }
         };
         button.setFocusable(false);

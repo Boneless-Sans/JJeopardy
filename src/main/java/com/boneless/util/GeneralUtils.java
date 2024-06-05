@@ -1,7 +1,6 @@
 package com.boneless.util;
 
 import javax.swing.*;
-import javax.swing.border.AbstractBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,21 +19,22 @@ public class GeneralUtils {
     }
 
     public static BufferedImage renderIcon(){
-        int size = 103;
-        int posX = 12;
-        int posY = 12;
+        boolean OSIsWindows = System.getProperty("os.name").toLowerCase().contains("windows");
+        int size = OSIsWindows? 128 : 103;
+        int posX = OSIsWindows? 0 : 12;
+        int posY = OSIsWindows? 0 : 12;
         int arc = 40;
-        int fontSize = 18;
+        int fontSize = 80;
         String jeopardy;
         Color color;
         Color fontColor;
         Font font;
 
         if(fileName == null) {
-            jeopardy = "Jeopardy!";
-            color = new Color(20,20,255);
+            jeopardy = "J";
+            color = new Color(70,70,255);
             fontColor = Color.white;
-            font = new Font("New Roman Times", Font.PLAIN, fontSize);
+            font = new Font("Arial", Font.PLAIN, fontSize);
         } else {
             jeopardy = JsonFile.read(fileName,"data","icon_text");
             color = parseColor(JsonFile.read(fileName, "data", "global_color"));
@@ -47,6 +47,15 @@ public class GeneralUtils {
 
         g2d.setPaint(new GradientPaint(0,0,color,128,128,ScrollGridPanel.adjustColor(color)));
         g2d.fillRoundRect(posX,posY,size,size,arc,arc);
+
+        Color forgroundColor = ScrollGridPanel.adjustColor(color);
+        int smallerSize = (int)(size * 0.8);
+        int smallerPosX = posX + (size - smallerSize) / 2;
+        int smallerPosY = posY + (size - smallerSize) / 2;
+        int smallerArc = 20;
+
+        g2d.setPaint(new GradientPaint(0,0,forgroundColor,128,128,ScrollGridPanel.adjustColor(forgroundColor)));
+        g2d.fillRoundRect(smallerPosX,smallerPosY,smallerSize,smallerSize,smallerArc,smallerArc);
 
         g2d.setFont(font);
 
@@ -132,7 +141,7 @@ public class GeneralUtils {
         }
 
         //hide scrollbar ui
-        private static class HiddenScrollUI extends BasicScrollBarUI { //todo: fix sluggish scrolling
+        private static class HiddenScrollUI extends BasicScrollBarUI { //todo: fix sluggish scrolling, only happens on track pad
             @Override protected void configureScrollBarColors() {}
             @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
             @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}

@@ -26,8 +26,6 @@ public class ButtonIcon extends JButton {
         color = startChecked ? GREEN : RED;
         iconID = startChecked ? CHECKMARK : CROSS;
         isChecked = startChecked;
-        revalidate();
-        repaint();
     }
 
     public ButtonIcon(int size, int iconID, Color color) {

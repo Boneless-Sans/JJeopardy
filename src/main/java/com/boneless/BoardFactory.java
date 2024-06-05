@@ -20,6 +20,7 @@ public class BoardFactory extends JPanel {
     public boolean factoryIsActive;
     private final JFrame parent;
     private Color mainColor;
+    public Color accentColor;
     private Color fontColor;
     private boolean changesMade = false;
     private final int fontSize = 20;
@@ -44,6 +45,10 @@ public class BoardFactory extends JPanel {
     }
     private void loadColors(){ //not really needed, but its cleaner
         mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+        accentColor = new Color(
+                clamp(mainColor.getRed()   - 40),
+                clamp(mainColor.getGreen() - 40),
+                clamp(mainColor.getBlue()  - 40));
         fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
     }
 
@@ -176,13 +181,13 @@ public class BoardFactory extends JPanel {
     private JPanel createCatPanel(int index) {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createBevelBorder(0));
-        panel.setBackground(mainColor);
+        panel.setBackground(accentColor);
 
-        JTextField field = new JTextField(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
-        field.setFont(generateFont(fontSize));
-        field.setForeground(fontColor);
+        JLabel label = new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
+        label.setFont(generateFont(fontSize));
+        label.setForeground(fontColor);
 
-        panel.add(field, gbc);
+        panel.add(label, gbc);
         return panel;
     }
 
@@ -212,6 +217,11 @@ public class BoardFactory extends JPanel {
         JFrame frame = new JFrame("About");
         frame.setSize(280, 520); //replicate macOS's about panel
         frame.setLocationRelativeTo(null);
+
+        /*
+        logo | X
+        info | X
+         */
 
         //todo: fill out this section
         frame.setVisible(true);
@@ -257,36 +267,7 @@ public class BoardFactory extends JPanel {
             changeCurrentPanel(mainMenu, this);
         }
     }
-    
-    private String getRandomWebsite(){
-        String[] siteIndex = { //useless web mega list
-                "https://sliding.toys/mystic-square/8-puzzle/daily/","https://longdogechallenge.com/","https://maze.toys/mazes/mini/daily/",
-                "https://optical.toys ","https://paint.toys/","https://puginarug.com ","https://alwaysjudgeabookbyitscover.com ",
-                "https://clicking.toys/flip-grid/neat-nine/3-holes/","https://weirdorconfusing.com/","https://checkbox.toys/scale/",
-                "https://memory.toys/classic/easy/","https://binarypiano.com/","https://mondrianandme.com/","https://onesquareminesweeper.com/",
-                "https://cursoreffects.com ","https://floatingqrcode.com/","https://thatsthefinger.com/","https://cant-not-tweet-this.com/",
-                "https://heeeeeeeey.com/","https://corndog.io/","https://eelslap.com/","https://www.staggeringbeauty.com/","https://burymewithmymoney.com/",
-                "https://smashthewalls.com/","https://jacksonpollock.org/","https://endless.horse/","https://drawing.garden/","https://www.trypap.com/",
-                "https://www.republiquedesmangues.fr/","https://www.movenowthinklater.com/","https://sliding.toys/klotski/easy-street/",
-                "https://paint.toys/calligram/","https://checkboxrace.com/","https://www.rrrgggbbb.com/","https://www.koalastothemax.com/",
-                "https://rotatingsandwiches.com/","https://www.everydayim.com/","https://randomcolour.com/","https://maninthedark.com/",
-                "https://cat-bounce.com/","https://chrismckenzie.com/","https://thezen.zone/","https://ninjaflex.com/","https://ihasabucket.com/",
-                "https://corndogoncorndog.com/","https://www.hackertyper.com/","https://pointerpointer.com ","https://imaninja.com/",
-                "https://www.partridgegetslucky.com/","https://www.ismycomputeron.com/","https://www.nullingthevoid.com/",
-                "https://www.muchbetterthanthis.com/","https://www.yesnoif.com/","https://lacquerlacquer.com ","https://potatoortomato.com/",
-                "https://iamawesome.com/","https://strobe.cool/","https://thisisnotajumpscare.com/","https://doughnutkitten.com/","https://crouton.net/",
-                "https://corgiorgy.com/","https://www.wutdafuk.com/","https://unicodesnowmanforyou.com/","https://chillestmonkey.com/",
-                "https://scroll-o-meter.club/","https://www.crossdivisions.com/","https://tencents.info/","https://boringboringboring.com/",
-                "https://www.patience-is-a-virtue.org/","https://pixelsfighting.com/","https://isitwhite.com/","https://existentialcrisis.com/",
-                "https://onemillionlols.com/","https://www.omfgdogs.com/","https://oct82.com/","https://chihuahuaspin.com/","https://www.blankwindows.com/",
-                "https://tunnelsnakes.com/","https://www.trashloop.com/","https://spaceis.cool/","https://www.doublepressure.com/",
-                "https://www.donothingfor2minutes.com/","https://buildshruggie.com/","https://yeahlemons.com/","https://wowenwilsonquiz.com ",
-                "https://notdayoftheweek.com/","https://www.amialright.com/","https://optical.toys/thatcher-effect/","https://greatbignothing.com/",
-                "https://zoomquilt.org/","https://dadlaughbutton.com/","https://remoji.com/","https://papertoilet.com/","https://loopedforinfinity.com/",
-                "https://end.city/","https://www.bouncingdvdlogo.com/", "https://clicking.toys/peg-solitaire/english/","https://toms.toys "
-        };
-        return siteIndex[new Random().nextInt(siteIndex.length)];
-    }
+
     private class MockBoardButton extends JButton {
         public MockBoardButton(int score, String question, String answer){
             setText(String.valueOf(score));
@@ -316,6 +297,7 @@ public class BoardFactory extends JPanel {
             g2d.setFont(font);
             g2d.drawString(getText(), x, y);
 
+
             g2d.dispose();
         }
 
@@ -336,5 +318,31 @@ public class BoardFactory extends JPanel {
         public MockJCard(String question, String answer){
             //
         }
+    }
+
+    //just going to tuck this away
+    private String getRandomWebsite(){ //possible encryption idea
+        String[] siteIndex = { //useless web mega list
+                "https://sliding.toys/mystic-square/8-puzzle/daily/","https://longdogechallenge.com/","https://maze.toys/mazes/mini/daily/","https://optical.toys",
+                "https://paint.toys/","https://puginarug.com","https://alwaysjudgeabookbyitscover.com","https://clicking.toys/flip-grid/neat-nine/3-holes/",
+                "https://weirdorconfusing.com/","https://checkbox.toys/scale/","https://memory.toys/classic/easy/","https://binarypiano.com/","https://mondrianandme.com/",
+                "https://onesquareminesweeper.com/","https://cursoreffects.com","https://floatingqrcode.com/","https://thatsthefinger.com/",
+                "https://cant-not-tweet-this.com/","https://heeeeeeeey.com/","https://eelslap.com/","https://www.staggeringbeauty.com/","https://burymewithmymoney.com/",
+                "https://smashthewalls.com/","https://jacksonpollock.org/","https://endless.horse/","https://drawing.garden/","https://www.trypap.com/",
+                "https://www.movenowthinklater.com/","https://sliding.toys/klotski/easy-street/","https://paint.toys/calligram/","https://checkboxrace.com/",
+                "https://www.rrrgggbbb.com/","https://www.koalastothemax.com/","https://rotatingsandwiches.com/","https://randomcolour.com/","https://maninthedark.com/",
+                "https://cat-bounce.com/","https://chrismckenzie.com/","https://thezen.zone/","https://ihasabucket.com/","https://corndogoncorndog.com/",
+                "https://www.hackertyper.com/","https://pointerpointer.com","https://imaninja.com/","https://www.nullingthevoid.com/","https://www.muchbetterthanthis.com/",
+                "https://www.yesnoif.com/","https://lacquerlacquer.com","https://potatoortomato.com/","https://iamawesome.com/","https://strobe.cool/",
+                "https://thisisnotajumpscare.com/","https://doughnutkitten.com/","https://crouton.net/","https://corgiorgy.com/","https://www.wutdafuk.com/",
+                "https://unicodesnowmanforyou.com/","https://chillestmonkey.com/","https://www.crossdivisions.com/","https://boringboringboring.com/",
+                "https://www.patience-is-a-virtue.org/","https://pixelsfighting.com/","https://isitwhite.com/","https://existentialcrisis.com/",
+                "https://onemillionlols.com/","https://www.omfgdogs.com/","https://oct82.com/","https://chihuahuaspin.com/","https://www.blankwindows.com/",
+                "https://tunnelsnakes.com/","https://www.trashloop.com/","https://spaceis.cool/","https://www.doublepressure.com/","https://www.donothingfor2minutes.com/",
+                "https://buildshruggie.com/","https://wowenwilsonquiz.com","https://notdayoftheweek.com/","https://optical.toys/thatcher-effect/",
+                "https://greatbignothing.com/","https://zoomquilt.org/","https://dadlaughbutton.com/","https://remoji.com/","https://papertoilet.com/",
+                "https://loopedforinfinity.com/","https://end.city/","https://www.bouncingdvdlogo.com/","https://clicking.toys/peg-solitaire/english/","https://toms.toys"
+        };
+        return siteIndex[new Random().nextInt(siteIndex.length)];
     }
 }

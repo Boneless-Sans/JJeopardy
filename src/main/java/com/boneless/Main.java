@@ -29,21 +29,20 @@ Road map (semi in order) X (incomplete / work in progress) | √ (complete)
         -create context header | X
             -File | X
                 -New | X
-                -Open | X
+                -Open | √
                 -Save | X
-                -Exit | X
+                -Exit | √
             -Help | X
-                -Not sure | X
-                -Redirect to joke site | X
+                -About Panel | X
+                -Redirect to joke site | √
         -create left board panel | X
-            -Emulate GameBoard
-            -Functionality with fakeCard
-            -Update board when updates are made with right panel
+            -Emulate GameBoard | √
+            -Functionality with fakeCard | X
         -create right settings panel | X
             - !!moved to class!!
         -figure out more | √
-    Create Application Icon | √ todo: change icon to not use text. for reference, use https://developer.apple.com/design/human-interface-guidelines/app-icons
-    Implement key binds and have them match settings.json | √ !!No ARG Only!!
+    Create Application Icon | √
+    Implement key binds and have them match settings.json | √ !! No ARG Only? !!
  */
 public class Main extends JFrame implements KeyListener {
     public static String fileName;
@@ -89,19 +88,22 @@ public class Main extends JFrame implements KeyListener {
         setTitle(newName);
     }
 
-    private void init(String args){
-        switch (args){
-            case "[-card]": { //for some reason, substring won't let me remove the brackets and only returns the brackets
-                add(gameBoard = new GameBoard(4));
-                break;
+    private void init(String arg){
+        int startIndex = arg.indexOf("-");
+        int endIndex = arg.indexOf("]");
+        if(startIndex != -1 && endIndex != -1) {
+            switch (arg.substring(startIndex + 1, endIndex)) {
+                case "card": {
+                    add(gameBoard = new GameBoard(4));
+                    break;
+                }
+                case "board": {
+                    add(boardFactory = new BoardFactory(this));
+                    break;
+                }
             }
-            case "[-board]": {
-                add(boardFactory = new BoardFactory(this));
-                break;
-            }
-            default: {
-                add(mainMenu = new MainMenu(this));
-            }
+        } else {
+            add(mainMenu = new MainMenu(this));
         }
     }
 
