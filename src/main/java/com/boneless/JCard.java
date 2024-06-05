@@ -126,10 +126,6 @@ public class JCard extends JPanel {
         setBackground(mainColor);
     }
 
-    public void advance() { //todo: remove, redundant
-        moveQuestion();
-    }
-
     private void setupMouseListeners() {
         addMouseListener(new MouseAdapter() {
             @Override
@@ -144,7 +140,7 @@ public class JCard extends JPanel {
         requestFocusInWindow();
     }
 
-    private void moveQuestion() {//todo: on the right header panel, on advance text needs to change to continue
+    public void moveQuestion() {//todo: on the right header panel, on advance text needs to change to continue
         if (hasFaded) {
             advanceExit();
             return;

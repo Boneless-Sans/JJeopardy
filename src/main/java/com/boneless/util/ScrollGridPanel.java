@@ -5,7 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static com.boneless.Main.fileName;
+import static com.boneless.util.GeneralUtils.*;
 
 public class ScrollGridPanel extends JPanel {
     public static final int WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
@@ -29,7 +29,7 @@ public class ScrollGridPanel extends JPanel {
             repaint();
         });
 
-        //timer.start(); //disabled for now, macbook ass, todo: get new battery or macbook
+        //timer.start(); //disabled for now, macbook ass
     }
 
     protected void changeColor(Color color) {
@@ -47,10 +47,6 @@ public class ScrollGridPanel extends JPanel {
         int g = clamp(color.getGreen() + adjustment);
         int b = clamp(color.getBlue() + adjustment);
         return new Color(r, g, b);
-    }
-
-    private static int clamp(int value) {
-        return Math.max(0, Math.min(255, value));
     }
 
     private void initializeSquares() {

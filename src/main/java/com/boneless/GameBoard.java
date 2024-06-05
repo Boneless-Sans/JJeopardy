@@ -17,6 +17,10 @@ public class GameBoard extends JPanel {
     public boolean GameIsActive;
     public boolean jCardIsActive = false;
     public static final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+    public static final Color accentColor = new Color(
+            clamp(mainColor.getRed()   - 40),
+            clamp(mainColor.getGreen() - 40),
+            clamp(mainColor.getBlue()  - 40));
     public static final Color fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
     public static int fontSize = 20;
     public final JPanel boardPanel;
@@ -31,10 +35,9 @@ public class GameBoard extends JPanel {
         setLayout(new BorderLayout());
         setBackground(mainColor);
         setFocusable(true);
-        HeaderPanel headerPanel = new HeaderPanel();
-        add(headerPanel, BorderLayout.NORTH);
-        boardPanel = mainBoard();
-        add(boardPanel, BorderLayout.CENTER);
+
+        add(new HeaderPanel(), BorderLayout.NORTH);
+        add(boardPanel = mainBoard(), BorderLayout.CENTER);
         add(createTeamsPanel(), BorderLayout.SOUTH);
 
         revalidate();
@@ -62,7 +65,7 @@ public class GameBoard extends JPanel {
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                BoardButton button = new BoardButton(score, question, answer, 0);
+                BoardButton button = new BoardButton(score, question, answer, 20);
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
@@ -76,7 +79,7 @@ public class GameBoard extends JPanel {
     private JPanel createCatPanel(int index) {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createBevelBorder(0));
-        panel.setBackground(mainColor);
+        panel.setBackground(accentColor);
 
         JLabel label = new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
         label.setFont(generateFont(fontSize));
@@ -88,7 +91,7 @@ public class GameBoard extends JPanel {
 
     private JScrollPane createTeamsPanel() {
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setBackground(mainColor);
+        panel.setBackground(accentColor);
         panel.setBorder(null);
 
         int teamPanelWidth = 150;
@@ -110,8 +113,6 @@ public class GameBoard extends JPanel {
         HiddenScroller pane = new HiddenScroller(panel, true);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
         pane.setBorder(null);
-//        pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-//        pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         return pane;
     }
@@ -161,7 +162,7 @@ public class GameBoard extends JPanel {
         public static JPanel rightPanel;
 
         public HeaderPanel() {
-            setBackground(mainColor);
+            setBackground(accentColor);
             setLayout(new GridLayout());
 
             leftText = new JLabel("Exit");
@@ -193,7 +194,7 @@ public class GameBoard extends JPanel {
 
         static JPanel createRightPanel(boolean blank) {
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
-            panel.setBackground(mainColor);
+            panel.setBackground(accentColor);
 
             if(!blank) {
                 JLabel rightText = new JLabel("Reveal Correct Answer");
@@ -219,7 +220,7 @@ public class GameBoard extends JPanel {
                     else
                         jCard.exit();
                 } else {
-                    jCard.advance();
+                    jCard.moveQuestion();
                 }
             });
 

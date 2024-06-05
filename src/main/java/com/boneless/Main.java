@@ -149,7 +149,7 @@ public class Main extends JFrame implements KeyListener {
         //continue handler - Dante
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "continue")))) {
             if(gameBoard.jCardIsActive) {
-                jCard.advance();
+                jCard.moveQuestion();
             }
         }
 

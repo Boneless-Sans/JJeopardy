@@ -21,7 +21,7 @@ public class BoardFactory extends JPanel {
     private final JFrame parent;
     private Color mainColor;
     private Color fontColor;
-    private boolean changesMade;
+    private boolean changesMade = false;
     private final int fontSize = 20;
     private final String tempDir = System.getProperty("java.io.tmpdir");
 
@@ -32,7 +32,7 @@ public class BoardFactory extends JPanel {
         if(fileName != null){
             loadColors();
         } else {
-            System.out.println("File is null, resetting with new template...");
+            System.out.println("File is null, creating new template...");
             fileName = createNewFile("temp").getAbsolutePath();
             System.out.println("File Name: " + fileName);
             loadColors();
@@ -80,7 +80,8 @@ public class BoardFactory extends JPanel {
             int userInput = JOptionPane.showConfirmDialog(null, fileNamePanel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if(userInput == JOptionPane.OK_OPTION){
-                System.out.println("Insert code for creating a new file in temp dir\n" + tempDir);
+                File file = new File(tempDir + "/" + textField.getText());
+
             }
         });
 
@@ -177,11 +178,11 @@ public class BoardFactory extends JPanel {
         panel.setBorder(BorderFactory.createBevelBorder(0));
         panel.setBackground(mainColor);
 
-        JLabel label = new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
-        label.setFont(generateFont(fontSize));
-        label.setForeground(fontColor);
+        JTextField field = new JTextField(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
+        field.setFont(generateFont(fontSize));
+        field.setForeground(fontColor);
 
-        panel.add(label, gbc);
+        panel.add(field, gbc);
         return panel;
     }
 
@@ -218,6 +219,7 @@ public class BoardFactory extends JPanel {
 
     private File createNewFile(String fileName){
         File file = new File(tempDir + "/" + fileName + ".json");
+        System.out.println("test");
 
         try {
             if(!file.exists() && file.createNewFile()){
@@ -246,12 +248,14 @@ public class BoardFactory extends JPanel {
         //
     }
 
-    private void load(){
+    private void load(String filePath){
         //
     }
 
     public void exit(){
-        changeCurrentPanel(mainMenu, this);
+        if(!changesMade) {
+            changeCurrentPanel(mainMenu, this);
+        }
     }
     
     private String getRandomWebsite(){
