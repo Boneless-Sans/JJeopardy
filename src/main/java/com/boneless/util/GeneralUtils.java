@@ -3,8 +3,6 @@ package com.boneless.util;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
-import java.awt.font.TextLayout;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import static com.boneless.Main.fileName;
@@ -34,7 +32,7 @@ public class GeneralUtils {
         if(fileName == null) {
             jeopardy = "J";
             color = new Color(70,70,255);
-            font = new Font("Comic Sans MS", Font.PLAIN, fontSize);
+            font = new Font("Arial", Font.PLAIN, fontSize);
         } else {
             jeopardy = JsonFile.read(fileName,"data","icon_text");
             color = parseColor(JsonFile.read(fileName, "data", "global_color"));

@@ -52,10 +52,13 @@ public class Team extends JPanel {
         add(teamName);
         add(line);
         add(scoreField);
+
         ButtonIcon plusScore = new ButtonIcon(45, ButtonIcon.PLUS, ButtonIcon.GREEN);
         plusScore.addActionListener(e -> addToScore(gameBoard.scoreToAdd));
+
         ButtonIcon minusScore = new ButtonIcon(45, ButtonIcon.MINUS, ButtonIcon.RED);
         minusScore.addActionListener(e -> addToScore(-gameBoard.scoreToAdd));
+
         add(plusScore);
         add(minusScore);
     }
@@ -103,7 +106,7 @@ public class Team extends JPanel {
         }
     }
 
-    public static class RoundedEtchedBorder extends AbstractBorder {
+    private static class RoundedEtchedBorder extends AbstractBorder {
         private static final int DEFAULT_CORNER_RADIUS = 10;
         private final int cornerRadius;
         private final Color highlight;

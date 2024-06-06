@@ -25,6 +25,7 @@ public class BoardFactory extends JPanel {
     private boolean changesMade = false;
     private final int fontSize = 20;
     private final String tempDir = System.getProperty("java.io.tmpdir");
+    //todo: have array lists containing all objects to save data (prob should use multiple per item)
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
@@ -167,11 +168,10 @@ public class BoardFactory extends JPanel {
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                MockBoardButton button = new MockBoardButton(score, question, answer);
+                MockBoardButton button = new MockBoardButton(score, question, answer, 20);
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
-                button.setOpaque(true);
                 panel.add(button);
             }
         }
@@ -183,11 +183,17 @@ public class BoardFactory extends JPanel {
         panel.setBorder(BorderFactory.createBevelBorder(0));
         panel.setBackground(accentColor);
 
-        JLabel label = new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
-        label.setFont(generateFont(fontSize));
-        label.setForeground(fontColor);
+        //setup field
+        JTextField field = new JTextField(10);
+        field.setFont(generateFont(fontSize));
+        field.setForeground(fontColor);
+        field.setBackground(accentColor);
+        field.setBorder(BorderFactory.createBevelBorder(1));
+        field.setHorizontalAlignment(JTextField.CENTER);
+        field.setText(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
+        field.setCaretColor(fontColor);
 
-        panel.add(label, gbc);
+        panel.add(field, gbc);
         return panel;
     }
 
@@ -217,13 +223,18 @@ public class BoardFactory extends JPanel {
         JFrame frame = new JFrame("About");
         frame.setSize(280, 520); //replicate macOS's about panel
         frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
 
         /*
         logo | X
         info | X
          */
 
-        //todo: fill out this section
+        JLabel label = new JLabel(new ImageIcon(renderIcon()));
+
+        add(label);
+
         frame.setVisible(true);
     }
 
@@ -269,10 +280,14 @@ public class BoardFactory extends JPanel {
     }
 
     private class MockBoardButton extends JButton {
-        public MockBoardButton(int score, String question, String answer){
+        private final int arc;
+
+        public MockBoardButton(int score, String question, String answer, int arc){
+            this.arc = arc;
             setText(String.valueOf(score));
             addActionListener(e -> changeCurrentPanel(new MockJCard(question, answer), boardPanel()));
         }
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -281,7 +296,7 @@ public class BoardFactory extends JPanel {
 
             // Background
             g2d.setColor(getBackground());
-            Shape backgroundShape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0);
+            Shape backgroundShape = new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), arc,arc);
             g2d.fill(backgroundShape);
 
             // Text
@@ -314,14 +329,15 @@ public class BoardFactory extends JPanel {
             g2d.dispose();
         }
     }
+
     private static class MockJCard extends JPanel {
         public MockJCard(String question, String answer){
-            //
+            setBackground(Color.WHITE);
         }
     }
 
     //just going to tuck this away
-    private String getRandomWebsite(){ //possible encryption idea
+    private String getRandomWebsite(){
         String[] siteIndex = { //useless web mega list
                 "https://sliding.toys/mystic-square/8-puzzle/daily/","https://longdogechallenge.com/","https://maze.toys/mazes/mini/daily/","https://optical.toys",
                 "https://paint.toys/","https://puginarug.com","https://alwaysjudgeabookbyitscover.com","https://clicking.toys/flip-grid/neat-nine/3-holes/",

@@ -69,7 +69,6 @@ public class GameBoard extends JPanel {
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
-                button.setOpaque(true);
                 panel.add(button);
             }
         }
