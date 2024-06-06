@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import static com.boneless.Main.*;
@@ -26,6 +27,10 @@ public class BoardFactory extends JPanel {
     private final int fontSize = 20;
     private final String tempDir = System.getProperty("java.io.tmpdir");
     //todo: have array lists containing all objects to save data (prob should use multiple per item)
+
+    private final ArrayList<JTextField> catFields = new ArrayList<>();
+    private final ArrayList<JLabel> questionLabels = new ArrayList<>();
+    private final ArrayList<JLabel> answerLabels = new ArrayList<>();
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
@@ -332,7 +337,7 @@ public class BoardFactory extends JPanel {
 
     private static class MockJCard extends JPanel {
         public MockJCard(String question, String answer){
-            setBackground(Color.WHITE);
+                setBackground(Color.WHITE);
         }
     }
 
