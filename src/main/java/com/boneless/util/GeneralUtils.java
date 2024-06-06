@@ -25,16 +25,13 @@ public class GeneralUtils {
         int posY = OSIsWindows? 0 : 12;
         int arc = 40;
         int fontSize = 80;
-        String jeopardy;
         Color color;
         Font font;
 
         if(fileName == null) {
-            jeopardy = "J";
             color = new Color(70,70,255);
             font = new Font("Arial", Font.PLAIN, fontSize);
         } else {
-            jeopardy = JsonFile.read(fileName,"data","icon_text");
             color = parseColor(JsonFile.read(fileName, "data", "global_color"));
             font = generateFont(fontSize);
         }
@@ -57,19 +54,19 @@ public class GeneralUtils {
         g2d.setFont(font);
 
         FontMetrics fmB = g2d.getFontMetrics();
-        int textWidthBackground = fmB.stringWidth(jeopardy);
+        int textWidthBackground = fmB.stringWidth("J");
         int textHeightBackground = fmB.getHeight();
 
         int xB = posX + (size - textWidthBackground) / 2;
         int yB = posY + (size - textHeightBackground) / 2 + fmB.getAscent();
 
         g2d.setColor(new Color(0,0,0,70));
-        g2d.drawString(jeopardy, xB + 2, yB + 7);
+        g2d.drawString("J", xB + 2, yB + 7);
 
         g2d.setFont(new Font(font.getFontName(), font.getStyle(), font.getSize() + 10));
 
         FontMetrics fmF = g2d.getFontMetrics();
-        int textWidthForeground = fmF.stringWidth(jeopardy);
+        int textWidthForeground = fmF.stringWidth("J");
         int textHeightForeground = fmF.getHeight();
 
         int xF = posX + (size - textWidthForeground) / 2;
@@ -77,7 +74,7 @@ public class GeneralUtils {
 
         g2d.setFont(font);
         g2d.setColor(Color.white);
-        g2d.drawString(jeopardy, xF, yF);
+        g2d.drawString("J", xF, yF);
 
         g2d.dispose();
 

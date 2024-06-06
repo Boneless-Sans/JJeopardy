@@ -4,6 +4,7 @@ import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.io.FileReader;
@@ -18,15 +19,20 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
-    public boolean factoryIsActive;
     private final JFrame parent;
+    private JPanel boardPanel;
+    private MockJCard card;
+
     private Color mainColor;
     public Color accentColor;
     private Color fontColor;
+
+    public boolean factoryIsActive;
     private boolean changesMade = false;
+    private boolean inJCard = false;
+
     private final int fontSize = 20;
     private final String tempDir = System.getProperty("java.io.tmpdir");
-    //todo: have array lists containing all objects to save data (prob should use multiple per item)
 
     private final ArrayList<JTextField> catFields = new ArrayList<>();
     private final ArrayList<JLabel> questionLabels = new ArrayList<>();
@@ -61,7 +67,12 @@ public class BoardFactory extends JPanel {
     private void reload(){
         removeAll();
 
-        add(boardPanel(), BorderLayout.CENTER);
+        JPanel panel = new JPanel(new BorderLayout()); //stupid work around
+
+        panel.add(headerPanel(), BorderLayout.NORTH);
+        panel.add(boardPanel = boardPanel(), BorderLayout.CENTER);
+
+        add(panel, BorderLayout.CENTER);
         add(controlPanel(), BorderLayout.EAST);
 
         parent.revalidate();
@@ -70,7 +81,6 @@ public class BoardFactory extends JPanel {
     private JMenuBar menuBar(){
         //use macOS's system menu bar instead of a frame. Windows will default
         System.setProperty("apple.laf.useScreenMenuBar", "true");
-        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Jeopardy Creator"); //don't think this works
 
         JMenuBar menuBar = new JMenuBar();
 
@@ -92,7 +102,6 @@ public class BoardFactory extends JPanel {
 
             if(userInput == JOptionPane.OK_OPTION){
                 File file = new File(tempDir + "/" + textField.getText());
-
             }
         });
 
@@ -180,6 +189,7 @@ public class BoardFactory extends JPanel {
                 panel.add(button);
             }
         }
+
         return panel;
     }
 
@@ -199,6 +209,54 @@ public class BoardFactory extends JPanel {
         field.setCaretColor(fontColor);
 
         panel.add(field, gbc);
+        catFields.add(field);
+
+        return panel;
+    }
+
+    private JPanel headerPanel(){
+        JPanel panel = new JPanel(new GridLayout());
+        panel.setBackground(accentColor);
+
+        //left panel
+        JLabel leftText = new JLabel("Exit");
+        leftText.setForeground(fontColor);
+        leftText.setFont(generateFont(fontSize));
+
+        String rawKeyBind = JsonFile.read("settings.json", "keyBinds", "exit");
+        String keyBind = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
+
+        JButton headerExitButton = new JButton(keyBind);
+
+        headerExitButton.setFocusable(false);
+        headerExitButton.setFont(generateFont(20));
+        headerExitButton.setForeground(Color.black);
+        headerExitButton.addActionListener(e -> {
+            if (inJCard) changeCurrentPanel(boardPanel, card);
+            else exit();
+        });
+
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setOpaque(false);
+        leftPanel.add(headerExitButton);
+        leftPanel.add(leftText);
+
+        //center panel
+        JLabel title = new JLabel(JsonFile.read(fileName, "data", "board_name"));
+        title.setForeground(fontColor);
+        title.setFont(generateFont(fontSize));
+
+        JPanel titlePanel = new JPanel(new GridBagLayout());
+        titlePanel.setOpaque(false);
+
+        titlePanel.add(title, gbc);
+
+        panel.add(leftPanel, gbc);
+        panel.add(titlePanel, gbc);
+        panel.add(new JPanel(){{ //need to center title
+            setOpaque(false);
+        }});
+
         return panel;
     }
 
@@ -215,7 +273,6 @@ public class BoardFactory extends JPanel {
                 -for rows, create a section with text fields for scores
          */
         JPanel panel = new JPanel();
-        panel.setBackground(Color.red);
         panel.setPreferredSize(new Dimension(500,getHeight()));
 
 
@@ -284,13 +341,22 @@ public class BoardFactory extends JPanel {
         }
     }
 
+    private ActionListener onChangeListener(){
+        return e -> changesMade = true;
+    }
+
     private class MockBoardButton extends JButton {
         private final int arc;
 
         public MockBoardButton(int score, String question, String answer, int arc){
             this.arc = arc;
+
             setText(String.valueOf(score));
-            addActionListener(e -> changeCurrentPanel(new MockJCard(question, answer), boardPanel()));
+
+            addActionListener(e -> {
+                inJCard = true;
+                changeCurrentPanel(card = new MockJCard(question, answer), boardPanel);
+            });
         }
 
         @Override
@@ -335,9 +401,26 @@ public class BoardFactory extends JPanel {
         }
     }
 
-    private static class MockJCard extends JPanel {
+    private class MockJCard extends JPanel {
         public MockJCard(String question, String answer){
-                setBackground(Color.WHITE);
+            setLayout(new GridLayout());
+            setBackground(mainColor);
+
+            add(createTextField(question));
+            add(new JLabel("--------------------------"));
+            add(createTextField(answer));
+        }
+
+        private JPanel createTextField(String text){
+            JPanel panel = new JPanel();
+
+            panel.setOpaque(false);
+
+            JTextField textField = new JTextField(text);
+
+            panel.add(textField);
+            add(panel);
+            return panel;
         }
     }
 

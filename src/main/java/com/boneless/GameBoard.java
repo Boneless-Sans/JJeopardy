@@ -3,7 +3,6 @@ package com.boneless;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
@@ -45,7 +44,7 @@ public class GameBoard extends JPanel {
     }
 
     // panel to contain the main board grid
-    private JPanel mainBoard() {
+    public JPanel mainBoard() {
         JPanel panel = new JPanel();
         panel.setBackground(Color.black);
 
@@ -191,7 +190,7 @@ public class GameBoard extends JPanel {
             add(rightPanel);
         }
 
-        static JPanel createRightPanel(boolean blank) {
+        public static JPanel createRightPanel(boolean blank) {
             JPanel panel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
             panel.setBackground(accentColor);
 

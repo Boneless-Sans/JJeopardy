@@ -1,7 +1,6 @@
 {
   "data" : {
-    "board_name": "Dev Board",
-    "icon_text": "Jeopardy!",
+    "board_name": "Template",
     "categories": 5,
     "rows": 5,
 
