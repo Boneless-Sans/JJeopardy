@@ -113,20 +113,25 @@ public class GeneralUtils {
         return new Font("Arial", Font.PLAIN, fontSize);
     }
 
-    public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown) {
+    public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
         int selfStartY = self.getY();
         int selfTargetY;
         int panelToAddStartY;
 
-        if (!moveDown) {
-            selfTargetY = -self.getHeight();
-            panelToAddStartY = self.getHeight();
-        } else {
-            selfTargetY = self.getHeight();
-            panelToAddStartY = -self.getHeight();
+        int extraMove = 0;
+        if(extraMoveDistance != null && extraMoveDistance.length > 0) {
+            extraMove = extraMoveDistance[0];
         }
 
-        int duration = 1000;
+        if (!moveDown) {
+            selfTargetY = -(self.getHeight() + extraMove);
+            panelToAddStartY = (self.getHeight() + extraMove);
+        } else {
+            selfTargetY = (self.getHeight() + extraMove);
+            panelToAddStartY = -(self.getHeight() + extraMove);
+        }
+
+        int duration = 700;
         int interval = 10;
 
         Timer timer = new Timer(interval, null);
@@ -137,19 +142,17 @@ public class GeneralUtils {
             long elapsed = System.currentTimeMillis() - startTime;
             double progress = Math.min(1.0, (double) elapsed / duration);
 
-            // Ease-in-ease-out transition
             double easeProgress = -Math.pow(progress - 1, 2) + 1;
 
-            // Calculate new Y positions
             int selfNewY = (int) (selfStartY + easeProgress * (selfTargetY - selfStartY));
             int panelToAddNewY = (int) (panelToAddStartY + easeProgress * (selfStartY - panelToAddStartY));
 
-            // Set new bounds for the panels
             self.setBounds(self.getX(), selfNewY, self.getWidth(), self.getHeight());
             panelToAdd.setBounds(panelToAdd.getX(), panelToAddNewY, panelToAdd.getWidth(), panelToAdd.getHeight());
 
             if (progress >= 1.0) {
                 timer.stop();
+                self.getParent().remove(self);
             }
 
             // Refresh the UI

@@ -89,19 +89,21 @@ public class MainMenu extends ScrollGridPanel {
 
         //main body
         JPanel contentPane = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        contentPane.setPreferredSize(new Dimension(320,230));
+        contentPane.setPreferredSize(new Dimension(320,200));
         contentPane.setBackground(Color.white);
 
         JLabel numTeamText = new JLabel("Number of Teams");
-        numTeamText.setFont(generateFont(35));
+        numTeamText.setFont(generateFont(30));
 
         JComboBox<String> dropDown = new JComboBox<>(dropDownList);
         dropDown.setPreferredSize(new Dimension(200,40));
         dropDown.setFont(generateFont(20));
         dropDown.setFocusable(false);
 
-        int gapSize = 50; //should be fine to stay at 50, may break depending on font regardless of font size
+        int gapSize = 30; //a wierd font could case misalignment
+        contentPane.add(createGap(gapSize, null));
         contentPane.add(numTeamText);
+        contentPane.add(createGap(gapSize, null));
         contentPane.add(createGap(gapSize, null));
         contentPane.add(dropDown);
         contentPane.add(createGap(gapSize, null));
@@ -111,7 +113,7 @@ public class MainMenu extends ScrollGridPanel {
         ButtonIcon exitButton = new ButtonIcon(buttonSize, ButtonIcon.BACK, ButtonIcon.RED);
         exitButton.addActionListener(a -> {
             timer.start();
-            changeCurrentPanel(mainMenu, teamChoosePanel, true);
+            changeCurrentPanel(mainMenu, teamChoosePanel, false);
         });
 
         ButtonIcon soundCheck = new ButtonIcon(buttonSize,false);
@@ -122,7 +124,9 @@ public class MainMenu extends ScrollGridPanel {
         });
 
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
-        startGame.addActionListener(a -> changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel, true));
+        startGame.addActionListener(a -> {
+            changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel, true);
+        });
 
         contentPane.add(createTeamChooserButton(exitButton, "Exit"));
         contentPane.add(createTeamChooserButton(soundCheck, "Play Audio"));
@@ -189,7 +193,6 @@ public class MainMenu extends ScrollGridPanel {
 
     private class MenuButton extends JButton{
         public MenuButton(String text, int UUID){
-
             setFocusable(false);
             setFont(generateFont(15));
             setBorderPainted(false);
@@ -211,7 +214,7 @@ public class MainMenu extends ScrollGridPanel {
         public Dimension getPreferredSize() {
             Dimension size = super.getPreferredSize();
             size.width = 160;
-            size.height = 40;
+            size.height = 45;
             return size;
         }
 

@@ -30,46 +30,12 @@ public class Dev extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setTitle("Dev");
         setUndecorated(true);
-        //setLayout(null);
         init();
         setVisible(true);
     }
 
     private void init() {
-        setLayout(null);
-
-        JPanel startPanel = new JPanel(new GridBagLayout());
-        startPanel.setBackground(cyan);
-        startPanel.setBounds(0,0,getWidth(),getHeight());
-
-        JPanel endPanel = new JPanel(new GridBagLayout());
-        endPanel.setBackground(red);
-
-        JPanel testPanel = new JPanel(new GridBagLayout());
-        testPanel.setBackground(green);
-
-//        JButton transitionButton = new JButton("Move?");
-//        transitionButton.addActionListener(e -> changeCurrentPanel(endPanel, startPanel, false));
-//
-//        JButton otherTest = new JButton("Test");
-//        otherTest.addActionListener(e -> changeCurrentPanel(testPanel, startPanel, true));
-//
-//        JButton transitionButton2 = new JButton("Move");
-//        transitionButton2.addActionListener(e -> changeCurrentPanel(startPanel,endPanel, true));
-//
-//        startPanel.add(transitionButton, gbc);
-//        startPanel.add(otherTest);
-//
-//        endPanel.add(transitionButton2, gbc);
-//        endPanel.add(new JButton("Bruh"){{addActionListener(e -> changeCurrentPanel(testPanel, endPanel, true));}});
-//
-//        testPanel.add(new JButton("Also a Test"){{addActionListener(e -> changeCurrentPanel(startPanel, testPanel, false));}}, gbc);
-//        testPanel.add(new JButton("Also a Test 2"){{addActionListener(e -> changeCurrentPanel(endPanel, testPanel, false));}});
-
-
-
-        add(startPanel);
-        //add(endPanel);
+        //
     }
 
     private void fontListTest(){

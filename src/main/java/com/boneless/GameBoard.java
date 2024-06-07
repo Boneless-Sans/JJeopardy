@@ -258,7 +258,7 @@ public class GameBoard extends JPanel {
                 GameIsActive = false;
                 scoreToAdd = score;
                 setEnabled(false);
-                changeCurrentPanel(jCard, parentPanel, true);
+                changeCurrentPanel(jCard, parentPanel, true, 200);
             };
         }
 
