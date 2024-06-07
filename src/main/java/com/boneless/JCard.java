@@ -1,6 +1,6 @@
 package com.boneless;
 
-import com.boneless.util.GeneralUtils;
+import com.boneless.util.AnimeJLabel;
 import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
@@ -12,24 +12,17 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class JCard extends JPanel {
+    private final AnimeJLabel test;
     private final JLabel questionLabel;
     private final JLabel answerLabel;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
-    private final static Color parseColorFadeComplete = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
+    private final static Color parseColorFadeComplete = parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
     private final JPanel fadePanel;
     private final JPanel fadePanel2;
     private final JButton sourceButton;
     private static final Random random = new Random();
-
-
-    public static int generateRandomNumber(int limit) {
-        if (limit <= 0) {
-            throw new IllegalArgumentException("Limit must be greater than 0");
-        }
-        return random.nextInt(limit);
-    }
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
@@ -57,14 +50,23 @@ public class JCard extends JPanel {
         questionLabel.setForeground(fontColor);
         questionLabel.setOpaque(false);
 
+        test = new AnimeJLabel(fontColor, fontColor, 1);
+        test.setForeground(fontColor);
+        test.setOpaque(false);
+
         answerLabel = new JLabel(answer);
         answerLabel.setForeground(parseColorFadeComplete);
         answerLabel.setOpaque(false);
 
         moversPanel.add(questionLabel);
+        moversPanel.add(test);
         fadePanel.add(answerLabel);
         add(moversPanel);
         add(fadePanel);
+
+//        String[] j = new String[] {question, answer};
+//        test.setTxtAniam(j, 500);
+
 
         centerTestPanel();
 
@@ -91,7 +93,6 @@ public class JCard extends JPanel {
         int sizeY = (getHeight() - (getHeight() / factor)) / factor;
         int sixth = (getHeight() - (getHeight() / 2)) / 6;
         int y = (getHeight() / 2) - (sizeY / 2);
-        int y2 = this.getHeight() / 2;
         int y3 = (getHeight() / 2) - (sizeY / 2);
         int yComplete = ((y + sixth) + y3) / 2;
 
@@ -120,8 +121,9 @@ public class JCard extends JPanel {
     }
 
     private void setUpCharacters() {
-        questionLabel.setFont(GeneralUtils.generateFont(30));
-        answerLabel.setFont(GeneralUtils.generateFont(30));
+        questionLabel.setFont(generateFont(30));
+        answerLabel.setFont(generateFont(30));
+        test.setFont(generateFont(30));
         setBackground(mainColor);
     }
 
@@ -186,7 +188,7 @@ public class JCard extends JPanel {
                 ((Timer) e.getSource()).stop();
             }
 
-            Color fadedColor = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
             answerLabel.setForeground(fadedColor);
             System.out.println("Opacity: " + opacity2 + ", Color: " + fadedColor);
 
