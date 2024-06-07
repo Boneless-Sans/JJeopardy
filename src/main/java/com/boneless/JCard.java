@@ -58,14 +58,17 @@ public class JCard extends JPanel {
         answerLabel.setForeground(parseColorFadeComplete);
         answerLabel.setOpaque(false);
 
-        moversPanel.add(questionLabel);
+//        moversPanel.add(questionLabel);
         moversPanel.add(test);
         fadePanel.add(answerLabel);
         add(moversPanel);
         add(fadePanel);
 
-//        String[] j = new String[] {question, answer};
+        String[] j = new String[] {"c","co","cod","code","code m","code me"," code me a","s","sa","san","sand","sandw","sandwi","sandwic","sandwich"};
+        String[] f = question.split("");
 //        test.setTxtAniam(j, 500);
+
+        test.setTxtAniam(f, 500);
 
 
         centerTestPanel();
