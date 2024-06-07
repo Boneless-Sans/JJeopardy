@@ -2,11 +2,10 @@ package com.boneless;
 
 import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
+import java.util.Random;
 import static com.boneless.GameBoard.*;
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
@@ -22,6 +21,15 @@ public class JCard extends JPanel {
     private final JPanel fadePanel;
     private final JPanel fadePanel2;
     private final JButton sourceButton;
+    private static final Random random = new Random();
+
+
+    public static int generateRandomNumber(int limit) {
+        if (limit <= 0) {
+            throw new IllegalArgumentException("Limit must be greater than 0");
+        }
+        return random.nextInt(limit);
+    }
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
@@ -79,8 +87,15 @@ public class JCard extends JPanel {
         g2.setColor(fontColor);
         g2.setStroke(dashedLineStroke);
 
-        int y = this.getHeight() / 2;
-        g2.drawLine(10, y, this.getWidth() - 10, y);
+        int factor = 2;
+        int sizeY = (getHeight() - (getHeight() / factor)) / factor;
+        int sixth = (getHeight() - (getHeight() / 2)) / 6;
+        int y = (getHeight() / 2) - (sizeY / 2);
+        int y2 = this.getHeight() / 2;
+        int y3 = (getHeight() / 2) - (sizeY / 2);
+        int yComplete = ((y + sixth) + y3) / 2;
+
+        g2.drawLine(10, yComplete, this.getWidth() - 10, yComplete);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
