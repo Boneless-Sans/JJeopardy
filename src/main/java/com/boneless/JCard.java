@@ -13,20 +13,20 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class JCard extends JPanel {
-    private JLabel questionLabel;
-    private JLabel answerLabel;
-//    private JLabel questionQuestion;
-//    private JLabel answerAnswer;
-    private JLabel moron;
+    private final JLabel questionLabel;
+    private final JLabel answerLabel;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
     private final static Color parseColorFadeComplete = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
     private final JPanel fadePanel;
     private final JPanel fadePanel2;
-    private final JPanel dottedLinePanel;
     private final JButton sourceButton;
 
+    // Class variables for opacity and faded state
+    private float opacity2 = 0.0f;
+    private final Stroke dashedLineStroke = getDashedLineStroke(1);
+    private final Color fontColor = Color.WHITE; // Example font color
 
     public JCard(String question, String answer, JButton sourceButton) {
         this.sourceButton = sourceButton;
@@ -36,9 +36,11 @@ public class JCard extends JPanel {
 
         moversPanel = new JPanel(new GridBagLayout());
         moversPanel.setBackground(mainColor);
+        moversPanel.setOpaque(false);
 
         fadePanel = new JPanel(new GridBagLayout());
         fadePanel.setBackground(mainColor);
+        fadePanel.setOpaque(false);
 
         fadePanel2 = new JPanel(new GridBagLayout());
         fadePanel2.setBackground(mainColor);
@@ -48,33 +50,20 @@ public class JCard extends JPanel {
         questionLabel.setOpaque(false);
 
         answerLabel = new JLabel(answer);
-        answerLabel.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
+        answerLabel.setForeground(parseColorFadeComplete);
         answerLabel.setOpaque(false);
-
-        moron = new JLabel();
-        moron.setForeground(GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0));
-        moron.setOpaque(false);
-
-        dottedLinePanel = createDottedLinePanel();
 
         moversPanel.add(questionLabel);
         fadePanel.add(answerLabel);
-        //fadePanel2.add(moron);
-
-        //add(fadePanel2);
         add(moversPanel);
         add(fadePanel);
-        add(dottedLinePanel);
-
 
         centerTestPanel();
-
 
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 centerTestPanel();
-                dottedLinePanel.setBounds(0, getHeight() / 2, getWidth(), 10);
             }
         });
 
@@ -82,27 +71,23 @@ public class JCard extends JPanel {
         setUpCharacters();
     }
 
-    private JPanel createDottedLinePanel() {
-        return new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                drawDottedLine(g, getWidth());
-            }
-        };
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity2));
+        g2.setColor(fontColor);
+        g2.setStroke(dashedLineStroke);
+
+        int y = this.getHeight() / 2;
+        g2.drawLine(10, y, this.getWidth() - 10, y);
+
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 
-    private void drawDottedLine(Graphics g, int width) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.BLACK); // Change to your desired color
-
-        int y = getHeight() / 2;
-        int dotSize = 2;
-        int gapSize = 2;
-
-        for (int x = 0; x < width; x += dotSize + gapSize) {
-            g2d.fillRect(x, y, dotSize, dotSize);
-        }
+    public Stroke getDashedLineStroke(int width) {
+        float[] dashPattern = {5, 5}; //Setting the length of dot and spacing of dot: {dot length, space width}
+        return new BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0);
     }
 
     private void centerTestPanel() {
@@ -122,7 +107,6 @@ public class JCard extends JPanel {
     private void setUpCharacters() {
         questionLabel.setFont(GeneralUtils.generateFont(30));
         answerLabel.setFont(GeneralUtils.generateFont(30));
-        moron.setFont(GeneralUtils.generateFont(10));
         setBackground(mainColor);
     }
 
@@ -140,7 +124,7 @@ public class JCard extends JPanel {
         requestFocusInWindow();
     }
 
-    public void moveQuestion() {//todo: on the right header panel, on advance text needs to change to continue
+    public void moveQuestion() {
         if (hasFaded) {
             advanceExit();
             return;
@@ -153,8 +137,8 @@ public class JCard extends JPanel {
         int yQuestion = (getHeight() - sizeY) / 2;
         int targetY = 50; // Target Y position for question label
 
-        Timer q = new Timer(7, null);
-        q.addActionListener(new ActionListener() {
+        Timer questionMoveUp = new Timer(7, null);
+        questionMoveUp.addActionListener(new ActionListener() {
             private int currentY = yQuestion;
 
             @Override
@@ -162,7 +146,7 @@ public class JCard extends JPanel {
                 currentY -= 1; // Adjust this value to control the speed of movement
                 if (currentY <= targetY) {
                     currentY = targetY;
-                    q.stop();
+                    questionMoveUp.stop();
                     fadeInAnswer();
                 }
                 moversPanel.setBounds(x, currentY, sizeX, sizeY);
@@ -170,7 +154,7 @@ public class JCard extends JPanel {
                 repaint();
             }
         });
-        q.start();
+        questionMoveUp.start();
     }
 
     private void fadeInAnswer() {
@@ -179,34 +163,29 @@ public class JCard extends JPanel {
         }
         hasFadedIn = false;
 
-        Timer j = new Timer(50, null);
-        j.addActionListener(new ActionListener() {
-            private float opacity2 = 0.0f;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                opacity2 += 0.05f;
-                if (opacity2 >= 1.0f) {
-                    opacity2 = 1.0f;
-                    j.stop();
-                }
-
-                Color fadedColor = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
-                answerLabel.setForeground(fadedColor);
-                moron.setForeground(fadedColor);
-                System.out.println("Opacity: " + opacity2 + ", Color: " + fadedColor);
-
-                revalidate();
-                repaint();
+        Timer opacityFadeUp = new Timer(50, null);
+        opacityFadeUp.addActionListener(e -> {
+            opacity2 += 0.05f;
+            if (opacity2 >= 1.0f) {
+                opacity2 = 1.0f;
+                ((Timer) e.getSource()).stop();
             }
+
+            Color fadedColor = GeneralUtils.parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
+            answerLabel.setForeground(fadedColor);
+            System.out.println("Opacity: " + opacity2 + ", Color: " + fadedColor);
+
+            revalidate();
+            repaint();
         });
-        j.start();
+        opacityFadeUp.start();
     }
 
-    private void advanceExit(){
+    private void advanceExit() {
         exit();
         sourceButton.setEnabled(false);
     }
+
     public void exit() {
         leftText.setText("Exit");
         rightPanel.removeAll();
