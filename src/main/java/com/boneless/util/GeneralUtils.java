@@ -113,7 +113,72 @@ public class GeneralUtils {
         return new Font("Arial", Font.PLAIN, fontSize);
     }
 
-    public static void changeCurrentPanel(JPanel panelToSet, JComponent self) {
+    public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown) {
+        int selfStartY = self.getY();
+        int selfTargetY;
+        int panelToAddStartY;
+
+        if (!moveDown) {
+            selfTargetY = -self.getHeight();
+            panelToAddStartY = self.getHeight();
+        } else {
+            selfTargetY = self.getHeight();
+            panelToAddStartY = -self.getHeight();
+        }
+
+        int duration = 1000;
+        int interval = 10;
+
+        Timer timer = new Timer(interval, null);
+
+        long startTime = System.currentTimeMillis();
+
+        timer.addActionListener(e -> {
+            long elapsed = System.currentTimeMillis() - startTime;
+            double progress = Math.min(1.0, (double) elapsed / duration);
+
+            // Ease-in-ease-out transition
+            double easeProgress = -Math.pow(progress - 1, 2) + 1;
+
+            // Calculate new Y positions
+            int selfNewY = (int) (selfStartY + easeProgress * (selfTargetY - selfStartY));
+            int panelToAddNewY = (int) (panelToAddStartY + easeProgress * (selfStartY - panelToAddStartY));
+
+            // Set new bounds for the panels
+            self.setBounds(self.getX(), selfNewY, self.getWidth(), self.getHeight());
+            panelToAdd.setBounds(panelToAdd.getX(), panelToAddNewY, panelToAdd.getWidth(), panelToAdd.getHeight());
+
+            if (progress >= 1.0) {
+                timer.stop();
+            }
+
+            // Refresh the UI
+            self.repaint();
+            panelToAdd.repaint();
+            self.getParent().revalidate();
+            self.getParent().repaint();
+        });
+
+        if (self.getParent().getLayout() != null) {
+            self.getParent().setLayout(null);
+        }
+
+        if (panelToAdd.getBounds().isEmpty()) {
+            panelToAdd.setBounds(self.getX(), panelToAddStartY, self.getWidth(), self.getHeight());
+        }
+
+        if (panelToAdd.getParent() == null) {
+            self.getParent().add(panelToAdd);
+        }
+
+        //ensure panels are visible!
+        self.setVisible(true);
+        panelToAdd.setVisible(true);
+
+        timer.start();
+    }
+
+    public static void changeCurrentPanelLegacy(JPanel panelToSet, JComponent self) {
         Container parent = self.getParent();
 
         if(parent == null){

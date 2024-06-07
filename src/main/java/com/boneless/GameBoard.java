@@ -151,7 +151,7 @@ public class GameBoard extends JPanel {
             mainMenu.menuIsActive = true;
             mainMenu.timer.start();
             Team.teamCount = 0;
-            changeCurrentPanel(mainMenu, gameBoard);
+            changeCurrentPanel(mainMenu, gameBoard, false);
         }
     }
 
@@ -258,7 +258,7 @@ public class GameBoard extends JPanel {
                 GameIsActive = false;
                 scoreToAdd = score;
                 setEnabled(false);
-                changeCurrentPanel(jCard, parentPanel);
+                changeCurrentPanel(jCard, parentPanel, true);
             };
         }
 

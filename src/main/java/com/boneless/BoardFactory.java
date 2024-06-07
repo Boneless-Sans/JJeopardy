@@ -232,7 +232,7 @@ public class BoardFactory extends JPanel {
         headerExitButton.setFont(generateFont(20));
         headerExitButton.setForeground(Color.black);
         headerExitButton.addActionListener(e -> {
-            if (inJCard) changeCurrentPanel(boardPanel, card);
+            if (inJCard) changeCurrentPanel(boardPanel, card, false);
             else exit();
         });
 
@@ -341,7 +341,7 @@ public class BoardFactory extends JPanel {
 
     public void exit(){
         if(!changesMade) {
-            changeCurrentPanel(mainMenu, this);
+            changeCurrentPanel(mainMenu, this, false);
         }
     }
 
@@ -359,7 +359,7 @@ public class BoardFactory extends JPanel {
 
             addActionListener(e -> {
                 inJCard = true;
-                changeCurrentPanel(card = new MockJCard(question, answer), boardPanel);
+                changeCurrentPanel(card = new MockJCard(question, answer), boardPanel, true);
             });
         }
 

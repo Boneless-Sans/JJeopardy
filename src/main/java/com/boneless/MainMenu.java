@@ -111,7 +111,7 @@ public class MainMenu extends ScrollGridPanel {
         ButtonIcon exitButton = new ButtonIcon(buttonSize, ButtonIcon.BACK, ButtonIcon.RED);
         exitButton.addActionListener(a -> {
             timer.start();
-            changeCurrentPanel(mainMenu, teamChoosePanel);
+            changeCurrentPanel(mainMenu, teamChoosePanel, true);
         });
 
         ButtonIcon soundCheck = new ButtonIcon(buttonSize,false);
@@ -122,13 +122,13 @@ public class MainMenu extends ScrollGridPanel {
         });
 
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
-        startGame.addActionListener(a -> changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel));
+        startGame.addActionListener(a -> changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel, true));
 
         contentPane.add(createTeamChooserButton(exitButton, "Exit"));
         contentPane.add(createTeamChooserButton(soundCheck, "Play Audio"));
         contentPane.add(createTeamChooserButton(startGame, "Start"));
         teamChoosePanel.add(contentPane, gbc);
-        changeCurrentPanel(teamChoosePanel, this);
+        changeCurrentPanel(teamChoosePanel, this, true);
     }
 
     private JPanel createTeamChooserButton(ButtonIcon icon, String text){
@@ -172,11 +172,11 @@ public class MainMenu extends ScrollGridPanel {
                     break;
                 }
                 case 2: { //board creator
-                    changeCurrentPanel(boardFactory = new BoardFactory(parent), this);
+                    changeCurrentPanel(boardFactory = new BoardFactory(parent), this, true);
                     break;
                 }
                 case 3: { //settings
-                    changeCurrentPanel(new Settings(), this);
+                    changeCurrentPanel(new Settings(), this, true);
                     break;
                 }
                 case 4: { //exit

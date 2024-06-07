@@ -13,9 +13,11 @@ import java.io.IOException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.boneless.util.GeneralUtils.gbc;
+import static com.boneless.util.GeneralUtils.*;
+import static java.awt.Color.*;
 
 public class Dev extends JFrame implements KeyListener {
     public static void main(String[] args){
@@ -37,112 +39,38 @@ public class Dev extends JFrame implements KeyListener {
         setLayout(null);
 
         JPanel startPanel = new JPanel(new GridBagLayout());
-        startPanel.setBackground(Color.cyan);
+        startPanel.setBackground(cyan);
         startPanel.setBounds(0,0,getWidth(),getHeight());
 
-        JPanel endPanel = new JPanel();
-        endPanel.setBackground(Color.red);
+        JPanel endPanel = new JPanel(new GridBagLayout());
+        endPanel.setBackground(red);
 
-        JButton transitionButton = new JButton("Move?");
-        transitionButton.addActionListener(e -> movePanels(endPanel, startPanel));
+        JPanel testPanel = new JPanel(new GridBagLayout());
+        testPanel.setBackground(green);
 
-        JButton transitionButton2 = new JButton("Move");
-        transitionButton2.addActionListener(e -> movePanels(startPanel,endPanel));
-
-        startPanel.add(transitionButton, gbc);
-        endPanel.add(transitionButton2, gbc);
+//        JButton transitionButton = new JButton("Move?");
+//        transitionButton.addActionListener(e -> changeCurrentPanel(endPanel, startPanel, false));
+//
+//        JButton otherTest = new JButton("Test");
+//        otherTest.addActionListener(e -> changeCurrentPanel(testPanel, startPanel, true));
+//
+//        JButton transitionButton2 = new JButton("Move");
+//        transitionButton2.addActionListener(e -> changeCurrentPanel(startPanel,endPanel, true));
+//
+//        startPanel.add(transitionButton, gbc);
+//        startPanel.add(otherTest);
+//
+//        endPanel.add(transitionButton2, gbc);
+//        endPanel.add(new JButton("Bruh"){{addActionListener(e -> changeCurrentPanel(testPanel, endPanel, true));}});
+//
+//        testPanel.add(new JButton("Also a Test"){{addActionListener(e -> changeCurrentPanel(startPanel, testPanel, false));}}, gbc);
+//        testPanel.add(new JButton("Also a Test 2"){{addActionListener(e -> changeCurrentPanel(endPanel, testPanel, false));}});
 
 
 
         add(startPanel);
-        add(endPanel);
+        //add(endPanel);
     }
-
-    private JComponent lastMovedPanel;
-    private void movePanels(JPanel panelToAdd, JPanel self) {
-        // Get the starting and target positions
-        int selfStartY = self.getY();
-        int selfTargetY;
-        int panelToAddStartY;
-        int panelToAddTargetY;
-
-        if (lastMovedPanel == self) {
-            // If self was the last moved panel, move self down and panelToAdd up
-            selfTargetY = getHeight();
-            panelToAddStartY = -self.getHeight();
-        } else {
-            // If self was not the last moved panel, move self up and panelToAdd down
-            selfTargetY = -self.getHeight();
-            panelToAddStartY = getHeight();
-        }
-        panelToAddTargetY = selfStartY;
-
-        // Define the duration for the animation in milliseconds
-        int duration = 1000; // 1 second
-        // The interval for timer events in milliseconds
-        int interval = 10;  // Check every 10 ms for smoother animation
-
-        Timer timer = new Timer(interval, null);
-
-        // Record the start time of the animation
-        long startTime = System.currentTimeMillis();
-
-        timer.addActionListener(e -> {
-            // Calculate the elapsed time
-            long elapsed = System.currentTimeMillis() - startTime;
-            // Calculate the progress as a value between 0 and 1
-            double progress = Math.min(1.0, (double) elapsed / duration);
-
-            // Quadratic easing out function (decelerating to a stop)
-            double easeProgress = -Math.pow(progress - 1, 2) + 1;
-
-            // Calculate the new Y positions based on the eased progress
-            int selfNewY = (int) (selfStartY + easeProgress * (selfTargetY - selfStartY));
-            int panelToAddNewY = (int) (panelToAddStartY + easeProgress * (panelToAddTargetY - panelToAddStartY));
-
-            // Move the panels based on the new calculated Y positions
-            self.setBounds(self.getX(), selfNewY, self.getWidth(), self.getHeight());
-            panelToAdd.setBounds(panelToAdd.getX(), panelToAddNewY, panelToAdd.getWidth(), panelToAdd.getHeight());
-
-            // Debug output to check the positions
-            System.out.println("self Y: " + selfNewY + " panelToAdd Y: " + panelToAddNewY);
-
-            // Stop the timer when the progress reaches 1 (animation completed)
-            if (progress >= 1.0) {
-                timer.stop();
-                lastMovedPanel = self;
-            }
-
-            // Ensure the panel updates are reflected immediately
-            self.repaint();
-            panelToAdd.repaint();
-            self.getParent().revalidate();  // Ensure container is revalidated
-            self.getParent().repaint();
-        });
-
-        // Make sure the parent container has a layout manager that allows absolute positioning
-        if (self.getParent().getLayout() != null) {
-            self.getParent().setLayout(null);
-        }
-
-        // Set initial bounds for panelToAdd if it doesn't have any
-        if (panelToAdd.getBounds().isEmpty()) {
-            panelToAdd.setBounds(self.getX(), panelToAddStartY, self.getWidth(), self.getHeight());
-        }
-
-        // Add the panelToAdd to the parent container if not already added
-        if (panelToAdd.getParent() == null) {
-            self.getParent().add(panelToAdd);
-        }
-
-        // Make sure both panels are visible
-        self.setVisible(true);
-        panelToAdd.setVisible(true);
-
-        // Start the timer
-        timer.start();
-    }
-
 
     private void fontListTest(){
         System.out.println(System.getProperty("java.io.tmpdir"));
