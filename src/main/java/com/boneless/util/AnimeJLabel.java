@@ -172,45 +172,36 @@ import java.awt.Color;
             }
         }
 
-        public void setTxtAniam(final String [] txtArray, final long timeInMill)
-        {
+        public void setTxtAniam(final String[] txtArray, final long timeInMill) {
             stopTxtAniamBool = false;
             stopT();
 
-            try
-            {
-                t = new Thread(new Runnable()
-                {
-                    public void run()
-                    {
-                        try
-                        {
-                            while(false == stopTxtAniamBool)
-                            {
-                                for(int i = 0; i<txtArray.length; i++)
-                                {
-                                    if(false == stopTxtAniamBool)//will help to stop the aniam faster
-                                    {
-                                        setPlaneTxt(txtArray[i]);
-                                        Thread.sleep(timeInMill);
-                                    }
-                                }
-                            }
-                            while(true == start2end_colour()){
-                                Thread.sleep(10);
-                            }
+            try {
+                t = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            for (int i = 0; i < txtArray.length; i++) {
+                                if (stopTxtAniamBool) // Check if we need to stop the animation
+                                    break;
 
-                        }
-                        catch(Exception ex){
+                                setPlaneTxt(txtArray[i]);
+                                Thread.sleep(timeInMill);
+                            }
+                            // Additional animation or cleanup after the loop ends
+                            start2end_colour();
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt(); // Restore interrupted status
+                        } catch (Exception ex) {
+                            ex.printStackTrace(); // Handle other exceptions appropriately
                         }
                     }
                 });
                 t.start();
-            }
-            catch(Exception ex){
-                System.out.println("Error:setTxtAniam");
+            } catch (Exception ex) {
+                System.out.println("Error: setTxtAniam");
             }
         }
+
 
         private boolean start2end_colour()
         {

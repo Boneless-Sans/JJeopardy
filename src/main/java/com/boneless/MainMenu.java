@@ -170,7 +170,7 @@ public class MainMenu extends ScrollGridPanel {
                         File file = chooser.getSelectedFile();
                         changeFileName(String.valueOf(file));
                         changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
-                        renderIcon();
+                        renderIcon(128);
                     }
 
                     break;

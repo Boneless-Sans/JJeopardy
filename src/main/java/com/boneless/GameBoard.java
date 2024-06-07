@@ -36,8 +36,8 @@ public class GameBoard extends JPanel {
         setFocusable(true);
 
         add(new HeaderPanel(), BorderLayout.NORTH);
-        add(boardPanel = mainBoard(), BorderLayout.CENTER);
         add(createTeamsPanel(), BorderLayout.SOUTH);
+        add(boardPanel = mainBoard(), BorderLayout.CENTER);
 
         revalidate();
         repaint();

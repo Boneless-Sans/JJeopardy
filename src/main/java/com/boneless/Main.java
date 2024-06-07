@@ -67,14 +67,14 @@ public class Main extends JFrame implements KeyListener {
         setUndecorated(true);
 
         assert arg != null;
-        GeneralUtils.renderIcon();
+        GeneralUtils.renderIcon(128);
 
         //set icon
         String OS = System.getProperty("os.name").toLowerCase();
         if(OS.contains("mac")) {
-            Taskbar.getTaskbar().setIconImage(GeneralUtils.renderIcon());
+            Taskbar.getTaskbar().setIconImage(GeneralUtils.renderIcon(128));
         } else {
-            setIconImage(GeneralUtils.renderIcon());
+            setIconImage(GeneralUtils.renderIcon(128));
         }
 
         mainMenu = new MainMenu(this);
@@ -130,6 +130,9 @@ public class Main extends JFrame implements KeyListener {
                 setLocation(0,0);
                 setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
             }
+
+            revalidate();
+            repaint();
         }
 
         //esc handler

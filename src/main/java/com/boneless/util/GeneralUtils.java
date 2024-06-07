@@ -18,9 +18,9 @@ public class GeneralUtils {
         return Math.max(0, Math.min(255, value));
     }
 
-    public static BufferedImage renderIcon(){
+    public static BufferedImage renderIcon(int iconSize){
         boolean OSIsWindows = System.getProperty("os.name").toLowerCase().contains("windows");
-        int size = OSIsWindows? 128 : 103;
+        int size = OSIsWindows? iconSize : 103;
         int posX = OSIsWindows? 0 : 12;
         int posY = OSIsWindows? 0 : 12;
         int arc = 40;
@@ -156,10 +156,12 @@ public class GeneralUtils {
             }
 
             // Refresh the UI
-            self.repaint();
-            panelToAdd.repaint();
-            self.getParent().revalidate();
-            self.getParent().repaint();
+            try {
+                self.repaint();
+                panelToAdd.repaint();
+                self.getParent().revalidate();
+                self.getParent().repaint();
+            } catch (NullPointerException ignore){}
         });
 
         if (self.getParent().getLayout() != null) {
@@ -179,20 +181,6 @@ public class GeneralUtils {
         panelToAdd.setVisible(true);
 
         timer.start();
-    }
-
-    public static void changeCurrentPanelLegacy(JPanel panelToSet, JComponent self) {
-        Container parent = self.getParent();
-
-        if(parent == null){
-            System.err.println("Warning: Parent is null! Panels will not change!");
-            return;
-        }
-        parent.remove(self);
-        parent.add(panelToSet);
-
-        parent.revalidate();
-        parent.repaint();
     }
 
     public static JPanel createGap(int size, Color color) {

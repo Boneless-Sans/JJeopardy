@@ -65,17 +65,13 @@ public class JCard extends JPanel {
         add(moversPanel);
         add(fadePanel);
 
-        String[] f = question.split("");
-
-        int index = 0;
-
-        while(index < f.length) {
-
-
-            index++;
+        //here
+        String[] arr = new String[question.length()];
+        for(int i = 0; i < question.length();i++) {
+            arr[i] = question.substring(0, i + 1);
         }
 
-        test.setTxtAniam(, 500);
+        test.setTxtAniam(arr, 100);
 
 
         centerTestPanel();

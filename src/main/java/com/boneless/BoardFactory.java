@@ -284,22 +284,34 @@ public class BoardFactory extends JPanel {
     private void showAboutPanel(){
         JFrame frame = new JFrame("About");
         frame.setSize(280, 520); //replicate macOS's about panel
-        /*
-        Logo
-        created by
-         */
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new FlowLayout());
+        frame.getContentPane().setBackground(mainColor);
+        frame.setResizable(false);
 
-        /*
-        logo | X
-        info | X
-         */
+        JPanel contentPanel = new JPanel(new FlowLayout()){
+            @Override
+            protected void paintComponent(Graphics g){
+                super.paintComponent(g);
 
-        JLabel label = new JLabel(new ImageIcon(renderIcon()));
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setPaint(new GradientPaint(0,0,mainColor,frame.getWidth(),frame.getHeight(),accentColor));
+                g2d.fillRoundRect(0,0,frame.getWidth(),frame.getHeight(),0,0);
+            }
+        };
+        contentPanel.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
 
-        add(label);
+        JLabel label = new JLabel(new ImageIcon(renderIcon(150)));
+
+        JLabel titleLabel = new JLabel("JJeopardy!");
+        titleLabel.setFont(generateFont(50));
+        titleLabel.setForeground(fontColor);
+
+        contentPanel.add(label);
+        contentPanel.add(titleLabel);
+
+        frame.add(contentPanel);
 
         frame.setVisible(true);
     }
@@ -359,7 +371,7 @@ public class BoardFactory extends JPanel {
 
             addActionListener(e -> {
                 inJCard = true;
-                changeCurrentPanel(card = new MockJCard(question, answer), boardPanel, true);
+                changeCurrentPanel(card = new MockJCard(question, answer), boardPanel, true, 200);
             });
         }
 
@@ -407,7 +419,7 @@ public class BoardFactory extends JPanel {
 
     private class MockJCard extends JPanel {
         public MockJCard(String question, String answer){
-            setLayout(new GridLayout());
+            setLayout(new FlowLayout());
             setBackground(mainColor);
 
             add(createTextField(question));
@@ -421,6 +433,13 @@ public class BoardFactory extends JPanel {
             panel.setOpaque(false);
 
             JTextField textField = new JTextField(text);
+            textField.setFont(generateFont(30));
+            textField.setCaretColor(fontColor);
+            textField.setForeground(fontColor);
+            textField.setBackground(accentColor);
+            textField.setHorizontalAlignment(JTextField.CENTER);
+            textField.setBorder(BorderFactory.createBevelBorder(1));
+            textField.setPreferredSize(new Dimension(700,128));
 
             panel.add(textField);
             add(panel);
