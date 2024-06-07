@@ -5,6 +5,7 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 import java.util.Random;
 import static com.boneless.GameBoard.*;
 import static com.boneless.GameBoard.HeaderPanel.*;
@@ -64,11 +65,17 @@ public class JCard extends JPanel {
         add(moversPanel);
         add(fadePanel);
 
-        String[] j = new String[] {"c","co","cod","code","code m","code me"," code me a","s","sa","san","sand","sandw","sandwi","sandwic","sandwich"};
         String[] f = question.split("");
-//        test.setTxtAniam(j, 500);
 
-        test.setTxtAniam(f, 500);
+        int index = 0;
+
+        while(index < f.length) {
+
+
+            index++;
+        }
+
+        test.setTxtAniam(, 500);
 
 
         centerTestPanel();
