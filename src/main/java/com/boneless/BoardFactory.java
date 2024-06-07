@@ -284,6 +284,10 @@ public class BoardFactory extends JPanel {
     private void showAboutPanel(){
         JFrame frame = new JFrame("About");
         frame.setSize(280, 520); //replicate macOS's about panel
+        /*
+        Logo
+        created by
+         */
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new FlowLayout());
