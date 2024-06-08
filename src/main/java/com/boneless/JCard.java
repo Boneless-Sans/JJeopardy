@@ -65,13 +65,27 @@ public class JCard extends JPanel {
         add(moversPanel);
         add(fadePanel);
 
-        //here
-        String[] arr = new String[question.length()];
-        for(int i = 0; i < question.length();i++) {
-            arr[i] = question.substring(0, i + 1);
-        }
 
-        test.setTxtAniam(arr, 100);
+        switch (generateRandomNumber()){
+            case 0: {
+                //
+                String[] arr = new String[question.length()];
+                for (int i = 0; i < question.length(); i++) {
+                    arr[i] = question.substring(0, i + 1);
+                }
+                test.setTxtAniam(arr, 100);
+                break;
+            }
+            case 1: {
+                //
+                test.setTxt(question);
+//                test.setInterFadeTxt(question);
+                break;
+            }
+            default: {
+                moversPanel.add(questionLabel);
+            }
+        }
 
 
         centerTestPanel();
@@ -105,6 +119,10 @@ public class JCard extends JPanel {
         g2.drawLine(10, yComplete, this.getWidth() - 10, yComplete);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+    }
+
+    public static int generateRandomNumber() {
+        return new Random().nextInt(0,2);
     }
 
     public Stroke getDashedLineStroke(int width) {

@@ -37,8 +37,7 @@ public class BoardFactory extends JPanel {
     private final String tempDir = System.getProperty("java.io.tmpdir");
 
     private final ArrayList<JTextField> catFields = new ArrayList<>();
-    private final ArrayList<MockJCard.TextBox> questionLabels = new ArrayList<>();
-    private final ArrayList<MockJCard.TextBox> answerLabels = new ArrayList<>();
+    private final ArrayList<MockJCard.TextBox> QALabels = new ArrayList<>();
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
@@ -49,7 +48,6 @@ public class BoardFactory extends JPanel {
         } else {
             System.out.println("File is null, creating new template...");
             fileName = createNewFile("temp").getAbsolutePath();
-            System.out.println("File Name: " + fileName);
             loadColors();
         }
         setLayout(new BorderLayout());
@@ -215,6 +213,7 @@ public class BoardFactory extends JPanel {
         field.setHorizontalAlignment(JTextField.CENTER);
         field.setText(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
         field.setCaretColor(fontColor);
+        field.getDocument().addDocumentListener(documentListener());
 
         panel.add(field, gbc);
         catFields.add(field);
@@ -240,7 +239,10 @@ public class BoardFactory extends JPanel {
         headerExitButton.setFont(generateFont(20));
         headerExitButton.setForeground(Color.black);
         headerExitButton.addActionListener(e -> {
-            if (inJCard) changeCurrentPanel(boardPanel, card, false);
+            if (inJCard) {
+                inJCard = false;
+                changeCurrentPanel(boardPanel, card, false);
+            }
             else exit();
         });
 
@@ -352,13 +354,13 @@ public class BoardFactory extends JPanel {
     }
 
     private void quickTempSave(){
-        for(MockJCard.TextBox qLabels : questionLabels){
-            JsonFile.writeln3Keys(
-                    fileName,
-                    "board",
-                    "col_" + qLabels.col,
-                    qLabels.isQuestion ? "question_" + qLabels.row : "answer_" + qLabels.row,
-                    qLabels.getText());
+        for(MockJCard.TextBox qLabels : QALabels){
+//            JsonFile.writeln3Keys(
+//                    fileName,
+//                    "board",
+//                    "col_" + qLabels.col,
+//                    qLabels.isQuestion ? "question_" + qLabels.row : "answer_" + qLabels.row,
+//                    qLabels.getText());
 
             System.out.println(qLabels.getText());
         }
@@ -367,7 +369,7 @@ public class BoardFactory extends JPanel {
             //
         }
 
-        System.out.println("Saved at: " + tempDir);
+        System.out.println("save ran");
     }
     private void save(){
         //
@@ -379,12 +381,24 @@ public class BoardFactory extends JPanel {
 
     public void exit(){
         if(!changesMade) {
+            mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
         }
     }
 
     private ActionListener onChangeListener(){
         return e -> changesMade = true;
+    }
+
+    private DocumentListener documentListener(){
+        return new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                quickTempSave();
+            }
+            @Override public void removeUpdate(DocumentEvent e) {}
+            @Override public void changedUpdate(DocumentEvent e) {}
+        };
     }
 
     private class MockBoardButton extends JButton {
@@ -476,7 +490,7 @@ public class BoardFactory extends JPanel {
 
             TextBox textField = new TextBox(text, isQuestion, row, col);
 
-            questionLabels.add(textField);
+            QALabels.add(textField);
 
             panel.add(textField);
             add(panel);
@@ -487,9 +501,9 @@ public class BoardFactory extends JPanel {
         protected void paintComponent(Graphics g){
             super.paintComponent(g);
 
+            //stolen from dante >:)
             float[] dashPattern = {5, 5}; //Setting the length of dot and spacing of dot: {dot length, space width}
             Graphics2D g2 = (Graphics2D) g;
-            //g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 100));
             g2.setColor(fontColor);
             g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0));
 
@@ -505,21 +519,9 @@ public class BoardFactory extends JPanel {
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
 
-        public Stroke getDashedLineStroke(int width) {
-            float[] dashPattern = {5, 5}; //Setting the length of dot and spacing of dot: {dot length, space width}
-            return new BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0);
-        }
-
         private class TextBox extends JTextField {
-            private final boolean isQuestion;
-            private final int col;
-            private final int row;
-
             public TextBox(String text, boolean isQuestion, int row, int col){
-                super(text);
-                this.isQuestion = isQuestion;
-                this.col = col;
-                this.row = row;
+                super(JsonFile.readWithThreeKeys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
 
                 setFont(generateFont(30));
                 setCaretColor(fontColor);
@@ -529,14 +531,12 @@ public class BoardFactory extends JPanel {
                 setBorder(BorderFactory.createBevelBorder(1));
                 setPreferredSize(new Dimension(700,128));
 
-                getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        quickTempSave();
-                    }
-                    @Override public void removeUpdate(DocumentEvent e) {}
-                    @Override public void changedUpdate(DocumentEvent e) {}
-                });
+                getDocument().addDocumentListener(documentListener());
+            }
+
+            @Override
+            protected void paintBorder(Graphics g) {
+                super.paintBorder(g);
             }
         }
     }

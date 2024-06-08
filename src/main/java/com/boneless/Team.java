@@ -63,6 +63,25 @@ public class Team extends JPanel {
         add(minusScore);
     }
 
+    @Override
+    protected void paintBorder(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int arc = 45;
+
+        //g2.setColor(new Color(50,50,50,50));
+        g2.setColor(Color.red);
+        g2.drawRoundRect(0,0, getWidth() - 1, getHeight() - 1, arc, arc);
+
+        g2.setColor(Color.cyan);
+        g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, arc, arc);
+
+        g2.dispose();
+    }
+
+    //todo: round borders 45arc should do
+
     public void addToScore(int scoreToAdd){
         score += scoreToAdd;
         scoreField.setFocusable(false);
