@@ -14,38 +14,9 @@ import java.util.Arrays;
 √  - √
 X  - \bX\b
 !! - !!(.*?)!!
-Road map (semi in order) X (incomplete / work in progress) | √ (complete)
-    Main menu | √
-    Frame changing system | √
-    Rework settings | √
-    Create main board | √
-    Create question card (JCard) | X
-        -layout | X?
-        -key binds | √
-        -data from json | √
-        -animations | X
-    Create board factory | X
-        -figure out the layout | √
-        -create context header | X
-            -File | X
-                -New | X
-                -Open | √
-                -Save | X
-                -Exit | √
-            -Help | X
-                -About Panel | X
-                -Redirect to joke site | √
-        -create left board panel | X
-            -Emulate GameBoard | √
-            -Functionality with fakeCard | X
-        -create right settings panel | X
-            - !!moved to class!!
-        -figure out more | √
-    Create Application Icon | √
-    Implement key binds and have them match settings.json | √ !! No ARG Only? !!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName = "template.json";
+    public static String fileName;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 

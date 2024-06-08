@@ -3,6 +3,8 @@ package com.boneless;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
@@ -35,8 +37,8 @@ public class BoardFactory extends JPanel {
     private final String tempDir = System.getProperty("java.io.tmpdir");
 
     private final ArrayList<JTextField> catFields = new ArrayList<>();
-    private final ArrayList<JLabel> questionLabels = new ArrayList<>();
-    private final ArrayList<JLabel> answerLabels = new ArrayList<>();
+    private final ArrayList<MockJCard.TextBox> questionLabels = new ArrayList<>();
+    private final ArrayList<MockJCard.TextBox> answerLabels = new ArrayList<>();
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
@@ -52,9 +54,11 @@ public class BoardFactory extends JPanel {
         }
         setLayout(new BorderLayout());
         parent.setJMenuBar(menuBar());
+        setBackground(mainColor);
 
         reload();
     }
+
     private void loadColors(){ //not really needed, but its cleaner
         mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
         accentColor = new Color(
@@ -68,6 +72,7 @@ public class BoardFactory extends JPanel {
         removeAll();
 
         JPanel panel = new JPanel(new BorderLayout()); //stupid work around
+        panel.setBackground(mainColor);
 
         panel.add(headerPanel(), BorderLayout.NORTH);
         panel.add(boardPanel = boardPanel(), BorderLayout.CENTER);
@@ -75,9 +80,12 @@ public class BoardFactory extends JPanel {
         add(panel, BorderLayout.CENTER);
         add(controlPanel(), BorderLayout.EAST);
 
+        revalidate();
+        repaint();
         parent.revalidate();
         parent.repaint();
     }
+
     private JMenuBar menuBar(){
         //use macOS's system menu bar instead of a frame. Windows will default
         System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -182,7 +190,7 @@ public class BoardFactory extends JPanel {
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                MockBoardButton button = new MockBoardButton(score, question, answer, 20);
+                MockBoardButton button = new MockBoardButton(score, question, answer, 20, i, j);
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
@@ -343,6 +351,24 @@ public class BoardFactory extends JPanel {
         return file;
     }
 
+    private void quickTempSave(){
+        for(MockJCard.TextBox qLabels : questionLabels){
+            JsonFile.writeln3Keys(
+                    fileName,
+                    "board",
+                    "col_" + qLabels.col,
+                    qLabels.isQuestion ? "question_" + qLabels.row : "answer_" + qLabels.row,
+                    qLabels.getText());
+
+            System.out.println(qLabels.getText());
+        }
+
+        for(JTextField cats : catFields){
+            //
+        }
+
+        System.out.println("Saved at: " + tempDir);
+    }
     private void save(){
         //
     }
@@ -364,14 +390,14 @@ public class BoardFactory extends JPanel {
     private class MockBoardButton extends JButton {
         private final int arc;
 
-        public MockBoardButton(int score, String question, String answer, int arc){
+        public MockBoardButton(int score, String question, String answer, int arc, int row, int col){
             this.arc = arc;
 
             setText(String.valueOf(score));
 
             addActionListener(e -> {
                 inJCard = true;
-                changeCurrentPanel(card = new MockJCard(question, answer), boardPanel, true, 200);
+                changeCurrentPanel(card = new MockJCard(question, answer, row, col), boardPanel, true, 200);
             });
         }
 
@@ -418,32 +444,100 @@ public class BoardFactory extends JPanel {
     }
 
     private class MockJCard extends JPanel {
-        public MockJCard(String question, String answer){
-            setLayout(new FlowLayout());
+        String question;
+        String answer;
+        int row;
+        int col;
+        public MockJCard(String question, String answer, int row, int col){
+            this.question = question;
+            this.answer = answer;
+            this.row = row;
+            this.col = col;
+
+            setLayout(new GridBagLayout());
             setBackground(mainColor);
 
-            add(createTextField(question));
-            add(new JLabel("--------------------------"));
-            add(createTextField(answer));
+            JPanel fieldPanels = new JPanel(new FlowLayout());
+            fieldPanels.setPreferredSize(new Dimension(750,600));
+            fieldPanels.setOpaque(false);
+
+            fieldPanels.add(createGap(55, null));
+            fieldPanels.add(createTextField(question, true, row, col));
+            fieldPanels.add(createGap(80, null));
+            fieldPanels.add(createTextField(answer, false, row, col));
+
+            add(fieldPanels, gbc);
         }
 
-        private JPanel createTextField(String text){
+        private JPanel createTextField(String text, boolean isQuestion, int row, int col){
             JPanel panel = new JPanel();
 
             panel.setOpaque(false);
 
-            JTextField textField = new JTextField(text);
-            textField.setFont(generateFont(30));
-            textField.setCaretColor(fontColor);
-            textField.setForeground(fontColor);
-            textField.setBackground(accentColor);
-            textField.setHorizontalAlignment(JTextField.CENTER);
-            textField.setBorder(BorderFactory.createBevelBorder(1));
-            textField.setPreferredSize(new Dimension(700,128));
+            TextBox textField = new TextBox(text, isQuestion, row, col);
+
+            questionLabels.add(textField);
 
             panel.add(textField);
             add(panel);
             return panel;
+        }
+
+        @Override
+        protected void paintComponent(Graphics g){
+            super.paintComponent(g);
+
+            float[] dashPattern = {5, 5}; //Setting the length of dot and spacing of dot: {dot length, space width}
+            Graphics2D g2 = (Graphics2D) g;
+            //g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 100));
+            g2.setColor(fontColor);
+            g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0));
+
+            int factor = 2;
+            int sizeY = (getHeight() - (getHeight() / factor)) / factor;
+            int sixth = (getHeight() - (getHeight() / 2)) / 6;
+            int y = (getHeight() / 2) - (sizeY / 2);
+            int y3 = (getHeight() / 2) - (sizeY / 2);
+            int yComplete = ((y + sixth) + y3) / 2;
+
+            g2.drawLine(10, yComplete, this.getWidth() - 10, yComplete);
+
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        }
+
+        public Stroke getDashedLineStroke(int width) {
+            float[] dashPattern = {5, 5}; //Setting the length of dot and spacing of dot: {dot length, space width}
+            return new BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0);
+        }
+
+        private class TextBox extends JTextField {
+            private final boolean isQuestion;
+            private final int col;
+            private final int row;
+
+            public TextBox(String text, boolean isQuestion, int row, int col){
+                super(text);
+                this.isQuestion = isQuestion;
+                this.col = col;
+                this.row = row;
+
+                setFont(generateFont(30));
+                setCaretColor(fontColor);
+                setForeground(fontColor);
+                setBackground(accentColor);
+                setHorizontalAlignment(JTextField.CENTER);
+                setBorder(BorderFactory.createBevelBorder(1));
+                setPreferredSize(new Dimension(700,128));
+
+                getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        quickTempSave();
+                    }
+                    @Override public void removeUpdate(DocumentEvent e) {}
+                    @Override public void changedUpdate(DocumentEvent e) {}
+                });
+            }
         }
     }
 

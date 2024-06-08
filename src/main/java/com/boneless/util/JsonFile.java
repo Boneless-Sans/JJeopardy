@@ -118,6 +118,43 @@ public class JsonFile {
         } catch (IOException ignored) {}
     }
 
+    public static void writeln3Keys(String filename, String key1, String key2, String key3, String value) {
+        try {
+            // Read the existing JSON content from the file
+            JSONObject jsonObject = readJsonObject(filename);
+
+            // If the file is empty or does not exist, create a new JSONObject
+            if (jsonObject == null) {
+                jsonObject = new JSONObject();
+            }
+
+            // Navigate or create the nested structure for key1
+            JSONObject level1Object = jsonObject.optJSONObject(key1);
+            if (level1Object == null) {
+                level1Object = new JSONObject();
+                jsonObject.put(key1, level1Object);
+            }
+
+            // Navigate or create the nested structure for key2 within key1
+            JSONObject level2Object = level1Object.optJSONObject(key2);
+            if (level2Object == null) {
+                level2Object = new JSONObject();
+                level1Object.put(key2, level2Object);
+            }
+
+            // Directly put the value for key3 within key2
+            level2Object.put(key3, value);
+
+            // Write the updated JSON object back to the file
+            try (Writer writer = new FileWriter(getFilePath(filename))) {
+                writer.write(jsonObject.toString(2)); // Indent with 2 spaces for readability
+            }
+
+        } catch (IOException ignored) {
+            // Handle the exception as needed
+        }
+    }
+
     private static String getFilePath(String filename) {
         filename = (filename == null) ? "template.json" : filename;
         String directory;

@@ -185,6 +185,11 @@ public class GeneralUtils {
 
     public static JPanel createGap(int size, Color color) {
         JPanel panel = new JPanel();
+
+        if(color == null){
+            panel.setOpaque(false);
+        }
+
         panel.setBackground(color);
         panel.setPreferredSize(new Dimension(size, size));
         return panel;
