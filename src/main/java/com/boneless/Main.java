@@ -16,7 +16,7 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName;
+    public static String fileName = "template.json";
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 
@@ -36,6 +36,12 @@ public class Main extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
+
+        try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         assert arg != null;
         GeneralUtils.renderIcon(128);

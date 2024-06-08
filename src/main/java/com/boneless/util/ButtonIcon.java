@@ -55,6 +55,8 @@ public class ButtonIcon extends JButton {
 
     @Override
     protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
         Graphics2D g2d = (Graphics2D) g;
 
         // Enable antialiasing
@@ -132,5 +134,5 @@ public class ButtonIcon extends JButton {
             g2d.drawString(String.valueOf(iconID), centerX, centerY);
         }
     }
-    @Override protected void paintBorder(Graphics g) {} //disable, !! MAY CAUSE THE RENDERING ISSUE !!
+    @Override protected void paintBorder(Graphics g) {} //disabled, does not cause the rendering issue
 }

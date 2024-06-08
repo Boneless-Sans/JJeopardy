@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -22,7 +23,7 @@ public class MainMenu extends ScrollGridPanel {
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
     private final String[] dropDownList = {
-            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams"
+            "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams", "Other..."
     };
 
     public MainMenu(JFrame parent){
@@ -99,6 +100,16 @@ public class MainMenu extends ScrollGridPanel {
         dropDown.setPreferredSize(new Dimension(200,40));
         dropDown.setFont(generateFont(20));
         dropDown.setFocusable(false);
+        dropDown.addActionListener(e -> {
+            if(Objects.requireNonNull(dropDown.getSelectedItem()).toString().toLowerCase().contains("other")){
+                contentPane.add(new JLabel("Other Team"));
+            } else {
+                contentPane.add(new JLabel("Current Team"));
+            }
+
+            contentPane.revalidate();
+            contentPane.repaint();
+        });
 
         int gapSize = 30; //a wierd font could case misalignment
         contentPane.add(createGap(gapSize, null));
