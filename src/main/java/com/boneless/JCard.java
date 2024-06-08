@@ -17,6 +17,7 @@ public class JCard extends JPanel {
     private final JLabel answerLabel;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
+    private boolean hasFadedInQuestion = true;
     private final static Color parseColorFadeComplete = parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
     private final JPanel fadePanel;
@@ -221,13 +222,13 @@ public class JCard extends JPanel {
     }
 
     private void fadeInQuestion() {
-        if (!hasFadedIn) {
+        if (!hasFadedInQuestion) {
             return;
         }
-        hasFadedIn = false;
+        hasFadedInQuestion = false;
 
-        Timer opacityFadeUp = new Timer(50, null);
-        opacityFadeUp.addActionListener(e -> {
+        Timer opacityFadeUp2 = new Timer(50, null);
+        opacityFadeUp2.addActionListener(e -> {
             opacity3 += 0.05f;
             if (opacity3 >= 1.0f) {
                 opacity3 = 1.0f;
@@ -241,7 +242,7 @@ public class JCard extends JPanel {
             revalidate();
             repaint();
         });
-        opacityFadeUp.start();
+        opacityFadeUp2.start();
     }
 
     private void advanceExit() {
