@@ -5,7 +5,6 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 import java.util.Random;
 import static com.boneless.GameBoard.*;
 import static com.boneless.GameBoard.HeaderPanel.*;
@@ -27,8 +26,8 @@ public class JCard extends JPanel {
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
+    private float opacity3 = 0.0f;
     private final Stroke dashedLineStroke = getDashedLineStroke(1);
-    private final Color fontColor = Color.WHITE; // Example font color
 
     public JCard(String question, String answer, JButton sourceButton) {
         this.sourceButton = sourceButton;
@@ -59,7 +58,6 @@ public class JCard extends JPanel {
         answerLabel.setForeground(parseColorFadeComplete);
         answerLabel.setOpaque(false);
 
-//        moversPanel.add(questionLabel);
         moversPanel.add(test);
         fadePanel.add(answerLabel);
         add(moversPanel);
@@ -77,9 +75,9 @@ public class JCard extends JPanel {
                 break;
             }
             case 1: {
-                //
-                test.setTxt(question);
-//                test.setInterFadeTxt(question);
+
+                moversPanel.add(questionLabel);
+                fadeInQuestion();
                 break;
             }
             default: {
@@ -215,6 +213,30 @@ public class JCard extends JPanel {
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
             answerLabel.setForeground(fadedColor);
             System.out.println("Opacity: " + opacity2 + ", Color: " + fadedColor);
+
+            revalidate();
+            repaint();
+        });
+        opacityFadeUp.start();
+    }
+
+    private void fadeInQuestion() {
+        if (!hasFadedIn) {
+            return;
+        }
+        hasFadedIn = false;
+
+        Timer opacityFadeUp = new Timer(50, null);
+        opacityFadeUp.addActionListener(e -> {
+            opacity3 += 0.05f;
+            if (opacity3 >= 1.0f) {
+                opacity3 = 1.0f;
+                ((Timer) e.getSource()).stop();
+            }
+
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity3 * 255));
+            questionLabel.setForeground(fadedColor);
+            System.out.println("Opacity: " + opacity3 + ", Color: " + fadedColor);
 
             revalidate();
             repaint();
