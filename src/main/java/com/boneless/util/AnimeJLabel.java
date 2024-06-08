@@ -188,7 +188,7 @@ import java.awt.Color;
                                 Thread.sleep(timeInMill);
                             }
                             // Additional animation or cleanup after the loop ends
-                            start2end_colour();
+//                            start2end_colour();
                         } catch (InterruptedException ex) {
                             Thread.currentThread().interrupt(); // Restore interrupted status
                         } catch (Exception ex) {

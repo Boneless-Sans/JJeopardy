@@ -23,7 +23,6 @@ public class JCard extends JPanel {
     private final JPanel fadePanel;
     private final JPanel fadePanel2;
     private final JButton sourceButton;
-    private static final Random random = new Random();
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
