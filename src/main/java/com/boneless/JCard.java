@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+
 import static com.boneless.GameBoard.*;
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
@@ -19,6 +21,7 @@ public class JCard extends JPanel {
     private boolean hasFadedIn = true;
     private boolean flashBanged = true;
     private boolean hasFadedInQuestion = true;
+    private boolean isFlashBanged = true;
     private final static Color parseColorFadeComplete = parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
     private final JPanel fadePanel;
@@ -32,7 +35,10 @@ public class JCard extends JPanel {
     private float opacity5 = 0.0f;
     private final Stroke dashedLineStroke = getDashedLineStroke(1);
 
+    private final String question;
+
     public JCard(String question, String answer, JButton sourceButton) {
+        this.question = question;  // Store the question string as a class field
         this.sourceButton = sourceButton;
         setLayout(null);
 
@@ -66,29 +72,7 @@ public class JCard extends JPanel {
         add(moversPanel);
         add(fadePanel);
 
-        switch (generateRandomNumber()){
-//            case 0: {
-//                String[] arr = new String[question.length()];
-//                for (int i = 0; i < question.length(); i++) {
-//                    arr[i] = question.substring(0, i + 1);
-//                }
-//                animatedQuestion.setTxtAniam(arr, 100);
-//                break;
-//            }
-//            case 1: {
-//                moversPanel.add(questionLabel);
-//                fadeInQuestion();
-//                break;
-//            }
-            case 0: {
-                moversPanel.add(questionLabel);
-                easiestFlashBangTimingSolution();
-                break;
-            }
-            default: {
-                moversPanel.add(questionLabel);
-            }
-        }
+        animationSelect();
 
         centerTestPanel();
 
@@ -103,8 +87,40 @@ public class JCard extends JPanel {
         setUpCharacters(35);
     }
 
+    private CompletableFuture<Void> animationSelect() {
+        switch (generateRandomNumber()) {
+            case 0: {
+
+                String[] arr = new String[question.length()];
+                for (int i = 0; i < question.length(); i++) {
+                    arr[i] = question.substring(0, i + 1);
+                }
+                animatedQuestion.setTxtAniam(arr, 100);
+                break;
+            }
+            case 1: {
+                moversPanel.add(questionLabel);
+                fadeInQuestion();
+                break;
+            }
+            case 2: {
+                if (!isFlashBanged) {
+                    return recursionFlashBangCheck();
+                }
+                hasFadedInQuestion = false;
+
+                moversPanel.add(questionLabel);
+                easiestFlashBangTimingSolution();
+                break;
+            }
+            default: {
+                moversPanel.add(questionLabel);
+            }
+        }
+    }
+
     public static int generateRandomNumber() {
-        return new Random().nextInt(0,1);
+        return new Random().nextInt(0,3);
     }
 
     private void setupMouseListeners() {
@@ -248,6 +264,21 @@ public class JCard extends JPanel {
         opacityFadeUp.start();
     }
 
+
+    public CompletableFuture<Void> recursionFlashBangCheck() {
+        CompletableFuture<Void> future = new CompletableFuture<>();
+
+        Timer opacityFadeUp2 = new Timer(501, null);
+        opacityFadeUp2.addActionListener(e -> {
+            animationSelect();
+            future.complete(null);
+        });
+        opacityFadeUp2.setRepeats(false);
+        opacityFadeUp2.start();
+
+        return future;
+    }
+
     private void easiestFlashBangTimingSolution() {
         if (!flashBanged) {
             return;
@@ -284,6 +315,17 @@ public class JCard extends JPanel {
         opacityFadeUp.start();
     }
 
+    private void flashBangQuestion() {
+        Timer opacityFadeUp = new Timer(5, null);
+        opacityFadeUp.addActionListener(e -> {
+            if (opacity5 >= 0.6f) {
+                questionLabel.setForeground(fontColor);
+            }
+        });
+        opacityFadeUp.start();
+        opacityFadeUp.setRepeats(false);
+    }
+
     private void flashBangReverse() {
         Timer opacityFadeDown = new Timer(100, null);
         opacityFadeDown.addActionListener(e -> {
@@ -291,6 +333,7 @@ public class JCard extends JPanel {
             if (opacity5 >= 1.0f) {
                 opacity5 = 1.0f;
                 ((Timer) e.getSource()).stop();
+                flashBangQuestion();
             }
 
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int)(opacity5 * 255));
@@ -324,5 +367,6 @@ public class JCard extends JPanel {
         gameBoard.GameIsActive = true;
         hasFaded = false;
         changeCurrentPanel(gameBoard.boardPanel, this, false);
+        setBackground(mainColor);
     }
 }
