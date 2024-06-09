@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 
 /*
@@ -27,6 +27,11 @@ public class Main extends JFrame implements KeyListener {
     public static BoardFactory boardFactory;
 
     public static void main(String[] args) throws IOException {
+
+        //handle null file
+        fileName = GeneralUtils.checkFileExists();
+
+        //run program
         SwingUtilities.invokeLater(() -> new Main(args));
     }
 
@@ -38,7 +43,11 @@ public class Main extends JFrame implements KeyListener {
         setUndecorated(true);
 
         try {
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            if(System.getProperty("os.name").equalsIgnoreCase("windows")) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            } else {
+                UIManager.setLookAndFeel(UIManager.getLookAndFeel());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -82,6 +91,9 @@ public class Main extends JFrame implements KeyListener {
         } else {
             add(mainMenu = new MainMenu(this));
         }
+
+        revalidate();
+        repaint();
     }
 
     private String parseKeyStrokeInput(String keyStrokeCode){

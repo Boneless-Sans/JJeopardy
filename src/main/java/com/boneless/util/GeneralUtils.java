@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import static com.boneless.Main.fileName;
 
@@ -28,6 +31,7 @@ public class GeneralUtils {
         Color color;
         Font font;
 
+        System.out.println(fileName);
         if(fileName == null) {
             color = new Color(70,70,255);
             font = new Font("Arial", Font.PLAIN, fontSize);
@@ -216,5 +220,113 @@ public class GeneralUtils {
             @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
             @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
         }
+    }
+
+    public static String checkFileExists() throws IOException { //stupid, i hate it but its required todo: fix jar packing
+        String tmpDir = System.getProperty("java.io.tmpdir");
+        File file = new File(tmpDir + "temp.json");
+
+        if (new File("src/main/resources/data/template.json").exists()) {
+            if (file.createNewFile()) {
+                System.out.println("File Created In Temp");
+            } else {
+                System.out.println("Error: Failed To Create File! (Does it already exist??) File Name: " + file.getAbsolutePath());
+            }
+
+            // JSON content to be written to the file
+            String jsonContent = "{\n" +
+                    "  \"data\": {\n" +
+                    "    \"board_name\": \"Template\",\n" +
+                    "    \"categories\": 5,\n" +
+                    "    \"rows\": 5,\n" +
+                    "    \"font\": \"Arial\",\n" +
+                    "    \"font_color\": \"255,255,255\",\n" +
+                    "    \"global_color\": \"20,20,255\",\n" +
+                    "    \"disabled_button_color\": \"80,80,80\"\n" +
+                    "  },\n" +
+                    "  \"board\": {\n" +
+                    "    \"categories\": {\n" +
+                    "      \"cat_0\": \"Test 1\",\n" +
+                    "      \"cat_1\": \"Test 2\",\n" +
+                    "      \"cat_2\": \"Test 3\",\n" +
+                    "      \"cat_3\": \"Test 4\",\n" +
+                    "      \"cat_4\": \"Test 5\"\n" +
+                    "    },\n" +
+                    "    \"scores\": {\n" +
+                    "      \"row_0\": \"100\",\n" +
+                    "      \"row_1\": \"200\",\n" +
+                    "      \"row_2\": \"300\",\n" +
+                    "      \"row_3\": \"400\",\n" +
+                    "      \"row_4\": \"500\"\n" +
+                    "    },\n" +
+                    "    \"col_0\": {\n" +
+                    "        \"question_0\": \"Column 0 Question 0\",\n" +
+                    "        \"question_1\": \"Column 0 Question 1\",\n" +
+                    "        \"question_2\": \"Column 0 Question 2\",\n" +
+                    "        \"question_3\": \"Column 0 Question 3\",\n" +
+                    "        \"question_4\": \"Column 0 Question 4\",\n" +
+                    "        \"answer_0\": \"Column 0 Answer 0\",\n" +
+                    "        \"answer_1\": \"Column 0 Answer 1\",\n" +
+                    "        \"answer_2\": \"Column 0 Answer 2\",\n" +
+                    "        \"answer_3\": \"Column 0 Answer 3\",\n" +
+                    "        \"answer_4\": \"Column 0 Answer 4\"\n" +
+                    "    },\n" +
+                    "    \"col_1\": {\n" +
+                    "        \"question_0\": \"Column 1 Question 0\",\n" +
+                    "        \"question_1\": \"Column 1 Question 1\",\n" +
+                    "        \"question_2\": \"Column 1 Question 2\",\n" +
+                    "        \"question_3\": \"Column 1 Question 3\",\n" +
+                    "        \"question_4\": \"Column 1 Question 4\",\n" +
+                    "        \"answer_0\": \"Column 1 Answer 0\",\n" +
+                    "        \"answer_1\": \"Column 1 Answer 1\",\n" +
+                    "        \"answer_2\": \"Column 1 Answer 2\",\n" +
+                    "        \"answer_3\": \"Column 1 Answer 3\",\n" +
+                    "        \"answer_4\": \"Column 1 Answer 4\"\n" +
+                    "    },\n" +
+                    "    \"col_2\": {\n" +
+                    "        \"question_0\": \"Column 2 Question 0\",\n" +
+                    "        \"question_1\": \"Column 2 Question 1\",\n" +
+                    "        \"question_2\": \"Column 2 Question 2\",\n" +
+                    "        \"question_3\": \"Column 2 Question 3\",\n" +
+                    "        \"question_4\": \"Column 2 Question 4\",\n" +
+                    "        \"answer_0\": \"Column 2 Answer 0\",\n" +
+                    "        \"answer_1\": \"Column 2 Answer 1\",\n" +
+                    "        \"answer_2\": \"Column 2 Answer 2\",\n" +
+                    "        \"answer_3\": \"Column 2 Answer 3\",\n" +
+                    "        \"answer_4\": \"Column 2 Answer 4\"\n" +
+                    "    },\n" +
+                    "    \"col_3\": {\n" +
+                    "        \"question_0\": \"Column 3 Question 0\",\n" +
+                    "        \"question_1\": \"Column 3 Question 1\",\n" +
+                    "        \"question_2\": \"Column 3 Question 2\",\n" +
+                    "        \"question_3\": \"Column 3 Question 3\",\n" +
+                    "        \"question_4\": \"Column 3 Question 4\",\n" +
+                    "        \"answer_0\": \"Column 3 Answer 0\",\n" +
+                    "        \"answer_1\": \"Column 3 Answer 1\",\n" +
+                    "        \"answer_2\": \"Column 3 Answer 2\",\n" +
+                    "        \"answer_3\": \"Column 3 Answer 3\",\n" +
+                    "        \"answer_4\": \"Column 3 Answer 4\"\n" +
+                    "    },\n" +
+                    "    \"col_4\": {\n" +
+                    "        \"question_0\": \"Column 4 Question 0\",\n" +
+                    "        \"question_1\": \"Column 4 Question 1\",\n" +
+                    "        \"question_2\": \"Column 4 Question 2\",\n" +
+                    "        \"question_3\": \"Column 4 Question 3\",\n" +
+                    "        \"question_4\": \"Column 4 Question 4\",\n" +
+                    "        \"answer_0\": \"Column 4 Answer 0\",\n" +
+                    "        \"answer_1\": \"Column 4 Answer 1\",\n" +
+                    "        \"answer_2\": \"Column 4 Answer 2\",\n" +
+                    "        \"answer_3\": \"Column 4 Answer 3\",\n" +
+                    "        \"answer_4\": \"Column 4 Answer 4\"\n" +
+                    "    }\n" +
+                    "  }\n" +
+                    "}";
+
+            try (FileWriter writer = new FileWriter(file)) {
+                writer.write(jsonContent);
+                System.out.println("JSON content written to file.");
+            }
+        }
+        return file.getAbsolutePath();
     }
 }

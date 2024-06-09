@@ -66,31 +66,29 @@ public class JCard extends JPanel {
         add(moversPanel);
         add(fadePanel);
 
-
         switch (generateRandomNumber()){
+//            case 0: {
+//                String[] arr = new String[question.length()];
+//                for (int i = 0; i < question.length(); i++) {
+//                    arr[i] = question.substring(0, i + 1);
+//                }
+//                animatedQuestion.setTxtAniam(arr, 100);
+//                break;
+//            }
+//            case 1: {
+//                moversPanel.add(questionLabel);
+//                fadeInQuestion();
+//                break;
+//            }
             case 0: {
-                String[] arr = new String[question.length()];
-                for (int i = 0; i < question.length(); i++) {
-                    arr[i] = question.substring(0, i + 1);
-                }
-                animatedQuestion.setTxtAniam(arr, 100);
-                break;
-            }
-            case 1: {
                 moversPanel.add(questionLabel);
-                fadeInQuestion();
-                break;
-            }
-            case 2: {
-                moversPanel.add(questionLabel);
-                flashBang();
+                easiestFlashBangTimingSolution();
                 break;
             }
             default: {
                 moversPanel.add(questionLabel);
             }
         }
-
 
         centerTestPanel();
 
@@ -103,6 +101,24 @@ public class JCard extends JPanel {
 
         setupMouseListeners();
         setUpCharacters(35);
+    }
+
+    public static int generateRandomNumber() {
+        return new Random().nextInt(0,1);
+    }
+
+    private void setupMouseListeners() {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!hasFaded) {
+                    moveQuestion();
+                }
+            }
+        });
+
+        setFocusable(true);
+        requestFocusInWindow();
     }
 
     @Override
@@ -123,10 +139,6 @@ public class JCard extends JPanel {
         g2.drawLine(10, yComplete, this.getWidth() - 10, yComplete);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-    }
-
-    public static int generateRandomNumber() {
-        return new Random().nextInt(0,3);
     }
 
     public Stroke getDashedLineStroke(int width) {
@@ -153,20 +165,6 @@ public class JCard extends JPanel {
         answerLabel.setFont(generateFont(size));
         animatedQuestion.setFont(generateFont(size));
         setBackground(mainColor);
-    }
-
-    private void setupMouseListeners() {
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (!hasFaded) {
-                    moveQuestion();
-                }
-            }
-        });
-
-        setFocusable(true);
-        requestFocusInWindow();
     }
 
     public void moveQuestion() {
@@ -250,15 +248,27 @@ public class JCard extends JPanel {
         opacityFadeUp.start();
     }
 
-    private void flashBang() {
+    private void easiestFlashBangTimingSolution() {
         if (!flashBanged) {
             return;
         }
         flashBanged = false;
 
-        Timer opacityFadeUp = new Timer(300, null);
+        opacity4 = 0.0f;
+        opacity5 = 0.0f;
+
+        Timer opacityFadeUp2 = new Timer(500, null);
+        opacityFadeUp2.addActionListener(e -> {
+            flashBang();
+        });
+        opacityFadeUp2.setRepeats(false);
+        opacityFadeUp2.start();
+    }
+
+    private void flashBang() {
+        Timer opacityFadeUp = new Timer(5, null);
         opacityFadeUp.addActionListener(e -> {
-            opacity4 += 0.5f;
+            opacity4 += 0.05f;
             if (opacity4 >= 1.0f) {
                 opacity4 = 1.0f;
                 ((Timer) e.getSource()).stop();
@@ -266,7 +276,6 @@ public class JCard extends JPanel {
             }
 
             Color fadedColor = parseColorFade("255,255,255", (int)(opacity4 * 255));
-
             setBackground(fadedColor);
 
             revalidate();
@@ -276,24 +285,28 @@ public class JCard extends JPanel {
     }
 
     private void flashBangReverse() {
-
-        Timer opacityFadeUp = new Timer(300, null);
-        opacityFadeUp.addActionListener(e -> {
-            opacity5 += 0.05f;
+        Timer opacityFadeDown = new Timer(100, null);
+        opacityFadeDown.addActionListener(e -> {
+            opacity5 += 0.01f;
             if (opacity5 >= 1.0f) {
                 opacity5 = 1.0f;
                 ((Timer) e.getSource()).stop();
             }
 
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int)(opacity5 * 255));
+            Color fadedFontColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity5 * 255));
+
+            questionLabel.setForeground(fadedFontColor);
 
             setBackground(fadedColor);
 
             revalidate();
             repaint();
         });
-        opacityFadeUp.start();
+        opacityFadeDown.start();
     }
+
+
 
     private void advanceExit() {
         exit();

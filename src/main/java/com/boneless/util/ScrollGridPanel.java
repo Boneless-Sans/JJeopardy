@@ -29,7 +29,7 @@ public class ScrollGridPanel extends JPanel {
             repaint();
         });
 
-        //timer.start(); //disabled for now, macbook SHIT
+        timer.start(); //disabled for now, macbook SHIT
     }
 
     protected void changeColor(Color color) {
