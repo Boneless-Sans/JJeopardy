@@ -17,6 +17,7 @@ public class JCard extends JPanel {
     private final JLabel answerLabel;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
+    private boolean flashBanged = true;
     private boolean hasFadedInQuestion = true;
     private final static Color parseColorFadeComplete = parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
@@ -27,6 +28,7 @@ public class JCard extends JPanel {
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
     private float opacity3 = 0.0f;
+    private float opacity4 = 1.0f;
     private final Stroke dashedLineStroke = getDashedLineStroke(1);
 
     public JCard(String question, String answer, JButton sourceButton) {
@@ -240,6 +242,67 @@ public class JCard extends JPanel {
 
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
             answerLabel.setForeground(fadedColor);
+
+            revalidate();
+            repaint();
+        });
+        opacityFadeUp.start();
+    }
+
+    private void flashBang() {
+        if (!flashBanged) {
+            return;
+        }
+        flashBanged = false;
+
+        Timer opacityFadeUp = new Timer(1, null);
+        opacityFadeUp.addActionListener(e -> {
+            opacity4 -= 0.05f;
+            if (opacity4 >= 0.0f) {
+                opacity4 = 0.0f;
+                ((Timer) e.getSource()).stop();
+                flashBangReverse();
+            }
+
+            Color fadedColor = new Color(255,255,255);
+            moversPanel.setForeground(fadedColor);
+            fadePanel.setForeground(fadedColor);
+            fadePanel2.setForeground(fadedColor);
+
+            setBackground(fadedColor);
+
+            questionLabel.setForeground(fadedColor);
+            answerLabel.setForeground(fadedColor);
+            animatedQuestion.setForeground(fadedColor);
+
+            revalidate();
+            repaint();
+        });
+        opacityFadeUp.start();
+    }
+
+    private void flashBangReverse() {
+
+        Timer opacityFadeUp = new Timer(300, null);
+        opacityFadeUp.addActionListener(e -> {
+            opacity4 += 0.0005f;
+            if (opacity4 >= 1.0f) {
+                opacity4 = 1.0f;
+                ((Timer) e.getSource()).stop();
+            }
+
+
+            moversPanel.setForeground(mainColor);
+            fadePanel.setForeground(mainColor);
+            fadePanel2.setForeground(mainColor);
+
+            setBackground(mainColor);
+
+            questionLabel.setForeground(fontColor);
+            answerLabel.setForeground(fontColor);
+            animatedQuestion.setForeground(fontColor);
+
+            System.out.println("Opacity: " + opacity4 + ", Color: " + mainColor);
 
             revalidate();
             repaint();
