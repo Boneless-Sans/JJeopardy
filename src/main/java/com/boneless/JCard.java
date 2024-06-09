@@ -6,8 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-
 import static com.boneless.GameBoard.*;
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
@@ -87,7 +85,7 @@ public class JCard extends JPanel {
         setUpCharacters(35);
     }
 
-    private CompletableFuture<Void> animationSelect() {
+    private void animationSelect() {
         switch (generateRandomNumber()) {
             case 0: {
 
@@ -105,7 +103,8 @@ public class JCard extends JPanel {
             }
             case 2: {
                 if (!isFlashBanged) {
-                    return recursionFlashBangCheck();
+                    recursionFlashBangCheck();
+                    return;
                 }
                 hasFadedInQuestion = false;
 
@@ -117,9 +116,7 @@ public class JCard extends JPanel {
                 moversPanel.add(questionLabel);
             }
         }
-        return animationSelect();
     }
-
 
     public static int generateRandomNumber() {
         return new Random().nextInt(0,3);
@@ -266,19 +263,13 @@ public class JCard extends JPanel {
         opacityFadeUp.start();
     }
 
-
-    public CompletableFuture<Void> recursionFlashBangCheck() {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-
+    private void recursionFlashBangCheck(){
         Timer opacityFadeUp2 = new Timer(501, null);
         opacityFadeUp2.addActionListener(e -> {
             animationSelect();
-            future.complete(null);
         });
         opacityFadeUp2.setRepeats(false);
         opacityFadeUp2.start();
-
-        return future;
     }
 
     private void easiestFlashBangTimingSolution() {
