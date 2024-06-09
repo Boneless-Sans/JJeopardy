@@ -18,15 +18,13 @@ public class JCard extends JPanel {
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
     private boolean hasFadedInQuestion = true;
-//    public static boolean hasNotFlashBanged = true;
     private final static Color parseColorFadeComplete = parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
     private final JPanel fadePanel;
     private final JPanel fadePanel2;
     private final JButton sourceButton;
-//    boolean hasNotFlashBanged = mainMenu.hasNotBanged;
 
-    //Todo: set a public static variable in the part of the program that transitions from the main menu to the question select screen, then change that variables state the 1st time you get flashbanged.
+    //Todo: set a public variable in the part of the program that transitions from the main menu to the question select screen, then change that variables state the 1st time you get flashBanged.
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
@@ -89,25 +87,26 @@ public class JCard extends JPanel {
 
     private void animationSelect() {
         switch (generateRandomNumber()) {
-//            case 0: {
-//                String[] arr = new String[question.length()];
-//                for (int i = 0; i < question.length(); i++) {
-//                    arr[i] = question.substring(0, i + 1);
-//                }
-//                animatedQuestion.setTxtAnim(arr, 100);
-//                break;
-//            }
-//            case 1: {
-//                moversPanel.add(questionLabel);
-//                fadeInQuestion();
-//                break;
-//            }
+            case 0: {
+                String[] arr = new String[question.length()];
+                for (int i = 0; i < question.length(); i++) {
+                    arr[i] = question.substring(0, i + 1);
+                }
+                animatedQuestion.setTxtAnim(arr, 100);
+                break;
+            }
             case 1: {
+                moversPanel.add(questionLabel);
+                fadeInQuestion();
+                break;
+            }
+            case 2: {
                 if(mainMenu.hasNotBanged){
+                    mainMenu.hasNotBanged = false;
                     moversPanel.add(questionLabel);
                     easiestFlashBangTimingSolution();
                 }
-                    animationSelect();
+                moversPanel.add(questionLabel);
                     break;
 
 
@@ -119,7 +118,7 @@ public class JCard extends JPanel {
     }
 
     public static int generateRandomNumber() {
-        return new Random().nextInt(0,1);
+        return new Random().nextInt(0,3);
     }
 
     private void setupMouseListeners() {
@@ -269,9 +268,7 @@ public class JCard extends JPanel {
         opacity5 = 0.0f;
 
         Timer opacityFadeUp2 = new Timer(500, null);
-        opacityFadeUp2.addActionListener(e -> {
-            flashBang();
-        });
+        opacityFadeUp2.addActionListener(e -> flashBang());
         opacityFadeUp2.setRepeats(false);
         opacityFadeUp2.start();
     }
@@ -302,7 +299,7 @@ public class JCard extends JPanel {
             if (opacity5 >= 1.0f) {
                 opacity5 = 1.0f;
                 ((Timer) e.getSource()).stop();
-                flashBangQuestion();
+                flashBangReverseQuestion();
             }
 
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int)(opacity5 * 255));
@@ -318,7 +315,7 @@ public class JCard extends JPanel {
         opacityFadeDown.start();
     }
 
-    private void flashBangQuestion() {
+    private void flashBangReverseQuestion() {
         Timer opacityFadeUp = new Timer(5, null);
         opacityFadeUp.addActionListener(e -> {
             if (opacity5 >= 0.6f) {

@@ -36,8 +36,7 @@ public class GeneralUtils {
             color = new Color(70,70,255);
             font = new Font("Arial", Font.PLAIN, fontSize);
         } else {
-            String file = JsonFile.read(fileName, "data", "global_color");
-            color = parseColor(file.contains("key") ? file : "255,255,255");
+            color = parseColor(JsonFile.read(fileName, "data", "global_color"));
             font = generateFont(fontSize);
         }
 
@@ -87,7 +86,7 @@ public class GeneralUtils {
     }
 
     public static Color parseColor(String color){
-        String[] split = color.contains("key") ? color.split(",") : fixme;
+        String[] split = color.split(",");
         int red = Integer.parseInt(split[0]);
         int green = Integer.parseInt(split[1]);
         int blue = Integer.parseInt(split[2]);
@@ -119,6 +118,7 @@ public class GeneralUtils {
     }
 
     public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
+
         int selfStartY = self.getY();
         int selfTargetY;
         int panelToAddStartY;
