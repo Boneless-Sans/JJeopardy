@@ -12,7 +12,7 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class JCard extends JPanel {
-    private final AnimeJLabel test;
+    private final AnimeJLabel animatedQuestion;
     private final JLabel questionLabel;
     private final JLabel answerLabel;
     private boolean hasFaded = false;
@@ -50,15 +50,15 @@ public class JCard extends JPanel {
         questionLabel.setForeground(fontColor);
         questionLabel.setOpaque(false);
 
-        test = new AnimeJLabel(fontColor, fontColor, 1);
-        test.setForeground(fontColor);
-        test.setOpaque(false);
+        animatedQuestion = new AnimeJLabel(fontColor, fontColor, 1);
+        animatedQuestion.setForeground(fontColor);
+        animatedQuestion.setOpaque(false);
 
         answerLabel = new JLabel(answer);
         answerLabel.setForeground(parseColorFadeComplete);
         answerLabel.setOpaque(false);
 
-        moversPanel.add(test);
+        moversPanel.add(animatedQuestion);
         fadePanel.add(answerLabel);
         add(moversPanel);
         add(fadePanel);
@@ -66,16 +66,14 @@ public class JCard extends JPanel {
 
         switch (generateRandomNumber()){
             case 0: {
-                //
                 String[] arr = new String[question.length()];
                 for (int i = 0; i < question.length(); i++) {
                     arr[i] = question.substring(0, i + 1);
                 }
-                test.setTxtAniam(arr, 100);
+                animatedQuestion.setTxtAniam(arr, 100);
                 break;
             }
             case 1: {
-
                 moversPanel.add(questionLabel);
                 fadeInQuestion();
                 break;
@@ -96,7 +94,7 @@ public class JCard extends JPanel {
         });
 
         setupMouseListeners();
-        setUpCharacters();
+        setUpCharacters(35);
     }
 
     @Override
@@ -142,10 +140,10 @@ public class JCard extends JPanel {
         repaint();
     }
 
-    private void setUpCharacters() {
-        questionLabel.setFont(generateFont(30));
-        answerLabel.setFont(generateFont(30));
-        test.setFont(generateFont(30));
+    private void setUpCharacters(int size) {
+        questionLabel.setFont(generateFont(size));
+        answerLabel.setFont(generateFont(size));
+        animatedQuestion.setFont(generateFont(size));
         setBackground(mainColor);
     }
 
@@ -196,30 +194,6 @@ public class JCard extends JPanel {
         questionMoveUp.start();
     }
 
-    private void fadeInAnswer() {
-        if (!hasFadedIn) {
-            return;
-        }
-        hasFadedIn = false;
-
-        Timer opacityFadeUp = new Timer(50, null);
-        opacityFadeUp.addActionListener(e -> {
-            opacity2 += 0.05f;
-            if (opacity2 >= 1.0f) {
-                opacity2 = 1.0f;
-                ((Timer) e.getSource()).stop();
-            }
-
-            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
-            answerLabel.setForeground(fadedColor);
-            System.out.println("Opacity: " + opacity2 + ", Color: " + fadedColor);
-
-            revalidate();
-            repaint();
-        });
-        opacityFadeUp.start();
-    }
-
     private void fadeInQuestion() {
         if (!hasFadedInQuestion) {
             return;
@@ -236,17 +210,41 @@ public class JCard extends JPanel {
 
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity3 * 255));
             questionLabel.setForeground(fadedColor);
-            System.out.println("Opacity: " + opacity3 + ", Color: " + fadedColor);
 
             revalidate();
             repaint();
         });
         opacityFadeUp2.start();
+
+
     }
 
     private void advanceExit() {
         exit();
         sourceButton.setEnabled(false);
+    }
+
+    private void fadeInAnswer() {
+        if (!hasFadedIn) {
+            return;
+        }
+        hasFadedIn = false;
+
+        Timer opacityFadeUp = new Timer(50, null);
+        opacityFadeUp.addActionListener(e -> {
+            opacity2 += 0.05f;
+            if (opacity2 >= 1.0f) {
+                opacity2 = 1.0f;
+                ((Timer) e.getSource()).stop();
+            }
+
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
+            answerLabel.setForeground(fadedColor);
+
+            revalidate();
+            repaint();
+        });
+        opacityFadeUp.start();
     }
 
     public void exit() {
