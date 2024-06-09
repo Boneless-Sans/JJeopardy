@@ -24,7 +24,7 @@ public class JCard extends JPanel {
     private final JPanel fadePanel2;
     private final JButton sourceButton;
 
-    //Todo: set a public variable in the part of the program that transitions from the main menu to the question select screen, then change that variables state the 1st time you get flashBanged.
+    //Todo: get sound working for flashBang
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
