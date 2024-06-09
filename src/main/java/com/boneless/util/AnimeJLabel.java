@@ -172,7 +172,7 @@ import java.awt.Color;
             }
         }
 
-        public void setTxtAniam(final String[] txtArray, final long timeInMill) {
+        public void setTxtAnim(final String[] txtArray, final long timeInMill) {
             stopTxtAniamBool = false;
             stopT();
 

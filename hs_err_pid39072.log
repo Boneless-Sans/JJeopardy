@@ -1,0 +1,229 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 532676608 bytes. Error detail: G1 virtual space
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   This process is running with CompressedOops enabled, and the Java Heap may be blocking the growth of the native heap
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+#   JVM is running with Zero Based Compressed Oops mode in which the Java heap is
+#     placed in the first 32GB address space. The Java Heap base address is the
+#     maximum limit for the native heap growth. Please use -XX:HeapBaseMinAddress
+#     to set the Java Heap base and to place the Java Heap above 32GB virtual address.
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_windows.cpp:3613), pid=39072, tid=39540
+#
+# JRE version:  (17.0.11+9) (build )
+# Java VM: OpenJDK 64-Bit Server VM (17.0.11+9-LTS, mixed mode, sharing, tiered, compressed oops, compressed class ptrs, g1 gc, windows-amd64)
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -Dfile.encoding=windows-1252 -Duser.country=US -Duser.language=en -Duser.variant com.boneless.Main -card
+
+Host: AMD Ryzen 7 7700X 8-Core Processor             , 16 cores, 31G,  Windows 11 , 64 bit Build 22621 (10.0.22621.3527)
+Time: Sat Jun  8 23:13:10 2024 Pacific Daylight Time elapsed time: 0.006171 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001f1bbb08980):  JavaThread "Unknown thread" [_thread_in_vm, id=39540, stack(0x0000009243500000,0x0000009243600000)]
+
+Stack: [0x0000009243500000,0x0000009243600000]
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0x67d009]
+V  [jvm.dll+0x83489a]
+V  [jvm.dll+0x83635e]
+V  [jvm.dll+0x8369c3]
+V  [jvm.dll+0x2479df]
+V  [jvm.dll+0x679e49]
+V  [jvm.dll+0x66e8ba]
+V  [jvm.dll+0x30755b]
+V  [jvm.dll+0x30ea06]
+V  [jvm.dll+0x35e40e]
+V  [jvm.dll+0x35e63f]
+V  [jvm.dll+0x2de298]
+V  [jvm.dll+0x2df204]
+V  [jvm.dll+0x806221]
+V  [jvm.dll+0x36c161]
+V  [jvm.dll+0x7e4c56]
+V  [jvm.dll+0x3ef9cf]
+V  [jvm.dll+0x3f1521]
+C  [jli.dll+0x528f]
+C  [ucrtbase.dll+0x29333]
+C  [KERNEL32.DLL+0x1257d]
+C  [ntdll.dll+0x5aa48]
+
+
+---------------  P R O C E S S  ---------------
+
+Threads class SMR info:
+_java_thread_list=0x00007ffefc58eed8, length=0, elements={
+}
+
+Java Threads: ( => current thread )
+
+Other Threads:
+  0x000001f1bbbb7c80 GCTaskThread "GC Thread#0" [stack: 0x0000009243600000,0x0000009243700000] [id=38280]
+  0x000001f1e5c3bf00 ConcurrentGCThread "G1 Main Marker" [stack: 0x0000009243700000,0x0000009243800000] [id=34668]
+  0x000001f1bbbbcc80 ConcurrentGCThread "G1 Conc#0" [stack: 0x0000009243800000,0x0000009243900000] [id=24676]
+
+[error occurred during error reporting (printing all threads), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffefbd4ecd7]
+
+VM state: not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x000001f1bbb07470] Heap_lock - owner thread: 0x000001f1bbb08980
+
+Heap address: 0x0000000604400000, size: 8124 MB, Compressed Oops mode: Zero based, Oop shift amount: 3
+
+CDS archive(s) mapped at: [0x0000000000000000-0x0000000000000000-0x0000000000000000), size 0, SharedBaseAddress: 0x0000000800000000, ArchiveRelocationMode: 1.
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 0, Narrow klass range: 0x0
+
+GC Precious Log:
+<Empty>
+
+Heap:
+ garbage-first heap   total 0K, used 0K [0x0000000604400000, 0x0000000800000000)
+  region size 4096K, 0 young (0K), 0 survivors (0K)
+
+[error occurred during error reporting (printing heap information), id 0xc0000005, EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffefc136d29]
+
+GC Heap History (0 events):
+No events
+
+Dll operation events (1 events):
+Event: 0.004 Loaded shared library C:\Users\dante\.jdks\corretto-17.0.11\bin\java.dll
+
+Deoptimization events (0 events):
+No events
+
+Classes unloaded (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+VM Operations (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff6c1b90000 - 0x00007ff6c1b9e000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\java.exe
+0x00007fffc7670000 - 0x00007fffc7887000 	C:\Windows\SYSTEM32\ntdll.dll
+0x00007fffc65a0000 - 0x00007fffc6664000 	C:\Windows\System32\KERNEL32.DLL
+0x00007fffc4cc0000 - 0x00007fffc5067000 	C:\Windows\System32\KERNELBASE.dll
+0x00007fffc5280000 - 0x00007fffc5391000 	C:\Windows\System32\ucrtbase.dll
+0x00007fffb6e30000 - 0x00007fffb6e47000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\jli.dll
+0x00007fffb6ee0000 - 0x00007fffb6efb000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\VCRUNTIME140.dll
+0x00007fffc7190000 - 0x00007fffc733e000 	C:\Windows\System32\USER32.dll
+0x00007fffc5070000 - 0x00007fffc5096000 	C:\Windows\System32\win32u.dll
+0x00007fffba300000 - 0x00007fffba593000 	C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.3527_none_270e469b73872a76\COMCTL32.dll
+0x00007fffc6f60000 - 0x00007fffc7007000 	C:\Windows\System32\msvcrt.dll
+0x00007fffc6570000 - 0x00007fffc6599000 	C:\Windows\System32\GDI32.dll
+0x00007fffc4af0000 - 0x00007fffc4c09000 	C:\Windows\System32\gdi32full.dll
+0x00007fffc4a50000 - 0x00007fffc4aea000 	C:\Windows\System32\msvcp_win.dll
+0x00007fffc6f20000 - 0x00007fffc6f51000 	C:\Windows\System32\IMM32.DLL
+0x00007fffb7070000 - 0x00007fffb707c000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\vcruntime140_1.dll
+0x00007fffade50000 - 0x00007fffadedd000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\msvcp140.dll
+0x00007ffefba60000 - 0x00007ffefc6c2000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\server\jvm.dll
+0x00007fffc5530000 - 0x00007fffc55e2000 	C:\Windows\System32\ADVAPI32.dll
+0x00007fffc6e70000 - 0x00007fffc6f18000 	C:\Windows\System32\sechost.dll
+0x00007fffc4c10000 - 0x00007fffc4c38000 	C:\Windows\System32\bcrypt.dll
+0x00007fffc5410000 - 0x00007fffc5525000 	C:\Windows\System32\RPCRT4.dll
+0x00007fffaeb70000 - 0x00007fffaeb79000 	C:\Windows\SYSTEM32\WSOCK32.dll
+0x00007fffc37d0000 - 0x00007fffc381d000 	C:\Windows\SYSTEM32\POWRPROF.dll
+0x00007fffb52e0000 - 0x00007fffb5314000 	C:\Windows\SYSTEM32\WINMM.dll
+0x00007fffc73f0000 - 0x00007fffc7461000 	C:\Windows\System32\WS2_32.dll
+0x00007fffbbf80000 - 0x00007fffbbf8a000 	C:\Windows\SYSTEM32\VERSION.dll
+0x00007fffc37b0000 - 0x00007fffc37c3000 	C:\Windows\SYSTEM32\UMPDC.dll
+0x00007fffc3a60000 - 0x00007fffc3a78000 	C:\Windows\SYSTEM32\kernel.appcore.dll
+0x00007fffb35b0000 - 0x00007fffb35ba000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\jimage.dll
+0x00007fffb39b0000 - 0x00007fffb3be2000 	C:\Windows\SYSTEM32\DBGHELP.DLL
+0x00007fffc67d0000 - 0x00007fffc6b58000 	C:\Windows\System32\combase.dll
+0x00007fffc6be0000 - 0x00007fffc6cb7000 	C:\Windows\System32\OLEAUT32.dll
+0x00007fffacf10000 - 0x00007fffacf42000 	C:\Windows\SYSTEM32\dbgcore.DLL
+0x00007fffc4c40000 - 0x00007fffc4cb9000 	C:\Windows\System32\bcryptPrimitives.dll
+0x00007fffadf00000 - 0x00007fffadf25000 	C:\Users\dante\.jdks\corretto-17.0.11\bin\java.dll
+
+dbghelp: loaded successfully - version: 4.0.5 - missing functions: none
+symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Users\dante\.jdks\corretto-17.0.11\bin;C:\Windows\SYSTEM32;C:\Windows\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.22621.3527_none_270e469b73872a76;C:\Users\dante\.jdks\corretto-17.0.11\bin\server
+
+VM Arguments:
+jvm_args: -Dfile.encoding=windows-1252 -Duser.country=US -Duser.language=en -Duser.variant 
+java_command: com.boneless.Main -card
+java_class_path (initial): C:\Users\dante\IdeaProjects\APCompFinalProject\build\classes\java\main;C:\Users\dante\IdeaProjects\APCompFinalProject\build\resources\main;C:\Users\dante\.gradle\caches\modules-2\files-2.1\org.json\json\20231013\e22e0c040fe16f04ffdb85d851d77b07fc05ea52\json-20231013.jar
+Launcher Type: SUN_STANDARD
+
+[Global flags]
+     intx CICompilerCount                          = 12                                        {product} {ergonomic}
+     uint ConcGCThreads                            = 3                                         {product} {ergonomic}
+     uint G1ConcRefinementThreads                  = 13                                        {product} {ergonomic}
+   size_t G1HeapRegionSize                         = 4194304                                   {product} {ergonomic}
+    uintx GCDrainStackTargetSize                   = 64                                        {product} {ergonomic}
+   size_t InitialHeapSize                          = 532676608                                 {product} {ergonomic}
+   size_t MarkStackSize                            = 4194304                                   {product} {ergonomic}
+   size_t MaxHeapSize                              = 8518631424                                {product} {ergonomic}
+   size_t MinHeapDeltaBytes                        = 4194304                                   {product} {ergonomic}
+   size_t MinHeapSize                              = 8388608                                   {product} {ergonomic}
+    uintx NonNMethodCodeHeapSize                   = 7602480                                {pd product} {ergonomic}
+    uintx NonProfiledCodeHeapSize                  = 122027880                              {pd product} {ergonomic}
+    uintx ProfiledCodeHeapSize                     = 122027880                              {pd product} {ergonomic}
+    uintx ReservedCodeCacheSize                    = 251658240                              {pd product} {ergonomic}
+     bool SegmentedCodeCache                       = true                                      {product} {ergonomic}
+   size_t SoftMaxHeapSize                          = 8518631424                             {manageable} {ergonomic}
+     bool UseCompressedClassPointers               = true                           {product lp64_product} {ergonomic}
+     bool UseCompressedOops                        = true                           {product lp64_product} {ergonomic}
+     bool UseG1GC                                  = true                                      {product} {ergonomic}
+     bool UseLargePagesIndividualAllocation        = false                                  {pd product} {ergonomic}
+
+Logging:
+Log output configuration:
+ #0: stdout all=warning uptime,level,tags
+ #1: stderr all=off uptime,level,tags
+
+Environment Variables:
+PATH=C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\Oculus\Support\oculus-runtime;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\Git\cmd;C:\Users\dante\AppData\Local\Microsoft\WindowsApps;C:\Users\dante\Microsoft VS Code\bin;C:\Users\dante\Downloads\jdk-17.0.9_windows-x64_bin\jdk-17.0.9\bin;
+USERNAME=dante
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+TMP=C:\Users\dante\AppData\Local\Temp
+TEMP=C:\Users\dante\AppData\Local\Temp
+
+
+
+Periodic native trim disabled
+
+
+---------------  S Y S T E M  ---------------
+
+OS:
+ Windows 11 , 64 bit Build 22621 (10.0.22621.3527)
+OS uptime: 3 days 6:49 hours
+Hyper-V role detected
+
+CPU: total 16 (initial active 16) (16 cores per cpu, 2 threads per core) family 25 model 97 stepping 2 microcode 0x0, cx8, cmov, fxsr, ht, mmx, 3dnowpref, sse, sse2, sse3, ssse3, sse4a, sse4.1, sse4.2, popcnt, lzcnt, tsc, tscinvbit, avx, avx2, aes, erms, clmul, bmi1, bmi2, adx, avx512f, avx512dq, avx512cd, avx512bw, avx512vl, sha, fma, vzeroupper, avx512_vpopcntdq, avx512_vpclmulqdq, avx512_vaes, avx512_vnni, clflush, clflushopt, avx512_vbmi2, avx512_vbmi, hv
+Processor Information for all 16 processors :
+  Max Mhz: 4501, Current Mhz: 4501, Mhz Limit: 4501
+
+Memory: 4k page, system-wide physical 32490M (17618M free)
+TotalPageFile size 130794M (AvailPageFile size 436M)
+current process WorkingSet (physical memory assigned to process): 12M, peak: 12M
+current process commit charge ("private bytes"): 71M, peak: 579M
+
+vm_info: OpenJDK 64-Bit Server VM (17.0.11+9-LTS) for windows-amd64 JRE (17.0.11+9-LTS), built on Apr 10 2024 22:12:24 by "Administrator" with MS VC++ 16.10 / 16.11 (VS2019)
+
+END.

@@ -22,6 +22,7 @@ public class MainMenu extends ScrollGridPanel {
     public boolean menuIsActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
+    public boolean hasNotBanged = true;
     private final String[] dropDownList = {
             "1 Team", "2 Teams", "3 Teams", "4 Teams", "5 Teams", "6 Teams", "7 Teams", "8 Teams", "9 Teams", "10 Teams", "Other..."
     };
@@ -135,8 +136,10 @@ public class MainMenu extends ScrollGridPanel {
         });
 
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
+
         startGame.addActionListener(a -> {
             changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel, true);
+            hasNotBanged = true;
         });
 
         contentPane.add(createTeamChooserButton(exitButton, "Exit"));
