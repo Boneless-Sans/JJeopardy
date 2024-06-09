@@ -117,7 +117,9 @@ public class JCard extends JPanel {
                 moversPanel.add(questionLabel);
             }
         }
+        return animationSelect();
     }
+
 
     public static int generateRandomNumber() {
         return new Random().nextInt(0,3);
