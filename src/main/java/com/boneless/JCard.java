@@ -104,7 +104,7 @@ public class JCard extends JPanel {
                 if(mainMenu.hasNotBanged){
                     mainMenu.hasNotBanged = false;
                     moversPanel.add(questionLabel);
-                    easiestFlashBangTimingSolution();
+                    startFlashBangTimingSolution();
                 }
                 moversPanel.add(questionLabel);
                     break;
@@ -262,7 +262,7 @@ public class JCard extends JPanel {
         opacityFadeUp.start();
     }
 
-    public void easiestFlashBangTimingSolution() {
+    public void startFlashBangTimingSolution() {
 
         opacity4 = 0.0f;
         opacity5 = 0.0f;
