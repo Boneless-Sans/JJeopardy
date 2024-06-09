@@ -28,7 +28,8 @@ public class JCard extends JPanel {
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
     private float opacity3 = 0.0f;
-    private float opacity4 = 1.0f;
+    private float opacity4 = 0.0f;
+    private float opacity5 = 0.0f;
     private final Stroke dashedLineStroke = getDashedLineStroke(1);
 
     public JCard(String question, String answer, JButton sourceButton) {
@@ -80,6 +81,11 @@ public class JCard extends JPanel {
                 fadeInQuestion();
                 break;
             }
+            case 2: {
+                moversPanel.add(questionLabel);
+                flashBang();
+                break;
+            }
             default: {
                 moversPanel.add(questionLabel);
             }
@@ -120,7 +126,7 @@ public class JCard extends JPanel {
     }
 
     public static int generateRandomNumber() {
-        return new Random().nextInt(0,2);
+        return new Random().nextInt(0,3);
     }
 
     public Stroke getDashedLineStroke(int width) {
@@ -221,11 +227,6 @@ public class JCard extends JPanel {
 
     }
 
-    private void advanceExit() {
-        exit();
-        sourceButton.setEnabled(false);
-    }
-
     private void fadeInAnswer() {
         if (!hasFadedIn) {
             return;
@@ -255,25 +256,18 @@ public class JCard extends JPanel {
         }
         flashBanged = false;
 
-        Timer opacityFadeUp = new Timer(1, null);
+        Timer opacityFadeUp = new Timer(300, null);
         opacityFadeUp.addActionListener(e -> {
-            opacity4 -= 0.05f;
-            if (opacity4 >= 0.0f) {
-                opacity4 = 0.0f;
+            opacity4 += 0.5f;
+            if (opacity4 >= 1.0f) {
+                opacity4 = 1.0f;
                 ((Timer) e.getSource()).stop();
                 flashBangReverse();
             }
 
-            Color fadedColor = new Color(255,255,255);
-            moversPanel.setForeground(fadedColor);
-            fadePanel.setForeground(fadedColor);
-            fadePanel2.setForeground(fadedColor);
+            Color fadedColor = parseColorFade("255,255,255", (int)(opacity4 * 255));
 
             setBackground(fadedColor);
-
-            questionLabel.setForeground(fadedColor);
-            answerLabel.setForeground(fadedColor);
-            animatedQuestion.setForeground(fadedColor);
 
             revalidate();
             repaint();
@@ -285,29 +279,25 @@ public class JCard extends JPanel {
 
         Timer opacityFadeUp = new Timer(300, null);
         opacityFadeUp.addActionListener(e -> {
-            opacity4 += 0.0005f;
-            if (opacity4 >= 1.0f) {
-                opacity4 = 1.0f;
+            opacity5 += 0.05f;
+            if (opacity5 >= 1.0f) {
+                opacity5 = 1.0f;
                 ((Timer) e.getSource()).stop();
             }
 
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int)(opacity5 * 255));
 
-            moversPanel.setForeground(mainColor);
-            fadePanel.setForeground(mainColor);
-            fadePanel2.setForeground(mainColor);
-
-            setBackground(mainColor);
-
-            questionLabel.setForeground(fontColor);
-            answerLabel.setForeground(fontColor);
-            animatedQuestion.setForeground(fontColor);
-
-            System.out.println("Opacity: " + opacity4 + ", Color: " + mainColor);
+            setBackground(fadedColor);
 
             revalidate();
             repaint();
         });
         opacityFadeUp.start();
+    }
+
+    private void advanceExit() {
+        exit();
+        sourceButton.setEnabled(false);
     }
 
     public void exit() {
