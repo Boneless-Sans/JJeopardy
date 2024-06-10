@@ -2,6 +2,7 @@ package com.boneless;
 
 import com.boneless.util.AnimeJLabel;
 import com.boneless.util.JsonFile;
+import com.boneless.util.SimpleTextAnimation;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -24,7 +25,9 @@ public class JCard extends JPanel {
     private final JPanel fadePanel2;
     private final JButton sourceButton;
 
-    //Todo: get sound working for flashBang
+    public int animationJCardBound = 3;
+    // Set animationJCardBound to -1 for no animations
+    // Set animationJCardBound to 3 for all animations
 
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
@@ -36,7 +39,7 @@ public class JCard extends JPanel {
     private final String question;
 
     public JCard(String question, String answer, JButton sourceButton) {
-        this.question = question;  // Store the question string as a class field
+        this.question = question;
         this.sourceButton = sourceButton;
         setLayout(null);
 
@@ -86,7 +89,7 @@ public class JCard extends JPanel {
     }
 
     private void animationSelect() {
-        switch (generateRandomNumber(3)) {
+        switch (generateRandomNumber(animationJCardBound)) {
             case 0: {
                 String[] arr = new String[question.length()];
                 for (int i = 0; i < question.length(); i++) {
@@ -101,24 +104,22 @@ public class JCard extends JPanel {
                 break;
             }
             case 2: {
-                if(mainMenu.hasNotBanged){
+                if (mainMenu.hasNotBanged) {
                     mainMenu.hasNotBanged = false;
                     moversPanel.add(questionLabel);
                     startFlashBangTimingSolution();
                 }
                 moversPanel.add(questionLabel);
-                    break;
-
-
+                break;
             }
-//            default: {
-//                moversPanel.add(questionLabel);
-//            }
+            default: {
+                moversPanel.add(questionLabel);
+            }
         }
     }
 
     public static int generateRandomNumber(int bound) {
-        return new Random().nextInt(0,bound);
+        return new Random().nextInt(bound);
     }
 
     private void setupMouseListeners() {
@@ -235,8 +236,6 @@ public class JCard extends JPanel {
             repaint();
         });
         opacityFadeUp2.start();
-
-
     }
 
     private void fadeInAnswer() {
