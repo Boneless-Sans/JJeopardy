@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static com.boneless.Main.mainMenu;
+import static com.boneless.Main.settingsFile;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
@@ -48,7 +49,6 @@ public class BoardFactory extends JPanel {
         if(fileName != null){
             loadColors();
         } else {
-            System.out.println("File is null, creating new template...");
             fileName = createNewFile("temp.json");
             loadColors();
         }
@@ -234,7 +234,7 @@ public class BoardFactory extends JPanel {
         leftText.setForeground(fontColor);
         leftText.setFont(generateFont(fontSize));
 
-        String rawKeyBind = JsonFile.read("settings.json", "keyBinds", "exit");
+        String rawKeyBind = JsonFile.read(settingsFile, "keyBinds", "exit");
         String keyBind = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
 
         JButton headerExitButton = new JButton(keyBind);

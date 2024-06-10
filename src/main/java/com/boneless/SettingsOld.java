@@ -135,7 +135,7 @@ public class SettingsOld extends JPanel{
     }
 
     private JButton createKeyBindButton(String keyBind){
-        String rawKeyBind = JsonFile.read("settings.json", "keyBinds", keyBind);
+        String rawKeyBind = JsonFile.read(settingsFile, "keyBinds", keyBind);
         String keyBindText = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
 
         JButton keyBindButton = new JButton(keyBindText);
@@ -165,9 +165,9 @@ public class SettingsOld extends JPanel{
     private void save(){
         changedSettings = false;
         //Key Binds
-        JsonFile.writeln("settings.json","keyBinds","exit",exitKeyBindButton.getText());
-        JsonFile.writeln("settings.json","keyBinds","continue",continueKeyBindButton.getText());
-        JsonFile.writeln("settings.json","keyBinds","fullscreen",fullScreenKeyBindButton.getText());
+        JsonFile.writeln(settingsFile,"keyBinds","exit",exitKeyBindButton.getText());
+        JsonFile.writeln(settingsFile,"keyBinds","continue",continueKeyBindButton.getText());
+        JsonFile.writeln(settingsFile,"keyBinds","fullscreen",fullScreenKeyBindButton.getText());
     }
 
     private void exitSettings(){

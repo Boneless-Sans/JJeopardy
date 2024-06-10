@@ -115,6 +115,7 @@ public class GameBoard extends JPanel {
         HiddenScroller pane = new HiddenScroller(panel, true);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
         pane.setBackground(accentColor);
+        pane.getHorizontalScrollBar().setUnitIncrement(15);
 
         return pane;
     }
@@ -210,7 +211,7 @@ public class GameBoard extends JPanel {
         }
 
         public static JButton createHeaderButton(String text, boolean isExit) {
-            String rawKeyBind = JsonFile.read("settings.json", "keyBinds", text);
+            String rawKeyBind = JsonFile.read(settingsFile, "keyBinds", text);
             String keyBind = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
             JButton button = new JButton(keyBind);
             button.setFocusable(false);

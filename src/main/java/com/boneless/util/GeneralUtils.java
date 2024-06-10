@@ -31,7 +31,6 @@ public class GeneralUtils {
         Color color;
         Font font;
 
-        System.out.println(fileName);
         if(fileName == null) {
             color = new Color(70,70,255);
             font = new Font("Arial", Font.PLAIN, fontSize);

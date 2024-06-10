@@ -132,7 +132,6 @@ public class MainMenu extends ScrollGridPanel {
         soundCheck.addActionListener(a -> {
             soundCheck.toggleIcon();
             playAudio = soundCheck.isChecked();
-            System.out.println(playAudio);
         });
 
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);

@@ -26,6 +26,8 @@ public class ButtonIcon extends JButton {
         color = startChecked ? GREEN : RED;
         iconID = startChecked ? CHECKMARK : CROSS;
         isChecked = startChecked;
+
+        addActionListener(e -> toggleIcon());
     }
 
     public ButtonIcon(int size, int iconID, Color color) {

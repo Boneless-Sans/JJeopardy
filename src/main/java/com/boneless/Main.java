@@ -16,7 +16,8 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName = "template.json";
+    public static String fileName;
+    public static String settingsFile;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 
@@ -30,11 +31,31 @@ public class Main extends JFrame implements KeyListener {
 
     public static void main(String[] args) throws IOException {
 
-        //handle null file
-        //fileName = GeneralUtils.checkFileExists();
+        //setup settings file
+        setupSettings();
 
         //run program
         SwingUtilities.invokeLater(() -> new Main(args));
+
+        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+    }
+
+    private static void setupSettings(){
+        File file = new File(System.getProperty("user.home") + "/settings.json");
+
+        try {
+            if (!file.exists() && file.createNewFile()) {
+                System.out.println("Settings File Missing, Created New File At: " + file.getAbsolutePath());
+            }
+
+            try(FileWriter writer = new FileWriter(file)){
+                writer.write("{\n}");
+            }
+        } catch (Exception e){
+            System.out.println("Error Creating File: \n" + e);
+        }
+        settingsFile = file.getAbsolutePath();
     }
 
     public Main(String... arg){
@@ -115,7 +136,7 @@ public class Main extends JFrame implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         //esc handler
-        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))) {
+        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "keyBinds", "exit")))) {
             if(mainMenu.menuIsActive) { //menu
                 System.exit(0);
             }
@@ -131,7 +152,7 @@ public class Main extends JFrame implements KeyListener {
         }
 
         //continue handler - Dante
-        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "continue")))) {
+        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "keyBinds", "continue")))) {
             if(gameBoard.jCardIsActive) {
                 jCard.moveQuestion();
             }

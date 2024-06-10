@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import static com.boneless.util.GeneralUtils.*;
 
 public class ScrollGridPanel extends JPanel {
-    public static final int WIDTH = Toolkit.getDefaultToolkit().getScreenSize().width;
-    public static final int HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().height;
     public static final double SCROLL_SPEED_X = 1;
     public static final double SCROLL_SPEED_Y = 1;
     private final ArrayList<GradientSquare> squareList = new ArrayList<>();

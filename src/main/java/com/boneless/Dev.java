@@ -39,8 +39,6 @@ public class Dev extends JFrame implements KeyListener {
     }
 
     private void fontListTest(){
-        System.out.println(System.getProperty("java.io.tmpdir"));
-
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         String[] fonts = ge.getAvailableFontFamilyNames();
