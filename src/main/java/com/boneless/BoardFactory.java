@@ -484,7 +484,7 @@ public class BoardFactory extends JPanel {
 
     public void exit(){
         if(!changesMade) {
-            //mainMenu.timer.start();
+            mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
             parent.setJMenuBar(null);
         }

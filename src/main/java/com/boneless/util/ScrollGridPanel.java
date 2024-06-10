@@ -2,83 +2,66 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.TimerTask;
 
-import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class ScrollGridPanel extends JPanel {
-    protected Timer timer;
-
-    private final ArrayList<Square> squareArrayList = new ArrayList<>();
+    public Timer timer;
+    private double offsetX = 0; //track offset
+    private double offsetY = 0;
+    private final int squareSize = 80;
+    private final Color squareColor = Color.blue;
+    private double angle = 225; //direction of movement, in degrees, flipped
 
     public ScrollGridPanel() {
         setLayout(null);
 
-        int squareSize = 64;
-        int squareX = 0;
-        int squareY = 0;
-
-        for(int i = 0; i < screenHeight / squareSize; i++) {
-            for(int j = 0;j < screenWidth / squareSize; j++) {
-                Square square = new Square(64, Color.blue);
-                square.setBounds(squareX, squareY, squareSize, squareSize);
-                add(square);
-                squareArrayList.add(square);
-                squareX += squareSize;
-            }
-            squareX = 0;
-            squareY += squareSize;
-        }
-
-        timer = new Timer(16, e -> updateSquares(squareSize));
-
+        timer = new Timer(16, e -> updateOffsets());
         timer.start();
     }
 
-    private void updateSquares(int squareSize) {
-        for (Square square : squareArrayList) {
-            int newX = square.getX() + 1;
-            int newY = square.getY();
-
-            // Check if the square goes out of the screen bounds horizontally
-            if (newX >= screenWidth) {
-                newX = 0;
-                newY += squareSize;
-            }
-
-            // Check if the square goes out of the screen bounds vertically
-            if (newY >= screenHeight) {
-                newY = 0;
-            }
-
-            square.setBounds(newX, newY, square.getWidth(), square.getHeight());
-        }
+    public void setAngle(double angle) {
+        this.angle = angle % 360;
     }
 
-    private static class Square extends JPanel {
-        private final int size;
-        private Color color;
+    private void updateOffsets() {
+        //convert angle to radians?? thanks stackoverflow
+        double radians = Math.toRadians(angle);
 
-        public Square(int size, Color color){
-            this.size = size;
-            this.color = color;
-        }
+        //speed controller
+        double speed = 1;
 
-        public void changeColor(Color color){
-            this.color = color;
-            revalidate();
-            repaint();
-        }
+        //calc direction with angle
+        offsetX = (offsetX + speed * Math.cos(radians)) % squareSize;
+        offsetY = (offsetY + speed * Math.sin(radians)) % squareSize;
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.setPaint(new GradientPaint(0,0, color, size, size, adjustColor(color)));
-            g2d.fillRect(0, 0, screenWidth, screenHeight);
+        //offsets to remove gaps
+        if (offsetX < 0) offsetX += squareSize;
+        if (offsetY < 0) offsetY += squareSize;
+
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        //calc amount of squares needed plus a bit extra for wrapping
+        int rows = (getHeight() / squareSize) + 2;
+        int cols = (getWidth() / squareSize) + 2;
+
+        //draw
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                int x = (int) (col * squareSize - offsetX);
+                int y = (int) (row * squareSize - offsetY);
+
+                g2d.setPaint(new GradientPaint(x, y, squareColor, x + squareSize, y + squareSize, adjustColor(squareColor)));
+                g2d.fillRect(x, y, squareSize, squareSize);
+            }
         }
     }
 }

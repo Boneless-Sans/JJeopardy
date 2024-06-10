@@ -215,6 +215,7 @@ public class Settings extends JPanel {
 
     private void exit(){
         changeCurrentPanel(mainMenu, this, false);
+        mainMenu.timer.start();
     }
 
     private static class JRoundedButton extends JButton{

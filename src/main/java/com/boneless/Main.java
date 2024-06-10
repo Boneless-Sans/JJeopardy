@@ -62,8 +62,8 @@ public class Main extends JFrame implements KeyListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        screenWidth = 1200;
+        screenHeight = 700;
 
         try {
             if(System.getProperty("os.name").equalsIgnoreCase("windows")) {
