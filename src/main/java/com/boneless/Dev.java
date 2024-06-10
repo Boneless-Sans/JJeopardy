@@ -1,23 +1,9 @@
 package com.boneless;
 
-import com.boneless.util.GeneralUtils;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.boneless.util.GeneralUtils.*;
-import static java.awt.Color.*;
 
 public class Dev extends JFrame implements KeyListener {
     public static void main(String[] args){
