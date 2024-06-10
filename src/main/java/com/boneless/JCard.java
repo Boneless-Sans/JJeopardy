@@ -86,7 +86,7 @@ public class JCard extends JPanel {
     }
 
     private void animationSelect() {
-        switch (generateRandomNumber()) {
+        switch (generateRandomNumber(3)) {
             case 0: {
                 String[] arr = new String[question.length()];
                 for (int i = 0; i < question.length(); i++) {
@@ -117,8 +117,8 @@ public class JCard extends JPanel {
         }
     }
 
-    public static int generateRandomNumber() {
-        return new Random().nextInt(0,3);
+    public static int generateRandomNumber(int bound) {
+        return new Random().nextInt(0,bound);
     }
 
     private void setupMouseListeners() {
