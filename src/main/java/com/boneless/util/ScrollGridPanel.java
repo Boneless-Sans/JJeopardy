@@ -2,113 +2,83 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.TimerTask;
 
+import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class ScrollGridPanel extends JPanel {
-    public static final double SCROLL_SPEED_X = 1;
-    public static final double SCROLL_SPEED_Y = 1;
-    private final ArrayList<GradientSquare> squareList = new ArrayList<>();
-    public static final int GAP = 1;
-    public static final int SQUARE_SIZE = 70;
-    public Timer timer;
-    private Color color1 = new Color(0,0,150);
-    private Color color2 = new Color(20,20,255);
+    protected Timer timer;
+
+    private final ArrayList<Square> squareArrayList = new ArrayList<>();
 
     public ScrollGridPanel() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        initializeSquares();
-        setBackground(Color.black);
+        setLayout(null);
 
-        timer = new Timer(20, e -> {
-            moveSquares();
-            repaint();
-        });
+        int squareSize = 64;
+        int squareX = 0;
+        int squareY = 0;
 
-        timer.start(); //disabled for now, macbook SHIT
-    }
-
-    protected void changeColor(Color color) {
-        color1 = color;
-        color2 = adjustColor(color);
-        for (GradientSquare gradientSquare : squareList) {
-            gradientSquare.changeColors(color1, color2);
-        }
-    }
-
-    public static Color adjustColor(Color color) {
-        int totalRGB = color.getRed() + color.getGreen() + color.getBlue();
-        int adjustment = totalRGB > 180 ? -100 : 100;
-        int r = clamp(color.getRed() + adjustment);
-        int g = clamp(color.getGreen() + adjustment);
-        int b = clamp(color.getBlue() + adjustment);
-        return new Color(r, g, b);
-    }
-
-    private void initializeSquares() {
-        for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
-            for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {
-                squareList.add(new GradientSquare(x, y, SQUARE_SIZE, color1, color2));
+        for(int i = 0; i < screenHeight / squareSize; i++) {
+            for(int j = 0;j < screenWidth / squareSize; j++) {
+                Square square = new Square(64, Color.blue);
+                square.setBounds(squareX, squareY, squareSize, squareSize);
+                add(square);
+                squareArrayList.add(square);
+                squareX += squareSize;
             }
+            squareX = 0;
+            squareY += squareSize;
+        }
+
+        timer = new Timer(16, e -> updateSquares(squareSize));
+
+        timer.start();
+    }
+
+    private void updateSquares(int squareSize) {
+        for (Square square : squareArrayList) {
+            int newX = square.getX() + 1;
+            int newY = square.getY();
+
+            // Check if the square goes out of the screen bounds horizontally
+            if (newX >= screenWidth) {
+                newX = 0;
+                newY += squareSize;
+            }
+
+            // Check if the square goes out of the screen bounds vertically
+            if (newY >= screenHeight) {
+                newY = 0;
+            }
+
+            square.setBounds(newX, newY, square.getWidth(), square.getHeight());
         }
     }
-    private void moveSquares() {
-        for (GradientSquare square : squareList) {
-            square.move((int) SCROLL_SPEED_X, (int) SCROLL_SPEED_Y, WIDTH, HEIGHT); //pause to optimize
-        }
-    }
-    private void drawSquares(Graphics2D g2d) {
-        for (GradientSquare square : squareList) {
-            square.draw(g2d);
-        }
-    }
-    public static BufferedImage createGradientImage(int size, Color color1, Color color2) {
-        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = image.createGraphics();
-        GradientPaint gradient = new GradientPaint(0, 0, color1, size, size, color2);
-        g2d.setPaint(gradient);
-        g2d.fillRect(0, 0, size, size);
-        g2d.dispose();
-        return image;
-    }
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        drawSquares(g2d);
-    }
-    private static class GradientSquare {
-        private int x;
-        private int y;
+
+    private static class Square extends JPanel {
         private final int size;
-        private BufferedImage image;
+        private Color color;
 
-        public GradientSquare(int x, int y, int size, Color color1, Color color2) {
-            this.x = x;
-            this.y = y;
+        public Square(int size, Color color){
             this.size = size;
-            this.image = createGradientImage(size, color1, color2);
-        }
-        public void changeColors(Color color1, Color color2){
-            image = createGradientImage(size, color1, color2);
-        }
-        public void move(int speedX, int speedY, int width, int height) {
-            x += speedX;
-            y += speedY;
-
-            if (x > width) {
-                x = -size;
-            }
-
-            if (y > height) {
-                y = -size;
-            }
+            this.color = color;
         }
 
-        public void draw(Graphics2D g2d) {
-            g2d.drawImage(image, x, y, null);
+        public void changeColor(Color color){
+            this.color = color;
+            revalidate();
+            repaint();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setPaint(new GradientPaint(0,0, color, size, size, adjustColor(color)));
+            g2d.fillRect(0, 0, screenWidth, screenHeight);
         }
     }
 }

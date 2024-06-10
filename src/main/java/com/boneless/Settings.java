@@ -58,11 +58,14 @@ public class Settings extends JPanel {
         accentColor = new Color(clamp(mainColor.getRed() - 40), clamp(mainColor.getGreen() - 40), clamp(mainColor.getBlue() - 40));
 
         JPanel masterPanel = new JPanel(new BorderLayout());
-        masterPanel.setBounds(0,0,screenWidth,screenHeight)o;
+        masterPanel.setBounds(0,0,screenWidth, screenHeight);
+        masterPanel.setOpaque(false);
 
         masterPanel.add(header(), BorderLayout.NORTH);
         masterPanel.add(mainBody(), BorderLayout.CENTER);
         masterPanel.add(footer(), BorderLayout.SOUTH);
+
+        add(masterPanel);
 
         save();
     }

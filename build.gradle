@@ -22,17 +22,16 @@ allprojects {
 
 jar {
     manifest {
-        attributes 'Main-Class' : 'com.boneless.Main'
+        attributes 'Main-Class' : 'com.boneless.Dev'
     }
 
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-//    // Include resources from src/main/resources and place them in the correct location
-//    from('src/main/resources') {
-//        into './'
-//    }
+    from('src/main/resources') {
+        into 'resources'
+    }
 }
 
 test {

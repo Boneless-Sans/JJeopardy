@@ -36,9 +36,6 @@ public class Main extends JFrame implements KeyListener {
 
         //run program
         SwingUtilities.invokeLater(() -> new Main(args));
-
-        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
     }
 
     private static void setupSettings(){
@@ -64,6 +61,9 @@ public class Main extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
+
+        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
         try {
             if(System.getProperty("os.name").equalsIgnoreCase("windows")) {

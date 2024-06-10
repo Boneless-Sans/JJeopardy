@@ -171,7 +171,7 @@ public class SettingsOld extends JPanel{
     }
 
     private void exitSettings(){
-        mainMenu.timer.start();
+        //mainMenu.timer.start();
         changeCurrentPanel(mainMenu, this, false);
     }
 

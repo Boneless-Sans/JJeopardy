@@ -35,7 +35,7 @@ public class Dev extends JFrame implements KeyListener {
     }
 
     private void init() {
-        //
+        System.out.println(getClass().getClassLoader().getResource("data/template.json"));
     }
 
     private void fontListTest(){

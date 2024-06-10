@@ -154,7 +154,7 @@ public class GameBoard extends JPanel {
         if (answer == 0) {
             gameBoard.GameIsActive = false;
             mainMenu.menuIsActive = true;
-            mainMenu.timer.start();
+            //mainMenu.timer.start();
             Team.teamCount = 0;
             changeCurrentPanel(mainMenu, gameBoard, false);
         }
