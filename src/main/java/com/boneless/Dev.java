@@ -44,7 +44,7 @@ public class Dev extends JFrame implements KeyListener {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
         String[] fonts = ge.getAvailableFontFamilyNames();
-
+ 
         JComboBox<String> comboBox = new JComboBox<>(fonts);
         if(fonts[0].contains(".")){ //removes macOS's wierd font '.AppleSystemUIFont'
             comboBox.removeItemAt(0);

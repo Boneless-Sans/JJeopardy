@@ -29,10 +29,10 @@ jar {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 
-    // Include resources from src/main/resources and place them in the correct location
-    from('src/main/resources') {
-        into 'src/main/resources'
-    }
+//    // Include resources from src/main/resources and place them in the correct location
+//    from('src/main/resources') {
+//        into './'
+//    }
 }
 
 test {

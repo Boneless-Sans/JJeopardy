@@ -16,7 +16,7 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName;
+    public static String fileName = "template.json";
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
 
@@ -29,7 +29,7 @@ public class Main extends JFrame implements KeyListener {
     public static void main(String[] args) throws IOException {
 
         //handle null file
-        fileName = GeneralUtils.checkFileExists();
+        //fileName = GeneralUtils.checkFileExists();
 
         //run program
         SwingUtilities.invokeLater(() -> new Main(args));
@@ -87,6 +87,10 @@ public class Main extends JFrame implements KeyListener {
                     add(boardFactory = new BoardFactory(this));
                     break;
                 }
+                case "settings": {
+                    add(new Settings());
+                    break;
+                }
             }
         } else {
             add(mainMenu = new MainMenu(this));
@@ -107,23 +111,7 @@ public class Main extends JFrame implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {//fullscreen handler
-        if(String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "fullscreen")))){
-            Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-            if(doFullScreen){
-                doFullScreen = false;
-                setLocation((screenSize.width / 2) - 1200 / 2, (screenSize.height / 2) - 720 / 2);
-                setSize(1200,720);
-            }else{
-                doFullScreen = true;
-                setLocation(0,0);
-                setSize((int) screenSize.getWidth(), (int) screenSize.getHeight());
-            }
-
-            revalidate();
-            repaint();
-        }
-
+    public void keyTyped(KeyEvent e) {
         //esc handler
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read("settings.json", "keyBinds", "exit")))) {
             if(mainMenu.menuIsActive) { //menu

@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static com.boneless.Main.*;
+import static com.boneless.Main.mainMenu;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
@@ -34,7 +34,9 @@ public class BoardFactory extends JPanel {
     private boolean inJCard = false;
 
     private final int fontSize = 20;
+
     private final String tempDir = System.getProperty("java.io.tmpdir");
+    private String fileName;
 
     private final ArrayList<JTextField> catFields = new ArrayList<>();
     private final ArrayList<MockJCard.TextBox> QALabels = new ArrayList<>();
@@ -47,9 +49,11 @@ public class BoardFactory extends JPanel {
             loadColors();
         } else {
             System.out.println("File is null, creating new template...");
-            fileName = createNewFile("temp").getAbsolutePath();
+            fileName = createNewFile("temp.json");
             loadColors();
         }
+
+        mainMenu.changeFileName(fileName);
         setLayout(new BorderLayout());
         parent.setJMenuBar(menuBar());
         setBackground(mainColor);
@@ -123,7 +127,7 @@ public class BoardFactory extends JPanel {
             int userInput = JOptionPane.showConfirmDialog(null, panel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
             if(userInput == JOptionPane.OK_OPTION){
-                createNewFile(textField.getText());
+                createNewFile(textField.getText() + ".json");
             }
         });
 
@@ -282,13 +286,25 @@ public class BoardFactory extends JPanel {
             -scores? | X
                 -for rows, create a section with text fields for scores
          */
-        JPanel panel = new JPanel();
+        JPanel panel = new JPanel(new FlowLayout());
         panel.setPreferredSize(new Dimension(500,getHeight()));
 
+        panel.add(createTextField());
 
         HiddenScroller scroller = new HiddenScroller(panel, false);
         scroller.setPreferredSize(new Dimension(120, getHeight()));
         return scroller;
+    }
+
+    private JPanel createTextField(){
+        JPanel panel = new JPanel();
+        panel.setBackground(accentColor);
+
+        JTextField field = new JTextField(10);
+
+        panel.add(field);
+
+        return panel;
     }
 
     private void showAboutPanel(){
@@ -326,31 +342,121 @@ public class BoardFactory extends JPanel {
         frame.setVisible(true);
     }
 
-    private File createNewFile(String fileName){
-        File file = new File(tempDir + "/" + fileName + ".json");
-        System.out.println("test");
+    private String createNewFile(String file){
+        String jsonContent = """
+                {
+                  "data" : {
+                    "board_name": "Template",
+                    "categories": 5,
+                    "rows": 5,
+                                
+                    "font": "Arial",
+                    "font_color": "255,255,255",
+                                
+                    "global_color": "20,20,255",
+                    "disabled_button_color": "80,80,80"
+                  },
+                  "board": {
+                    "categories": {
+                      "cat_0": "Test 1",
+                      "cat_1": "Test 2",
+                      "cat_2": "Test 3",
+                      "cat_3": "Test 4",
+                      "cat_4": "Test 5"
+                    },
+                    "scores": {
+                      "row_0": "100",
+                      "row_1": "200",
+                      "row_2": "300",
+                      "row_3": "400",
+                      "row_4": "500"
+                    },
+                    "col_0": {
+                      "question_0": "Column 0 Question 0",
+                      "question_1": "Column 0 Question 1",
+                      "question_2": "Column 0 Question 2",
+                      "question_3": "Column 0 Question 3",
+                      "question_4": "Column 0 Question 4",
+                      "answer_0": "Column 0 Answer 0",
+                      "answer_1": "Column 0 Answer 1",
+                      "answer_2": "Column 0 Answer 2",
+                      "answer_3": "Column 0 Answer 3",
+                      "answer_4": "Column 0 Answer 4"
+                    },
+                    "col_1": {
+                      "question_0": "Column 1 Question 0",
+                      "question_1": "Column 1 Question 1",
+                      "question_2": "Column 1 Question 2",
+                      "question_3": "Column 1 Question 3",
+                      "question_4": "Column 1 Question 4",
+                      "answer_0": "Column 1 Answer 0",
+                      "answer_1": "Column 1 Answer 1",
+                      "answer_2": "Column 1 Answer 2",
+                      "answer_3": "Column 1 Answer 3",
+                      "answer_4": "Column 1 Answer 4"
+                    },
+                    "col_2": {
+                      "question_0": "Column 2 Question 0",
+                      "question_1": "Column 2 Question 1",
+                      "question_2": "Column 2 Question 2",
+                      "question_3": "Column 2 Question 3",
+                      "question_4": "Column 2 Question 4",
+                      "answer_0": "Column 2 Answer 0",
+                      "answer_1": "Column 2 Answer 1",
+                      "answer_2": "Column 2 Answer 2",
+                      "answer_3": "Column 2 Answer 3",
+                      "answer_4": "Column 2 Answer 4"
+                    },
+                    "col_3": {
+                      "question_0": "Column 3 Question 0",
+                      "question_1": "Column 3 Question 1",
+                      "question_2": "Column 3 Question 2",
+                      "question_3": "Column 3 Question 3",
+                      "question_4": "Column 3 Question 4",
+                      "answer_0": "Column 3 Answer 0",
+                      "answer_1": "Column 3 Answer 1",
+                      "answer_2": "Column 3 Answer 2",
+                      "answer_3": "Column 3 Answer 3",
+                      "answer_4": "Column 3 Answer 4"
+                    },
+                    "col_4": {
+                      "question_0": "Column 4 Question 0",
+                      "question_1": "Column 4 Question 1",
+                      "question_2": "Column 4 Question 2",
+                      "question_3": "Column 4 Question 3",
+                      "question_4": "Column 4 Question 4",
+                      "answer_0": "Column 4 Answer 0",
+                      "answer_1": "Column 4 Answer 1",
+                      "answer_2": "Column 4 Answer 2",
+                      "answer_3": "Column 4 Answer 3",
+                      "answer_4": "Column 4 Answer 4"
+                    }
+                  }
+                }
+                """;
+        
+        String tempDir = System.getProperty("java.io.tmpdir");
+
+        File tempFile = new File(tempDir, file);
 
         try {
-            if(!file.exists() && file.createNewFile()){
-                System.out.println("File created at: " + file.getAbsoluteFile());
-            }
-
-            try (FileWriter writer = new FileWriter(file)){
-                FileReader reader = new FileReader("src/main/resources/data/template.json");
-
-                int character;
-                while((character = reader.read()) != -1){
-                    writer.write(character);
+            if (!tempFile.exists()) {
+                if(tempFile.createNewFile()){
+                    System.out.println("File Created");
+                } else {
+                    System.out.println("File Not Created");
                 }
 
-                writer.close();
-                reader.close();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error creating or writing to file: " + file.getAbsoluteFile(), e);
-        }
+                try (FileWriter writer = new FileWriter(tempFile)) {
+                    writer.write(jsonContent);
+                }
 
-        return file;
+            }
+            return tempFile.getAbsolutePath();
+        } catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void quickTempSave(){
@@ -383,17 +489,15 @@ public class BoardFactory extends JPanel {
         if(!changesMade) {
             mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
+            parent.setJMenuBar(null);
         }
-    }
-
-    private ActionListener onChangeListener(){
-        return e -> changesMade = true;
     }
 
     private DocumentListener documentListener(){
         return new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
+                changesMade = true;
                 quickTempSave();
             }
             @Override public void removeUpdate(DocumentEvent e) {}

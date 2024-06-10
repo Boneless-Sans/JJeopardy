@@ -36,7 +36,9 @@ public class GeneralUtils {
             color = new Color(70,70,255);
             font = new Font("Arial", Font.PLAIN, fontSize);
         } else {
-            color = parseColor(JsonFile.read(fileName, "data", "global_color"));
+            String file = JsonFile.read(fileName, "data", "global_color");
+            System.out.println(file.contains(","));
+            color = file.contains(",") ? parseColor(file) : new Color(20,20,255);
             font = generateFont(fontSize);
         }
 
@@ -118,7 +120,6 @@ public class GeneralUtils {
     }
 
     public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
-
         int selfStartY = self.getY();
         int selfTargetY;
         int panelToAddStartY;
@@ -181,7 +182,7 @@ public class GeneralUtils {
             self.getParent().add(panelToAdd);
         }
 
-        //ensure panels are visible!
+        //ensure panels are visible, shouldn't be an issue unless you really mess up
         self.setVisible(true);
         panelToAdd.setVisible(true);
 
@@ -215,119 +216,14 @@ public class GeneralUtils {
             horizontalScrollBar.setPreferredSize(new Dimension(0, 0)); //hide
         }
 
+        @Override
+        protected void paintBorder(Graphics g){} //disable globally
+
         //hide scrollbar ui
         private static class HiddenScrollUI extends BasicScrollBarUI { //todo: fix sluggish scrolling, only happens on track pad
             @Override protected void configureScrollBarColors() {}
             @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
             @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
         }
-    }
-
-    public static String checkFileExists() throws IOException { //stupid, i hate it but its required todo: fix jar packing
-        String tmpDir = System.getProperty("java.io.tmpdir");
-        File file = new File(tmpDir + "temp.json");
-
-        if (new File("src/main/resources/data/template.json").exists()) {
-            if (file.createNewFile()) {
-                System.out.println("File Created In Temp");
-            } else {
-                System.out.println("Error: Failed To Create File! (Does it already exist??) File Name: " + file.getAbsolutePath());
-            }
-
-            // JSON content to be written to the file
-            String jsonContent = "{\n" +
-                    "  \"data\": {\n" +
-                    "    \"board_name\": \"Template\",\n" +
-                    "    \"categories\": 5,\n" +
-                    "    \"rows\": 5,\n" +
-                    "    \"font\": \"Arial\",\n" +
-                    "    \"font_color\": \"255,255,255\",\n" +
-                    "    \"global_color\": \"20,20,255\",\n" +
-                    "    \"disabled_button_color\": \"80,80,80\"\n" +
-                    "  },\n" +
-                    "  \"board\": {\n" +
-                    "    \"categories\": {\n" +
-                    "      \"cat_0\": \"Test 1\",\n" +
-                    "      \"cat_1\": \"Test 2\",\n" +
-                    "      \"cat_2\": \"Test 3\",\n" +
-                    "      \"cat_3\": \"Test 4\",\n" +
-                    "      \"cat_4\": \"Test 5\"\n" +
-                    "    },\n" +
-                    "    \"scores\": {\n" +
-                    "      \"row_0\": \"100\",\n" +
-                    "      \"row_1\": \"200\",\n" +
-                    "      \"row_2\": \"300\",\n" +
-                    "      \"row_3\": \"400\",\n" +
-                    "      \"row_4\": \"500\"\n" +
-                    "    },\n" +
-                    "    \"col_0\": {\n" +
-                    "        \"question_0\": \"Column 0 Question 0\",\n" +
-                    "        \"question_1\": \"Column 0 Question 1\",\n" +
-                    "        \"question_2\": \"Column 0 Question 2\",\n" +
-                    "        \"question_3\": \"Column 0 Question 3\",\n" +
-                    "        \"question_4\": \"Column 0 Question 4\",\n" +
-                    "        \"answer_0\": \"Column 0 Answer 0\",\n" +
-                    "        \"answer_1\": \"Column 0 Answer 1\",\n" +
-                    "        \"answer_2\": \"Column 0 Answer 2\",\n" +
-                    "        \"answer_3\": \"Column 0 Answer 3\",\n" +
-                    "        \"answer_4\": \"Column 0 Answer 4\"\n" +
-                    "    },\n" +
-                    "    \"col_1\": {\n" +
-                    "        \"question_0\": \"Column 1 Question 0\",\n" +
-                    "        \"question_1\": \"Column 1 Question 1\",\n" +
-                    "        \"question_2\": \"Column 1 Question 2\",\n" +
-                    "        \"question_3\": \"Column 1 Question 3\",\n" +
-                    "        \"question_4\": \"Column 1 Question 4\",\n" +
-                    "        \"answer_0\": \"Column 1 Answer 0\",\n" +
-                    "        \"answer_1\": \"Column 1 Answer 1\",\n" +
-                    "        \"answer_2\": \"Column 1 Answer 2\",\n" +
-                    "        \"answer_3\": \"Column 1 Answer 3\",\n" +
-                    "        \"answer_4\": \"Column 1 Answer 4\"\n" +
-                    "    },\n" +
-                    "    \"col_2\": {\n" +
-                    "        \"question_0\": \"Column 2 Question 0\",\n" +
-                    "        \"question_1\": \"Column 2 Question 1\",\n" +
-                    "        \"question_2\": \"Column 2 Question 2\",\n" +
-                    "        \"question_3\": \"Column 2 Question 3\",\n" +
-                    "        \"question_4\": \"Column 2 Question 4\",\n" +
-                    "        \"answer_0\": \"Column 2 Answer 0\",\n" +
-                    "        \"answer_1\": \"Column 2 Answer 1\",\n" +
-                    "        \"answer_2\": \"Column 2 Answer 2\",\n" +
-                    "        \"answer_3\": \"Column 2 Answer 3\",\n" +
-                    "        \"answer_4\": \"Column 2 Answer 4\"\n" +
-                    "    },\n" +
-                    "    \"col_3\": {\n" +
-                    "        \"question_0\": \"Column 3 Question 0\",\n" +
-                    "        \"question_1\": \"Column 3 Question 1\",\n" +
-                    "        \"question_2\": \"Column 3 Question 2\",\n" +
-                    "        \"question_3\": \"Column 3 Question 3\",\n" +
-                    "        \"question_4\": \"Column 3 Question 4\",\n" +
-                    "        \"answer_0\": \"Column 3 Answer 0\",\n" +
-                    "        \"answer_1\": \"Column 3 Answer 1\",\n" +
-                    "        \"answer_2\": \"Column 3 Answer 2\",\n" +
-                    "        \"answer_3\": \"Column 3 Answer 3\",\n" +
-                    "        \"answer_4\": \"Column 3 Answer 4\"\n" +
-                    "    },\n" +
-                    "    \"col_4\": {\n" +
-                    "        \"question_0\": \"Column 4 Question 0\",\n" +
-                    "        \"question_1\": \"Column 4 Question 1\",\n" +
-                    "        \"question_2\": \"Column 4 Question 2\",\n" +
-                    "        \"question_3\": \"Column 4 Question 3\",\n" +
-                    "        \"question_4\": \"Column 4 Question 4\",\n" +
-                    "        \"answer_0\": \"Column 4 Answer 0\",\n" +
-                    "        \"answer_1\": \"Column 4 Answer 1\",\n" +
-                    "        \"answer_2\": \"Column 4 Answer 2\",\n" +
-                    "        \"answer_3\": \"Column 4 Answer 3\",\n" +
-                    "        \"answer_4\": \"Column 4 Answer 4\"\n" +
-                    "    }\n" +
-                    "  }\n" +
-                    "}";
-
-            try (FileWriter writer = new FileWriter(file)) {
-                writer.write(jsonContent);
-                System.out.println("JSON content written to file.");
-            }
-        }
-        return file.getAbsolutePath();
     }
 }

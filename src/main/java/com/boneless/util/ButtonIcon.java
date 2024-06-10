@@ -55,7 +55,7 @@ public class ButtonIcon extends JButton {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        //super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
 
@@ -115,6 +115,7 @@ public class ButtonIcon extends JButton {
             //draw
             g2d.drawLine(tipX, centerY, topTailX, topTailY); // \
             g2d.drawLine(tipX, centerY, botTailX, botTailY); // /
+            g2d.drawLine(botTailX, botTailY, topTailX, topTailY); // |
 
         } else if (iconID == BACK) { //back icon
             //calc

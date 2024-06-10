@@ -18,7 +18,7 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class MainMenu extends ScrollGridPanel {
-    private final JFrame parent; //only needed for board factory, sadly, no other way to do this
+    private final JFrame parent;
     public boolean menuIsActive;
     private final ArrayList<JButton> buttonsList = new ArrayList<>();
     private final JLabel currentFile;
@@ -76,7 +76,7 @@ public class MainMenu extends ScrollGridPanel {
     }
 
     private void startGameUI(){
-        Color color = GeneralUtils.parseColor(JsonFile.read(fileName, "data","global_color"));
+        Color color = parseColor(JsonFile.read(fileName, "data","global_color"));
         JPanel teamChoosePanel = new JPanel(new GridBagLayout()){
             @Override
             protected void paintComponent(Graphics g) {
@@ -160,8 +160,8 @@ public class MainMenu extends ScrollGridPanel {
         return panel;
     }
 
-    private void changeFileName(String newFile){
-        fileName = newFile.substring(newFile.lastIndexOf("\\") + 1);
+    public void changeFileName(String newFile){
+        fileName = newFile;
         currentFile.setText("Current Board: " + fileName);
         buttonsList.get(0).setEnabled(!fileName.isEmpty());
     }
@@ -209,13 +209,11 @@ public class MainMenu extends ScrollGridPanel {
         public MenuButton(String text, int UUID){
             setFocusable(false);
             setFont(generateFont(15));
-            setBorderPainted(false);
             try {
                 if (UUID == 0 && fileName.isEmpty()) { //disable start button if there is no current board file
                     setEnabled(false);
                 }
             } catch (NullPointerException ignore){
-                System.out.println("File is null, using defaults...");
                 setEnabled(false);
             }
             buttonsList.add(this);
@@ -234,7 +232,6 @@ public class MainMenu extends ScrollGridPanel {
 
         @Override
         protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
 
             if (!isEnabled()) {
                 g.setColor(Color.lightGray);
@@ -260,7 +257,7 @@ public class MainMenu extends ScrollGridPanel {
             if(isEnabled()) {
                 g2d.setColor(Color.black);
             } else {
-                g2d.setColor(parseColor(JsonFile.read(fileName, "data", "disabled_button_color")));
+                g2d.setColor(fileName != null ? parseColor(JsonFile.read(fileName, "data", "disabled_button_color")) : Color.lightGray);
             }
 
             Font font = getFont();

@@ -64,20 +64,13 @@ public class Team extends JPanel {
     }
 
     @Override
-    protected void paintBorder(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
 
-        int arc = 45;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        //g2.setColor(new Color(50,50,50,50));
-        g2.setColor(Color.red);
-        g2.drawRoundRect(0,0, getWidth() - 1, getHeight() - 1, arc, arc);
-
-        g2.setColor(Color.cyan);
-        g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, arc, arc);
-
-        g2.dispose();
+        g2d.setColor(Color.white);
+        g2d.fillRoundRect(0, 0, getWidth(), getHeight(),45,45);
     }
 
     //todo: round borders 45arc should do
