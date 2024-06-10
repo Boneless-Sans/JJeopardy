@@ -1,7 +1,6 @@
 package com.boneless;
 
 import com.boneless.util.ButtonIcon;
-import com.boneless.util.GeneralUtils;
 import com.boneless.util.JsonFile;
 import com.boneless.util.ScrollGridPanel;
 

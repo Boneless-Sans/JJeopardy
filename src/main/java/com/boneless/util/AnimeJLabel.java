@@ -2,27 +2,25 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.Color;
+import java.io.Serial;
 
-    public class AnimeJLabel extends JLabel
+@SuppressWarnings("BusyWait")
+public class AnimeJLabel extends JLabel
     {
+        @Serial
         private static final long serialVersionUID = 1L;
-        private Color startColour;
-
+        private final Color startColour;
         private Thread t;
         private boolean firstTime;
-        private long waitTime;
-
-        private boolean stopTxtAniamBool;
-
-        private int StartR,StartG,StartB;
+        private final long waitTime;
+        private boolean stopTxtAnimBool;
+        private final int StartR;
+        private final int StartG;
+        private final int StartB;
         private int MidR,MidG,MidB;
-        private int EndR,EndG,EndB;
-
-
-        public AnimeJLabel(Color startColour,Color endColour)
-        {
-            this(startColour,endColour,5);
-        }
+        private final int EndR;
+        private final int EndG;
+        private final int EndB;
 
         public AnimeJLabel(Color startColour,Color endColour,int sec)
         {
@@ -38,7 +36,7 @@ import java.awt.Color;
             EndB = endColour.getBlue();
 
             firstTime = true;
-            waitTime = sec * 1000;
+            waitTime = sec * 1000L;
         }
 
         public void setTxt(String txt)
@@ -51,27 +49,21 @@ import java.awt.Color;
 
             this.setForeground(startColour);
             this.setText(" "+txt);
-            if( ! txt.equals(""))//if theres No text then there no need to blend
+            if(!txt.isEmpty())//if there's No text then there no need to blend
             {
                 try
                 {
-                    t = new Thread(new Runnable()
-                    {
-                        public void run()
+                    t = new Thread(() -> {
+                        try
                         {
-                            try
-                            {
-                                Thread.sleep(waitTime);
+                            Thread.sleep(waitTime);
 
-                                while(true == start2end_colour()){
-                                    Thread.sleep(10);
-                                }
+                            while(start2end_colour()){
+                                Thread.sleep(10);
+                            }
 
-                            }
-                            catch(Exception ex){
-                                //System.out.println("Error:Sleep");
-                                //System.out.println(ex);
-                            }
+                        }
+                        catch(Exception ignored){
                         }
                     });
                     t.start();
@@ -82,14 +74,9 @@ import java.awt.Color;
             }
         }
 
-        public void stopTxtAniam(){
-            stopTxtAniamBool = true;
-        }
-
-
         private void stopT()
         {
-            if(false == firstTime){
+            if(!firstTime){
                 t.interrupt();
             }
             else{
@@ -108,22 +95,19 @@ import java.awt.Color;
 
             try
             {
-                t = new Thread(new Runnable()
-                {
-                    public void run(){
-                        try
-                        {
-                            while(true == start2end_colour()){
-                                Thread.sleep(2);
-                            }
-                            setPlaneTxt(txt);
+                t = new Thread(() -> {
+                    try
+                    {
+                        while(start2end_colour()){
+                            Thread.sleep(2);
+                        }
+                        setPlaneTxt(txt);
 
-                            while(true == end2start_colour()){
-                                Thread.sleep(2);
-                            }
+                        while(end2start_colour()){
+                            Thread.sleep(2);
                         }
-                        catch(Exception ex){
-                        }
+                    }
+                    catch(Exception ignored){
                     }
                 });
                 t.start();
@@ -144,25 +128,21 @@ import java.awt.Color;
 
             try
             {
-                t = new Thread(new Runnable()
-                {
-                    public void run()
+                t = new Thread(() -> {
+                    try
                     {
-                        try
+                        for(int i = Sec-1; 0<i; i--)
                         {
-                            for(int i = Sec-1; 0<i; i--)
+                            for(int ii = 100; 0<ii; ii-=2)//go up in 2
                             {
-                                for(int ii = 100; 0<ii; ii-=2)//go up in 2
-                                {
-                                    setPlaneTxt(displayMessage +" "+i+"."+ii);
-                                    Thread.sleep(20);
-                                }
+                                setPlaneTxt(displayMessage +" "+i+"."+ii);
+                                Thread.sleep(20);
                             }
-                            setPlaneTxt(endMessage);
+                        }
+                        setPlaneTxt(endMessage);
 
-                        }
-                        catch(Exception ex){
-                        }
+                    }
+                    catch(Exception ignored){
                     }
                 });
                 t.start();
@@ -173,32 +153,30 @@ import java.awt.Color;
         }
 
         public void setTxtAnim(final String[] txtArray, final long timeInMill) {
-            stopTxtAniamBool = false;
+            stopTxtAnimBool = false;
             stopT();
 
             try {
-                t = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            for (int i = 0; i < txtArray.length; i++) {
-                                if (stopTxtAniamBool) // Check if we need to stop the animation
-                                    break;
+                t = new Thread(() -> {
+                    try {
+                        for (String s : txtArray) {
+                            if (stopTxtAnimBool) // Check if we need to stop the animation
+                                break;
 
-                                setPlaneTxt(txtArray[i]);
-                                Thread.sleep(timeInMill);
-                            }
-                            // Additional animation or cleanup after the loop ends
-//                            start2end_colour();
-                        } catch (InterruptedException ex) {
-                            Thread.currentThread().interrupt(); // Restore interrupted status
-                        } catch (Exception ex) {
-                            ex.printStackTrace(); // Handle other exceptions appropriately
+                            setPlaneTxt(s);
+                            Thread.sleep(timeInMill);
                         }
+                        // Additional animation or cleanup after the loop ends
+//                            start2end_colour();
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt(); // Restore interrupted status
+                    } catch (Exception ex) {
+                        ex.printStackTrace(); // Handle other exceptions appropriately
                     }
                 });
                 t.start();
             } catch (Exception ex) {
-                System.out.println("Error: setTxtAniam");
+                System.out.println("Error: setTxtAnim");
             }
         }
 
@@ -233,10 +211,7 @@ import java.awt.Color;
             else// if(EndB<MidB)
             {  MidB--;  }
 
-            if(1 == intR && 1 == intB && 1 == intG)
-            {  return false;  }
-            else
-            {  return true;  }
+            return 1 != intR || 1 != intB || 1 != intG;
         }
 
         private boolean end2start_colour()
@@ -268,9 +243,6 @@ import java.awt.Color;
             else// if(EndB>MidB)
             { MidB--;  }
 
-            if(1 == intR && 1 == intB && 1 == intG)
-            { return false;  }
-            else
-            { return true; }
+            return 1 != intR || 1 != intB || 1 != intG;
         }
     }

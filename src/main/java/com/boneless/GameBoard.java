@@ -5,12 +5,8 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import static com.boneless.JCard.*;
-
-
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -28,7 +24,6 @@ public class GameBoard extends JPanel {
     public final JPanel boardPanel;
     public int scoreToAdd = 0;
     private final int teamCount;
-//    public boolean hasflashBanged = false;
 
     public GameBoard(int teamCount){
         this.teamCount = teamCount;
@@ -265,9 +260,6 @@ public class GameBoard extends JPanel {
                 scoreToAdd = score;
                 setEnabled(false);
                 changeCurrentPanel(jCard, parentPanel, true, 200);
-//                if(jCard.isFlashBanged){
-//                    hasflashBanged = false;
-//                }
             };
         }
 

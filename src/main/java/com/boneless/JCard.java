@@ -26,15 +26,15 @@ public class JCard extends JPanel {
 
     public int animationJCardBound = 3;
     // Set animationJCardBound to -1 for no animations
-    // Set animationJCardBound to 3 for all animations
+    // Set animationJCardBound to # of cases + 1 in animationSelect for all animations
 
     //todo: Implement one more animation that has each character rotate then settle for the question
 
     // Class variables for opacity and faded state
-    private float opacity2 = 0.0f;
-    private float opacity3 = 0.0f;
-    private float opacity4 = 0.0f;
-    private float opacity5 = 0.0f;
+    private float opacity2 = 0.0f; //Question opacity
+    private float opacity3 = 0.0f; //Question opacity
+    private float opacity4 = 0.0f; //FlashBang opacity
+    private float opacity5 = 0.0f; //FlashBangReverse opacity
     private final Stroke dashedLineStroke = getDashedLineStroke(1);
 
     private final String question;
@@ -119,7 +119,7 @@ public class JCard extends JPanel {
         }
     }
 
-    public static int generateRandomNumber(int bound) {
+    private static int generateRandomNumber(int bound) {
         return new Random().nextInt(bound);
     }
 
@@ -168,7 +168,7 @@ public class JCard extends JPanel {
         int sizeY = (getHeight() - (getHeight() / factor)) / factor;
         int x = (getWidth() / 2) - (sizeX2 / 2);
         int y = (getHeight() / 2) - (sizeY / 2);
-        int sixth = (getHeight() - (getHeight() / 2)) / 6;
+        int sixth = (getHeight() - (getHeight() / factor)) / 6;
         moversPanel.setBounds(x, y, sizeX2, sizeY);
         fadePanel.setBounds(x, y + sixth, sizeX2, sizeY);
         fadePanel2.setBounds(x, y - sixth, sizeX2, sizeY);
@@ -176,6 +176,7 @@ public class JCard extends JPanel {
         repaint();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void setUpCharacters(int size) {
         questionLabel.setFont(generateFont(size));
         answerLabel.setFont(generateFont(size));
