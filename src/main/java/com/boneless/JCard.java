@@ -29,6 +29,8 @@ public class JCard extends JPanel {
     // Set animationJCardBound to -1 for no animations
     // Set animationJCardBound to 3 for all animations
 
+    //todo: Implement one more animation that has each character rotate then settle for the question
+
     // Class variables for opacity and faded state
     private float opacity2 = 0.0f;
     private float opacity3 = 0.0f;
