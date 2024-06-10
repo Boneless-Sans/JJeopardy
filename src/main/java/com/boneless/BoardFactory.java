@@ -349,10 +349,8 @@ public class BoardFactory extends JPanel {
                     "board_name": "Template",
                     "categories": 5,
                     "rows": 5,
-                                
                     "font": "Arial",
                     "font_color": "255,255,255",
-                                
                     "global_color": "20,20,255",
                     "disabled_button_color": "80,80,80"
                   },
@@ -453,8 +451,7 @@ public class BoardFactory extends JPanel {
 
             }
             return tempFile.getAbsolutePath();
-        } catch(Exception e) {
-            e.printStackTrace();
+        } catch(Exception ignore) {
             return null;
         }
     }

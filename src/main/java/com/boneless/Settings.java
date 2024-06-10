@@ -1,20 +1,24 @@
 package com.boneless;
 
 import com.boneless.util.ButtonIcon;
-import com.boneless.util.GeneralUtils;
+import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
 
+import static com.boneless.Main.fileName;
+import static com.boneless.Main.mainMenu;
 import static com.boneless.util.GeneralUtils.*;
 
 public class Settings extends JPanel {
     /* slide bottom to middle
     -General | X
         -Null Safety | X
+            -Main File | √
+            -Settings | X
         -Exit Confirmation | X
     -Main Body | X
-        -JScrollPane
+        -JScrollPane | √
         -Rounded Boxes for Key Binds | X
             -Key Bind Text | X
             -Key Bind Setter | X
@@ -25,49 +29,133 @@ public class Settings extends JPanel {
         -Save Button | X
         -Exit Button | X
      */
-    private Color mainColor;
-    private Color accentColor;
+    private final Color mainColor;
+    private final Color accentColor;
+    private final Color fontColor;
 
     public Settings() {
         setLayout(new BorderLayout());
 
-        accentColor = new Color(
-                clamp(mainColor.getRed()   - 40),
-                clamp(mainColor.getGreen() - 40),
-                clamp(mainColor.getBlue()  - 40));
-        add(createMainBody(), BorderLayout.CENTER);
-        add(createFooter(), BorderLayout.SOUTH);
+        if(fileName == null){
+            mainColor = new Color(20,20,255);
+            fontColor = new Color(255,255,255);
+        } else {
+            mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+            fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+        }
+        accentColor = new Color(clamp(mainColor.getRed() - 40), clamp(mainColor.getGreen() - 40), clamp(mainColor.getBlue() - 40));
+
+        add(header(), BorderLayout.NORTH);
+        add(mainBody(), BorderLayout.CENTER);
+        add(footer(), BorderLayout.SOUTH);
     }
 
-    private JScrollPane createMainBody(){
-        JPanel panel = new JPanel() {
+    private JPanel header(){
+        JPanel header = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        header.setBackground(accentColor);
+
+        JLabel label = new JLabel("Settings");
+        label.setForeground(fontColor);
+        label.setFont(generateFont(20));
+
+        header.add(label);
+
+        return header;
+    }
+    private HiddenScroller mainBody(){
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT)){
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g){
                 super.paintComponent(g);
 
                 Graphics2D g2d = (Graphics2D) g;
 
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g2d.setPaint(new GradientPaint(0, 0, mainColor, getWidth() ,getHeight(), accentColor));
-                g2d.fillRect(0, 0, getWidth(), getHeight());
+                g2d.setPaint(new GradientPaint(0,0,mainColor,getWidth(),getHeight(),accentColor));
+                g2d.fillRect(0,0,getWidth(),getHeight());
             }
         };
-        panel.add(new JLabel("Test"));
+        panel.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize().width,Toolkit.getDefaultToolkit().getScreenSize().height));
 
-        return new HiddenScroller(panel, false){
-            {
-                setBackground(mainColor);
-            }
-        };
+        panel.add(sectionLabel("Key Binds"));
+        panel.add(createKeyBindPanel("Test"));
+        panel.add(createKeyBindPanel("Test"));
+
+        panel.add(divider());
+        panel.add(sectionLabel("Misc"));
+        panel.add(createTogglePanel("Fullscreen"));
+
+        HiddenScroller scroller = new HiddenScroller(panel, false);
+        scroller.setBackground(mainColor);
+        scroller.getVerticalScrollBar().setUnitIncrement(15);
+
+        return scroller;
     }
 
-    private JPanel createFooter(){
+    private JPanel divider(){
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(1000, 70));
+        panel.setOpaque(false);
+        return panel;
+    }
+
+    private JPanel sectionLabel(String text){
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setPreferredSize(new Dimension(1100, 70));
+        panel.setOpaque(false);
+
+        JLabel label = new JLabel(text);
+        label.setFont(generateFont(50));
+        label.setForeground(fontColor);
+
+        panel.add(label);
+
+        return panel;
+    }
+
+    private JPanel createKeyBindPanel(String item){
+        JPanel panel = new SettingsOptionPanel();
+
+        panel.add(new JLabel(item));
+
+        return panel;
+    }
+
+    private JPanel createTogglePanel(String item){
+        JPanel panel = new SettingsOptionPanel();
+
+        JPanel leftPanel = new JPanel(new FlowLayout());
+        leftPanel.setBackground(Color.red);
+
+        JLabel itemText = new JLabel(item);
+        itemText.setFont(generateFont(15));
+        itemText.setForeground(Color.black);
+
+        leftPanel.add(itemText);
+
+        JPanel rightPanel = new JPanel();
+        rightPanel.setBackground(Color.cyan);
+
+        ButtonIcon button = new ButtonIcon(64, false);
+
+        rightPanel.add(button);
+
+        panel.add(leftPanel);
+        panel.add(rightPanel);
+
+        return panel;
+    }
+
+    private JPanel footer(){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panel.setBackground(accentColor);
 
         JRoundedButton saveButton = new JRoundedButton("Save");
+        saveButton.addActionListener(e -> save());
 
         JRoundedButton exitButton = new JRoundedButton("Exit");
+        exitButton.addActionListener(e -> exit());
 
         panel.add(saveButton);
         panel.add(exitButton);
@@ -79,7 +167,7 @@ public class Settings extends JPanel {
     }
 
     private void exit(){
-        //
+        changeCurrentPanel(mainMenu, this, false);
     }
 
     private static class JRoundedButton extends JButton{
@@ -90,12 +178,12 @@ public class Settings extends JPanel {
 
         @Override
         protected void paintComponent(Graphics g){
-            super.paintComponent(g);
+            //super.paintComponent(g);
             Graphics2D g2d = (Graphics2D)g;
 
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            g2d.setColor(Color.lightGray);
+            g2d.setColor(Color.white);
             g2d.fillRoundRect(0,0,getWidth(),getHeight(),25,25);
 
             g2d.setColor(Color.black);
@@ -109,5 +197,22 @@ public class Settings extends JPanel {
         }
 
         @Override protected void paintBorder(Graphics g){} //disable
+    }
+
+    private static class SettingsOptionPanel extends JPanel {
+        public SettingsOptionPanel(){
+            setPreferredSize(new Dimension(700, 100)); //todo: fix centering
+            setLayout(new GridLayout(1,2));
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2d = (Graphics2D) g;
+
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g2d.setColor(Color.white);
+            g2d.fillRoundRect(0, 0, getWidth(), getHeight(),25,25);
+        }
+        @Override protected void paintBorder(Graphics g) {} //disable
     }
 }

@@ -220,7 +220,7 @@ public class GeneralUtils {
         protected void paintBorder(Graphics g){} //disable globally
 
         //hide scrollbar ui
-        private static class HiddenScrollUI extends BasicScrollBarUI { //todo: fix sluggish scrolling, only happens on track pad
+        private static class HiddenScrollUI extends BasicScrollBarUI {
             @Override protected void configureScrollBarColors() {}
             @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
             @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}

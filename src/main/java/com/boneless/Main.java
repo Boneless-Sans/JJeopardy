@@ -26,6 +26,8 @@ public class Main extends JFrame implements KeyListener {
     public static JCard jCard;
     public static BoardFactory boardFactory;
 
+    public static int screenWidth, screenHeight;
+
     public static void main(String[] args) throws IOException {
 
         //handle null file
@@ -44,7 +46,7 @@ public class Main extends JFrame implements KeyListener {
 
         try {
             if(System.getProperty("os.name").equalsIgnoreCase("windows")) {
-                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+                UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
             } else {
                 UIManager.setLookAndFeel(UIManager.getLookAndFeel());
             }

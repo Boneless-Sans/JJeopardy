@@ -114,6 +114,7 @@ public class GameBoard extends JPanel {
 
         HiddenScroller pane = new HiddenScroller(panel, true);
         pane.setPreferredSize(new Dimension(getWidth(), 120));
+        pane.setBackground(accentColor);
 
         return pane;
     }

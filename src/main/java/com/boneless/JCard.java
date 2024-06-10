@@ -2,7 +2,6 @@ package com.boneless;
 
 import com.boneless.util.AnimeJLabel;
 import com.boneless.util.JsonFile;
-import com.boneless.util.SimpleTextAnimation;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
