@@ -1,19 +1,19 @@
 package com.boneless;
 
-import com.boneless.util.AnimeJLabel;
 import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.util.Random;
+
 import static com.boneless.GameBoard.*;
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class JCard extends JPanel {
-    private final AnimeJLabel animatedQuestion;
-    private final JLabel questionLabel;
+    private final SpinningLabel animatedQuestion;
     private final JLabel answerLabel;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
@@ -24,17 +24,15 @@ public class JCard extends JPanel {
     private final JPanel fadePanel2;
     private final JButton sourceButton;
 
-    public int animationJCardBound = 3;
-    // Set animationJCardBound to -1 for no animations
+    public int animationJCardBound = 1;
+    // Set animationJCardBound to 1 for no animations
     // Set animationJCardBound to # of cases + 1 in animationSelect for all animations
 
-    //todo: Implement one more animation that has each character rotate then settle for the question
-
     // Class variables for opacity and faded state
-    private float opacity2 = 0.0f; //Question opacity
-    private float opacity3 = 0.0f; //Question opacity
-    private float opacity4 = 0.0f; //FlashBang opacity
-    private float opacity5 = 0.0f; //FlashBangReverse opacity
+    private float opacity2 = 0.0f; // Question opacity
+    private float opacity3 = 0.0f; // Question opacity
+    private float opacity4 = 0.0f; // FlashBang opacity
+    private float opacity5 = 0.0f; // FlashBangReverse opacity
     private final Stroke dashedLineStroke = getDashedLineStroke(1);
 
     private final String question;
@@ -57,11 +55,7 @@ public class JCard extends JPanel {
         fadePanel2 = new JPanel(new GridBagLayout());
         fadePanel2.setBackground(mainColor);
 
-        questionLabel = new JLabel(question);
-        questionLabel.setForeground(fontColor);
-        questionLabel.setOpaque(false);
-
-        animatedQuestion = new AnimeJLabel(fontColor, fontColor, 1);
+        animatedQuestion = new SpinningLabel(question);
         animatedQuestion.setForeground(fontColor);
         animatedQuestion.setOpaque(false);
 
@@ -74,7 +68,10 @@ public class JCard extends JPanel {
         add(moversPanel);
         add(fadePanel);
 
-        animationSelect();
+        try {
+            animationSelect();
+        } catch (InterruptedException ignored) {
+        }
 
         centerTestPanel();
 
@@ -89,33 +86,27 @@ public class JCard extends JPanel {
         setUpCharacters(35);
     }
 
-    private void animationSelect() {
+    private void animationSelect() throws InterruptedException {
         switch (generateRandomNumber(animationJCardBound)) {
             case 0: {
-                String[] arr = new String[question.length()];
-                for (int i = 0; i < question.length(); i++) {
-                    arr[i] = question.substring(0, i + 1);
-                }
-                animatedQuestion.setTxtAnim(arr, 100);
+                animatedQuestion.startAnimation();
                 break;
             }
-            case 1: {
-                moversPanel.add(questionLabel);
-                fadeInQuestion();
-                break;
-            }
-            case 2: {
-                if (mainMenu.hasNotBanged) {
-                    mainMenu.hasNotBanged = false;
-                    moversPanel.add(questionLabel);
-                    startFlashBangTimingSolution();
-                }
-                moversPanel.add(questionLabel);
-                break;
-            }
-            default: {
-                moversPanel.add(questionLabel);
-            }
+            // Uncomment and add other cases here as needed
+//            case 1: {
+//                moversPanel.add(questionLabel);
+//                fadeInQuestion();
+//                break;
+//            }
+//            case 2: {
+//                if (mainMenu.hasNotBanged) {
+//                    mainMenu.hasNotBanged = false;
+//                    moversPanel.add(questionLabel);
+//                    startFlashBangTimingSolution();
+//                }
+//                moversPanel.add(questionLabel);
+//                break;
+//            }
         }
     }
 
@@ -158,7 +149,7 @@ public class JCard extends JPanel {
     }
 
     public Stroke getDashedLineStroke(int width) {
-        float[] dashPattern = {5, 5}; //Setting the length of dot and spacing of dot: {dot length, space width}
+        float[] dashPattern = {5, 5}; // Setting the length of dot and spacing of dot: {dot length, space width}
         return new BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0);
     }
 
@@ -178,9 +169,8 @@ public class JCard extends JPanel {
 
     @SuppressWarnings("SameParameterValue")
     private void setUpCharacters(int size) {
-        questionLabel.setFont(generateFont(size));
-        answerLabel.setFont(generateFont(size));
         animatedQuestion.setFont(generateFont(size));
+        answerLabel.setFont(generateFont(size));
         setBackground(mainColor);
     }
 
@@ -231,8 +221,8 @@ public class JCard extends JPanel {
                 ((Timer) e.getSource()).stop();
             }
 
-            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity3 * 255));
-            questionLabel.setForeground(fadedColor);
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int) (opacity3 * 255));
+            animatedQuestion.setForeground(fadedColor);
 
             revalidate();
             repaint();
@@ -254,7 +244,7 @@ public class JCard extends JPanel {
                 ((Timer) e.getSource()).stop();
             }
 
-            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity2 * 255));
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int) (opacity2 * 255));
             answerLabel.setForeground(fadedColor);
 
             revalidate();
@@ -284,7 +274,7 @@ public class JCard extends JPanel {
                 flashBangReverse();
             }
 
-            Color fadedColor = parseColorFade("255,255,255", (int)(opacity4 * 255));
+            Color fadedColor = parseColorFade("255,255,255", (int) (opacity4 * 255));
             setBackground(fadedColor);
 
             revalidate();
@@ -303,10 +293,10 @@ public class JCard extends JPanel {
                 flashBangReverseQuestion();
             }
 
-            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int)(opacity5 * 255));
-            Color fadedFontColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int)(opacity5 * 255));
+            Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int) (opacity5 * 255));
+            Color fadedFontColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int) (opacity5 * 255));
 
-            questionLabel.setForeground(fadedFontColor);
+            animatedQuestion.setForeground(fadedFontColor);
 
             setBackground(fadedColor);
 
@@ -320,7 +310,7 @@ public class JCard extends JPanel {
         Timer opacityFadeUp = new Timer(5, null);
         opacityFadeUp.addActionListener(e -> {
             if (opacity5 >= 0.6f) {
-                questionLabel.setForeground(fontColor);
+                animatedQuestion.setForeground(fontColor);
             }
         });
         opacityFadeUp.start();
@@ -344,5 +334,46 @@ public class JCard extends JPanel {
         hasFaded = false;
         changeCurrentPanel(gameBoard.boardPanel, this, false);
         setBackground(mainColor);
+    }
+
+    // Custom JPanel for spinning characters
+    private static class SpinningLabel extends JPanel {
+        private final String text;
+        private final double[] angles;
+
+        public SpinningLabel(String text) {
+            this.text = text;
+            angles = new double[text.length()];
+            setPreferredSize(new Dimension(400, 100)); // Adjust as needed
+        }
+
+        public void startAnimation() {
+            Timer timer = new Timer(100, e -> {
+                for (int i = 0; i < angles.length; i++) {
+                    angles[i] += Math.PI / 8; // Adjust rotation speed as needed
+                }
+                repaint();
+            });
+            timer.start();
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            FontMetrics fm = g2d.getFontMetrics();
+            int x = 10;
+            int y = getHeight() / 2;
+
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                int charWidth = fm.charWidth(c);
+                AffineTransform original = g2d.getTransform();
+                g2d.rotate(angles[i], x + (double) charWidth / 2, y);
+                g2d.drawString(String.valueOf(c), x, y);
+                g2d.setTransform(original);
+                x += charWidth;
+            }
+        }
     }
 }
