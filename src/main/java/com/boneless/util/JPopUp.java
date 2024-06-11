@@ -17,8 +17,6 @@ public class JPopUp extends JPanel {
     private final int startY;
     private final int centerY;
 
-    private boolean showing;
-
     private Timer animationTimer;
 
     public JPopUp(JPanel parent, int width, int height) {
@@ -31,23 +29,10 @@ public class JPopUp extends JPanel {
         centerY = (screenHeight - parent.getHeight()) / 2 - height / 2;
 
         setLocation(startX, startY);
-
-        //check showing thread
-        Thread thread = new Thread(() -> {
-            while(true){
-                try {
-                    if(!showing){
-                        removeAll();
-                    }
-                    //noinspection BusyWait
-                    Thread.sleep(16);
-                } catch (InterruptedException ignore) {}
-            }
-        });
     }
 
     public void showPopUp(String title, String message, int type, JButton... buttons) {
-        showing = true;
+        removeAll();
         Color mainColor;
         Color fontColor;
 
@@ -71,8 +56,22 @@ public class JPopUp extends JPanel {
         headerPanel.add(titleLabel);
 
         //body
-        JPanel bodyPanel = new JPanel();
+        JPanel bodyPanel = new JPanel(new GridBagLayout());
         bodyPanel.setBackground(mainColor);
+
+        switch (type){
+            case BUTTON_INPUT: {
+                JRoundedButton inputButton = new JRoundedButton("Test");
+
+                bodyPanel.add(inputButton, gbc);
+            }
+            case TEXT_INPUT: {
+                //
+            }
+            case MESSAGE: {
+                //
+            }
+        }
 
         //footer
         JPanel footerPanel = new JPanel();
@@ -120,7 +119,6 @@ public class JPopUp extends JPanel {
 
                 if (elapsedTime > 1.0f) {
                     elapsedTime = 1.0f;
-                    removeAll();
                     ((Timer) e.getSource()).stop();
                 }
 

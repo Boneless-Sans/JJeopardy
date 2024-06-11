@@ -1,9 +1,6 @@
 package com.boneless;
 
-import com.boneless.util.ButtonIcon;
-import com.boneless.util.GeneralUtils;
-import com.boneless.util.JPopUp;
-import com.boneless.util.JsonFile;
+import com.boneless.util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,6 +44,8 @@ public class Settings extends JPanel {
     private final ArrayList<ButtonIcon> toggleButtonList = new ArrayList<>();
 
     private final JPopUp popup;
+
+    private boolean changesMade = false;
 
     public Settings() {
         setLayout(null);
@@ -145,7 +144,7 @@ public class Settings extends JPanel {
         panel.add(new JLabel(item));
 
         JRoundedButton button = new JRoundedButton(getKeyBindFor(item), item.toLowerCase());
-        button.addActionListener(e -> new JPopUp(panel, 500, 300));
+        button.addActionListener(e -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT));
         keyBindButtonList.add(button);
 
         panel.add(button);
@@ -222,56 +221,27 @@ public class Settings extends JPanel {
     }
 
     private void exit(){
-        changeCurrentPanel(mainMenu, this, false);
-        mainMenu.timer.start();
-    }
+        if(changesMade) {
+            JRoundedButton cancel = new JRoundedButton("Continue");
+            cancel.addActionListener(e -> popup.hidePopUp());
 
-    private static class JRoundedButton extends JButton{
-        private String id;
-        private boolean renderBorder = false;
+            JRoundedButton exitNoSave = new JRoundedButton("Exit Without Saving");
+            exitNoSave.addActionListener(e -> {
+                changeCurrentPanel(mainMenu, this, false);
+                mainMenu.timer.start();
+            });
 
-        public JRoundedButton(String text){
-            super(text);
-            setFocusable(false);
-        }
+            JRoundedButton exitSave = new JRoundedButton("Exit and Save");
+            exitSave.addActionListener(e -> {
+                save();
+                changeCurrentPanel(mainMenu, this, false);
+                mainMenu.timer.start();
+            });
 
-        public JRoundedButton(String text, String id){
-            this(text);
-            this.id = id;
-            renderBorder = true;
-        }
-
-        public String getId(){return id;}
-
-        @Override
-        protected void paintComponent(Graphics g){
-            //super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D)g;
-
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            g2d.setColor(Color.white);
-            g2d.fillRoundRect(0,0,getWidth(),getHeight(),25,25);
-
-            g2d.setColor(Color.black);
-            g2d.setFont(generateFont(15));
-            FontMetrics fm = g2d.getFontMetrics();
-            int textWidth = fm.stringWidth(getText());
-            int textHeight = fm.getAscent();
-            int x = (getWidth() - textWidth) / 2;
-            int y = ((getHeight() + textHeight) / 2) - 1;
-            g2d.drawString(getText(), x, y);
-        }
-
-        @Override protected void paintBorder(Graphics g){
-            if(renderBorder){
-                Graphics2D g2d = (Graphics2D) g;
-
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2d.setColor(Color.black);
-                g2d.drawRoundRect(0,0,getWidth(),getHeight(), 25, 25);
-            }
+            popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, cancel, exitSave, exitNoSave);
+        } else {
+            changeCurrentPanel(mainMenu, this, false);
+            mainMenu.timer.start();
         }
     }
 

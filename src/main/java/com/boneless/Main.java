@@ -16,10 +16,12 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName;
+    public static String fileName = "template.json";
     public static String settingsFile;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
+
+    public static KeyEvent lastKeyPressed;
 
     //init global panels
     public static MainMenu mainMenu;
@@ -135,6 +137,7 @@ public class Main extends JFrame implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
+        lastKeyPressed = e;
         //esc handler
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "keyBinds", "exit")))) {
             if(mainMenu.menuIsActive) { //menu
