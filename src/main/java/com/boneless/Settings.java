@@ -103,8 +103,25 @@ public class Settings extends JPanel {
         panel.setPreferredSize(new Dimension(screenWidth, screenHeight));
 
         panel.add(sectionLabel("Key Binds"));
-        panel.add(createKeyBindPanel("Exit"));
-        panel.add(createKeyBindPanel("Advance"));
+
+        SettingsOptionPanel settings = new SettingsOptionPanel();
+
+        JPanel test = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        test.setOpaque(false);
+
+        JLabel textTest = new JLabel("Test");
+        textTest.setFont(generateFont(40));
+        test.add(textTest);
+
+        JPanel rightTest = new JPanel(new GridBagLayout());
+        rightTest.setOpaque(false);
+        ButtonIcon icon = new ButtonIcon(64, false);
+        rightTest.add(icon, gbc);
+
+        settings.add(test);
+        settings.add(rightTest);
+
+        panel.add(settings);
 
         panel.add(divider());
         panel.add(sectionLabel("Misc"));
