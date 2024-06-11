@@ -1,13 +1,14 @@
 package com.boneless;
 
 import com.boneless.util.ButtonIcon;
+import com.boneless.util.GeneralUtils;
+import com.boneless.util.JPopUp;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static com.boneless.Main.*;
@@ -29,7 +30,7 @@ public class Settings extends JPanel {
             -Item Name | X
             -State | X
     -Footer | X
-        -Save Button | X
+        -Save Button | √
         -Exit Button | √
     -Settings | X
         -Exit | X
@@ -45,6 +46,8 @@ public class Settings extends JPanel {
     private final ArrayList<JRoundedButton> keyBindButtonList = new ArrayList<>();
     private final ArrayList<ButtonIcon> toggleButtonList = new ArrayList<>();
 
+    private final JPopUp popup;
+
     public Settings() {
         setLayout(null);
 
@@ -56,6 +59,8 @@ public class Settings extends JPanel {
             fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
         }
         accentColor = new Color(clamp(mainColor.getRed() - 40), clamp(mainColor.getGreen() - 40), clamp(mainColor.getBlue() - 40));
+
+        add(popup = new JPopUp(this, 500,300));
 
         JPanel masterPanel = new JPanel(new BorderLayout());
         masterPanel.setBounds(0,0,screenWidth, screenHeight);
@@ -140,6 +145,7 @@ public class Settings extends JPanel {
         panel.add(new JLabel(item));
 
         JRoundedButton button = new JRoundedButton(getKeyBindFor(item), item.toLowerCase());
+        button.addActionListener(e -> new JPopUp(panel, 500, 300));
         keyBindButtonList.add(button);
 
         panel.add(button);
@@ -150,22 +156,28 @@ public class Settings extends JPanel {
     private JPanel createTogglePanel(String item){
         JPanel panel = new SettingsOptionPanel();
 
-        JPanel leftPanel = new JPanel(new FlowLayout());
+        JPanel leftPanel = new JPanel(new GridBagLayout());
         leftPanel.setBackground(Color.red);
 
         JLabel itemText = new JLabel(item);
         itemText.setFont(generateFont(15));
         itemText.setForeground(Color.black);
 
-        leftPanel.add(itemText);
+        leftPanel.add(itemText, gbc);
 
-        JPanel rightPanel = new JPanel();
+        JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setBackground(Color.cyan);
 
         ButtonIcon button = new ButtonIcon(64, false);
-        button.addActionListener(null);
+        button.addActionListener(e -> {
+            if(!button.isChecked()){
+                popup.showPopUp("This is a title", "This is a message", JPopUp.MESSAGE, new JButton("Test"), new JButton("Test 2"));
+            } else {
+                popup.hidePopUp();
+            }
+        });
 
-        rightPanel.add(button);
+        rightPanel.add(button, gbc);
 
         panel.add(leftPanel);
         panel.add(rightPanel);
@@ -178,11 +190,7 @@ public class Settings extends JPanel {
         panel.setBackground(accentColor);
 
         JRoundedButton saveButton = new JRoundedButton("Save");
-        saveButton.addActionListener(e -> {
-            save();
-            System.out.println(settingsFile);
-            JsonFile.writeln(settingsFile, "key_binds","Test Bind","Bound Item");
-        });
+        saveButton.addActionListener(e -> save());
 
         JRoundedButton exitButton = new JRoundedButton("Exit");
         exitButton.addActionListener(e -> exit());
@@ -194,7 +202,7 @@ public class Settings extends JPanel {
 
     private String getKeyBindFor(String id){
         String result = JsonFile.read(settingsFile, "key_binds",id.toLowerCase());
-        if(result.toLowerCase().contains("key")){
+        if(result.toLowerCase().contains("invalid")){
             return null;
         } else {
             return result;
