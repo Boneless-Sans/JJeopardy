@@ -124,6 +124,10 @@ public class GeneralUtils {
         return new Font("Arial", Font.PLAIN, fontSize);
     }
 
+    public static String firstUpperCase(String text){
+        return text.substring(0, 1).toUpperCase() + text.substring(1);
+    }
+
     public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
         int selfStartY = self.getY();
         int selfTargetY;

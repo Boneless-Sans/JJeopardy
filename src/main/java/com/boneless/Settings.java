@@ -143,8 +143,11 @@ public class Settings extends JPanel {
 
         panel.add(new JLabel(item));
 
+        JRoundedButton set = new JRoundedButton("Set");
+        set.addActionListener(e -> {/*todo: fill out*/});
+
         JRoundedButton button = new JRoundedButton(getKeyBindFor(item), item.toLowerCase());
-        button.addActionListener(e -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT));
+        button.addActionListener(e -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT, popup.BUTTON_CANCEL, set));
         keyBindButtonList.add(button);
 
         panel.add(button);
@@ -170,9 +173,9 @@ public class Settings extends JPanel {
         ButtonIcon button = new ButtonIcon(64, false);
         button.addActionListener(e -> {
             if(!button.isChecked()){
-                popup.showPopUp("This is a title", "This is a message", JPopUp.MESSAGE, new JButton("Test"), new JButton("Test 2"));
+                //
             } else {
-                popup.hidePopUp();
+                //
             }
         });
 
@@ -238,7 +241,7 @@ public class Settings extends JPanel {
                 mainMenu.timer.start();
             });
 
-            popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, cancel, exitSave, exitNoSave);
+            popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, null, cancel, exitSave, exitNoSave);
         } else {
             changeCurrentPanel(mainMenu, this, false);
             mainMenu.timer.start();
