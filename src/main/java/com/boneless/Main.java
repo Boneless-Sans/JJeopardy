@@ -46,10 +46,9 @@ public class Main extends JFrame implements KeyListener {
         try {
             if (!file.exists() && file.createNewFile()) {
                 System.out.println("Settings File Missing, Created New File At: " + file.getAbsolutePath());
-            }
-
-            try(FileWriter writer = new FileWriter(file)){
-                writer.write("{\n}");
+                try(FileWriter writer = new FileWriter(file)){
+                    writer.write("{\n}");
+                }
             }
         } catch (Exception e){
             System.out.println("Error Creating File: \n" + e);

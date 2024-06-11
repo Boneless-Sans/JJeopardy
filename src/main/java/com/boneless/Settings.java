@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -40,8 +41,8 @@ public class Settings extends JPanel {
     private final Color accentColor;
     private final Color fontColor;
 
-    private final ArrayList<JRoundedButton> keyBindButtonList = new ArrayList<>();
-    private final ArrayList<ButtonIcon> toggleButtonList = new ArrayList<>();
+    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();
+    private final HashMap<String, ButtonIcon> toggleButtonList = new HashMap<>();
 
     private final JPopUp popup;
 
@@ -70,8 +71,6 @@ public class Settings extends JPanel {
         masterPanel.add(footer(), BorderLayout.SOUTH);
 
         add(masterPanel);
-
-        save();
     }
 
     private JPanel header(){
@@ -86,8 +85,9 @@ public class Settings extends JPanel {
 
         return header;
     }
+
     private HiddenScroller mainBody(){
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT)){
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER)){
             @Override
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
@@ -102,30 +102,19 @@ public class Settings extends JPanel {
         };
         panel.setPreferredSize(new Dimension(screenWidth, screenHeight));
 
+        JRoundedButton saveExit = new JRoundedButton("Save");
+        saveExit.addActionListener(e -> {
+
+        });
+
         panel.add(sectionLabel("Key Binds"));
-
-        SettingsOptionPanel settings = new SettingsOptionPanel();
-
-        JPanel test = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        test.setOpaque(false);
-
-        JLabel textTest = new JLabel("Test");
-        textTest.setFont(generateFont(40));
-        test.add(textTest);
-
-        JPanel rightTest = new JPanel(new GridBagLayout());
-        rightTest.setOpaque(false);
-        ButtonIcon icon = new ButtonIcon(64, false);
-        rightTest.add(icon, gbc);
-
-        settings.add(test);
-        settings.add(rightTest);
-
-        panel.add(settings);
+        panel.add(createKeyBindPanel("Exit", "exit",(Test) -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT, popup.BUTTON_CANCEL, saveExit)));
+        panel.add(createKeyBindPanel("Advance", "advance",(Test) -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT, popup.BUTTON_CANCEL, saveExit)));
 
         panel.add(divider());
         panel.add(sectionLabel("Misc"));
-        panel.add(createTogglePanel("Fullscreen"));
+        panel.add(createTogglePanel("Fullscreen", "fullscreen"));
+        panel.add(createTogglePanel("Play Audio", "audio"));
 
         HiddenScroller scroller = new HiddenScroller(panel, false);
         scroller.setBackground(mainColor);
@@ -143,7 +132,7 @@ public class Settings extends JPanel {
 
     private JPanel sectionLabel(String text){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setPreferredSize(new Dimension(1100, 70));
+        panel.setPreferredSize(new Dimension(700,60));
         panel.setOpaque(false);
 
         JLabel label = new JLabel(text);
@@ -155,48 +144,69 @@ public class Settings extends JPanel {
         return panel;
     }
 
-    private JPanel createKeyBindPanel(String item){
+    private final GridBagConstraints leftGBC = new GridBagConstraints(){{
+        gridx = 0;
+        gridy = 0;
+        weightx = 1;
+        weighty = 1;
+        anchor = GridBagConstraints.WEST;
+        insets = new Insets(0,50,0,0);
+    }};
+
+    private final GridBagConstraints rightGBC = new GridBagConstraints(){{
+        gridx = 0;
+        gridy = 0;
+        weightx = 1;
+        weighty = 1;
+        anchor = GridBagConstraints.EAST;
+        insets = new Insets(0,0,0,50);
+    }};
+
+    private JPanel createKeyBindPanel(String text, String key, SetButtonText action){
         JPanel panel = new SettingsOptionPanel();
 
-        panel.add(new JLabel(item));
+        JPanel leftPanel = new JPanel(new GridBagLayout());
+        leftPanel.setOpaque(false);
 
-        JRoundedButton set = new JRoundedButton("Set");
-        set.addActionListener(e -> {/*todo: fill out*/});
+        JLabel itemText = new JLabel(text);
+        itemText.setFont(generateFont(40));
 
-        JRoundedButton button = new JRoundedButton(getKeyBindFor(item), item.toLowerCase());
-        button.addActionListener(e -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT, popup.BUTTON_CANCEL, set));
-        keyBindButtonList.add(button);
+        leftPanel.add(itemText, leftGBC);
 
-        panel.add(button);
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setOpaque(false);
+
+        JRoundedButton button = new JRoundedButton(JsonFile.read(settingsFile, "key_binds", key));
+        button.addActionListener(e -> );
+
+        keyBindButtonList.put(key, button);
+
+        rightPanel.add(button, rightGBC);
+
+        panel.add(leftPanel);
+        panel.add(rightPanel);
 
         return panel;
     }
 
-    private JPanel createTogglePanel(String item){
+    private JPanel createTogglePanel(String text, String key){
         JPanel panel = new SettingsOptionPanel();
 
         JPanel leftPanel = new JPanel(new GridBagLayout());
-        leftPanel.setBackground(Color.red);
+        leftPanel.setOpaque(false);
 
-        JLabel itemText = new JLabel(item);
-        itemText.setFont(generateFont(15));
-        itemText.setForeground(Color.black);
+        JLabel itemText = new JLabel(text);
+        itemText.setFont(generateFont(40));
 
-        leftPanel.add(itemText, gbc);
+        leftPanel.add(itemText, leftGBC);
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
-        rightPanel.setBackground(Color.cyan);
+        rightPanel.setOpaque(false);
 
-        ButtonIcon button = new ButtonIcon(64, false);
-        button.addActionListener(e -> {
-            if(!button.isChecked()){
-                //
-            } else {
-                //
-            }
-        });
+        ButtonIcon button = new ButtonIcon(64, Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", key)));
+        toggleButtonList.put(key, button);
 
-        rightPanel.add(button, gbc);
+        rightPanel.add(button, rightGBC);
 
         panel.add(leftPanel);
         panel.add(rightPanel);
@@ -214,8 +224,8 @@ public class Settings extends JPanel {
         JRoundedButton exitButton = new JRoundedButton("Exit");
         exitButton.addActionListener(e -> exit());
 
-        panel.add(saveButton);
         panel.add(exitButton);
+        panel.add(saveButton);
         return panel;
     }
 
@@ -231,13 +241,15 @@ public class Settings extends JPanel {
     private void save(){
         System.out.println("Saving Settings...");
 
-        for(JRoundedButton button : keyBindButtonList){
-            JsonFile.writeln(settingsFile, "key_binds",button.getId(),button.getText());
-        }
+        JsonFile.writeln(settingsFile, "key_binds", "esc", keyBindButtonList.get("esc").getText());
+        JsonFile.writeln(settingsFile, "key_binds", "advance", keyBindButtonList.get("advance").getText());
 
-        for(ButtonIcon button : toggleButtonList){
-            //
-        }
+        JsonFile.writeln(settingsFile, "misc","fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
+        JsonFile.writeln(settingsFile, "misc","audio",getStringBoolean(toggleButtonList.get("audio").isChecked()));
+    }
+
+    private String getStringBoolean(boolean bool){
+        return bool ? "true" : "false";
     }
 
     private void exit(){
@@ -280,5 +292,10 @@ public class Settings extends JPanel {
             g2d.fillRoundRect(0, 0, getWidth(), getHeight(),25,25);
         }
         @Override protected void paintBorder(Graphics g) {} //disable
+    }
+
+    @FunctionalInterface
+    interface SetButtonText {
+        void run(JButton button);
     }
 }

@@ -1,9 +1,7 @@
 package com.boneless.util;
 
-import com.boneless.Settings;
 
 import javax.swing.*;
-//import javax.swing.text.TextAction;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,9 +41,7 @@ public class JPopUp extends JPanel {
         setLocation(startX, startY);
     }
 
-    private boolean checkForPress = false;
-
-    public String showPopUp(String title, String message, int type, JRoundedButton... buttons) {
+    public void showPopUp(String title, String message, int type, JRoundedButton... buttons) {
         removeAll();
         Color mainColor;
         Color fontColor;
@@ -64,7 +60,7 @@ public class JPopUp extends JPanel {
         headerPanel.setBackground(accentColor);
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(generateFont(20));
+        titleLabel.setFont(generateFont(15));
         titleLabel.setForeground(fontColor);
 
         headerPanel.add(titleLabel);
@@ -75,27 +71,7 @@ public class JPopUp extends JPanel {
 
         switch (type){
             case BUTTON_INPUT: {
-                JRoundedButton inputButton = new JRoundedButton("Click to Set");
-                inputButton.setPreferredSize(new Dimension(300,100));
-                inputButton.setFocusable(true);
-                inputButton.addKeyListener(new KeyListener() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        switch (e.getKeyChar()) {
-                            case 8: inputButton.setText("Backspace"); break;
-                            case 10: inputButton.setText("Enter"); break;
-                            case 27: inputButton.setText("Esc"); break;
-                            case 32: inputButton.setText("Space"); break;
-                            case 127: inputButton.setText("Delete"); break;
-                            default: inputButton.setText(firstUpperCase(String.valueOf(e.getKeyChar())));
-                        }
-                        keyPressed = inputButton.getText();
-                        revalidate();
-                        repaint();
-                    }
-                    @Override public void keyPressed(KeyEvent e) {}
-                    @Override public void keyReleased(KeyEvent e) {}
-                });
+                JRoundedButton inputButton = createKeyButton();
 
                 bodyPanel.add(inputButton, gbc);
             }
@@ -122,7 +98,31 @@ public class JPopUp extends JPanel {
 
         animateToPosition(centerY);
 
-        return null;
+    }
+
+    private JRoundedButton createKeyButton() {
+        JRoundedButton inputButton = new JRoundedButton("Click to Set");
+        inputButton.setPreferredSize(new Dimension(300,100));
+        inputButton.setFocusable(true);
+        inputButton.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                switch (e.getKeyChar()) {
+                    case 8: inputButton.setText("Backspace"); break;
+                    case 10: inputButton.setText("Enter"); break;
+                    case 27: inputButton.setText("Esc"); break;
+                    case 32: inputButton.setText("Space"); break;
+                    case 127: inputButton.setText("Delete"); break;
+                    default: inputButton.setText(firstUpperCase(String.valueOf(e.getKeyChar())));
+                }
+                keyPressed = inputButton.getText();
+                revalidate();
+                repaint();
+            }
+            @Override public void keyPressed(KeyEvent e) {}
+            @Override public void keyReleased(KeyEvent e) {}
+        });
+        return inputButton;
     }
 
     public void hidePopUp() {
@@ -155,9 +155,6 @@ public class JPopUp extends JPanel {
 
                 if (elapsedTime > 1.0f) {
                     elapsedTime = 1.0f;
-                    if(targetY == startY){
-
-                    }
                     ((Timer) e.getSource()).stop();
                 }
 
