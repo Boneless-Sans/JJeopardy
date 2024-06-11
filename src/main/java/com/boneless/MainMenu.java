@@ -83,7 +83,7 @@ public class MainMenu extends ScrollGridPanel {
                 Graphics2D g2d = (Graphics2D) g;
 
                 //draw background
-                g2d.setPaint(new GradientPaint(0,0,color,getWidth(),getHeight(),ScrollGridPanel.adjustColor(color)));
+                g2d.setPaint(new GradientPaint(0,0,color,getWidth(),getHeight(),adjustColor(color)));
                 g2d.fill(new RoundRectangle2D.Double(0, 0, getWidth(), getHeight(), 0,0));
             }
         };
@@ -181,7 +181,7 @@ public class MainMenu extends ScrollGridPanel {
                     if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                         File file = chooser.getSelectedFile();
                         changeFileName(String.valueOf(file));
-                        changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
+                        //changeColor(parseColor(JsonFile.read(fileName, "data", "global_color")));
                         renderIcon(128);
                     }
 

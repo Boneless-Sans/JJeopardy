@@ -1,13 +1,11 @@
 package com.boneless;
 
-import com.boneless.util.ButtonIcon;
-import com.boneless.util.JsonFile;
+import com.boneless.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import static com.boneless.Main.*;
@@ -29,7 +27,7 @@ public class Settings extends JPanel {
             -Item Name | X
             -State | X
     -Footer | X
-        -Save Button | X
+        -Save Button | √
         -Exit Button | √
     -Settings | X
         -Exit | X
@@ -45,6 +43,10 @@ public class Settings extends JPanel {
     private final ArrayList<JRoundedButton> keyBindButtonList = new ArrayList<>();
     private final ArrayList<ButtonIcon> toggleButtonList = new ArrayList<>();
 
+    private final JPopUp popup;
+
+    private boolean changesMade = false;
+
     public Settings() {
         setLayout(null);
 
@@ -57,12 +59,17 @@ public class Settings extends JPanel {
         }
         accentColor = new Color(clamp(mainColor.getRed() - 40), clamp(mainColor.getGreen() - 40), clamp(mainColor.getBlue() - 40));
 
+        add(popup = new JPopUp(this, 500,300));
+
         JPanel masterPanel = new JPanel(new BorderLayout());
-        masterPanel.setBounds(0,0,screenWidth,screenHeight);
+        masterPanel.setBounds(0,0,screenWidth, screenHeight);
+        masterPanel.setOpaque(false);
 
         masterPanel.add(header(), BorderLayout.NORTH);
         masterPanel.add(mainBody(), BorderLayout.CENTER);
         masterPanel.add(footer(), BorderLayout.SOUTH);
+
+        add(masterPanel);
 
         save();
     }
@@ -137,6 +144,7 @@ public class Settings extends JPanel {
         panel.add(new JLabel(item));
 
         JRoundedButton button = new JRoundedButton(getKeyBindFor(item), item.toLowerCase());
+        button.addActionListener(e -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT));
         keyBindButtonList.add(button);
 
         panel.add(button);
@@ -147,22 +155,28 @@ public class Settings extends JPanel {
     private JPanel createTogglePanel(String item){
         JPanel panel = new SettingsOptionPanel();
 
-        JPanel leftPanel = new JPanel(new FlowLayout());
+        JPanel leftPanel = new JPanel(new GridBagLayout());
         leftPanel.setBackground(Color.red);
 
         JLabel itemText = new JLabel(item);
         itemText.setFont(generateFont(15));
         itemText.setForeground(Color.black);
 
-        leftPanel.add(itemText);
+        leftPanel.add(itemText, gbc);
 
-        JPanel rightPanel = new JPanel();
+        JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setBackground(Color.cyan);
 
         ButtonIcon button = new ButtonIcon(64, false);
-        button.addActionListener(null);
+        button.addActionListener(e -> {
+            if(!button.isChecked()){
+                popup.showPopUp("This is a title", "This is a message", JPopUp.MESSAGE, new JButton("Test"), new JButton("Test 2"));
+            } else {
+                popup.hidePopUp();
+            }
+        });
 
-        rightPanel.add(button);
+        rightPanel.add(button, gbc);
 
         panel.add(leftPanel);
         panel.add(rightPanel);
@@ -175,11 +189,7 @@ public class Settings extends JPanel {
         panel.setBackground(accentColor);
 
         JRoundedButton saveButton = new JRoundedButton("Save");
-        saveButton.addActionListener(e -> {
-            save();
-            System.out.println(settingsFile);
-            JsonFile.writeln(settingsFile, "key_binds","Test Bind","Bound Item");
-        });
+        saveButton.addActionListener(e -> save());
 
         JRoundedButton exitButton = new JRoundedButton("Exit");
         exitButton.addActionListener(e -> exit());
@@ -191,7 +201,7 @@ public class Settings extends JPanel {
 
     private String getKeyBindFor(String id){
         String result = JsonFile.read(settingsFile, "key_binds",id.toLowerCase());
-        if(result.toLowerCase().contains("key")){
+        if(result.toLowerCase().contains("invalid")){
             return null;
         } else {
             return result;
@@ -211,55 +221,27 @@ public class Settings extends JPanel {
     }
 
     private void exit(){
-        changeCurrentPanel(mainMenu, this, false);
-    }
+        if(changesMade) {
+            JRoundedButton cancel = new JRoundedButton("Continue");
+            cancel.addActionListener(e -> popup.hidePopUp());
 
-    private static class JRoundedButton extends JButton{
-        private String id;
-        private boolean renderBorder = false;
+            JRoundedButton exitNoSave = new JRoundedButton("Exit Without Saving");
+            exitNoSave.addActionListener(e -> {
+                changeCurrentPanel(mainMenu, this, false);
+                mainMenu.timer.start();
+            });
 
-        public JRoundedButton(String text){
-            super(text);
-            setFocusable(false);
-        }
+            JRoundedButton exitSave = new JRoundedButton("Exit and Save");
+            exitSave.addActionListener(e -> {
+                save();
+                changeCurrentPanel(mainMenu, this, false);
+                mainMenu.timer.start();
+            });
 
-        public JRoundedButton(String text, String id){
-            this(text);
-            this.id = id;
-            renderBorder = true;
-        }
-
-        public String getId(){return id;}
-
-        @Override
-        protected void paintComponent(Graphics g){
-            //super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D)g;
-
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            g2d.setColor(Color.white);
-            g2d.fillRoundRect(0,0,getWidth(),getHeight(),25,25);
-
-            g2d.setColor(Color.black);
-            g2d.setFont(generateFont(15));
-            FontMetrics fm = g2d.getFontMetrics();
-            int textWidth = fm.stringWidth(getText());
-            int textHeight = fm.getAscent();
-            int x = (getWidth() - textWidth) / 2;
-            int y = ((getHeight() + textHeight) / 2) - 1;
-            g2d.drawString(getText(), x, y);
-        }
-
-        @Override protected void paintBorder(Graphics g){
-            if(renderBorder){
-                Graphics2D g2d = (Graphics2D) g;
-
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                g2d.setColor(Color.black);
-                g2d.drawRoundRect(0,0,getWidth(),getHeight(), 25, 25);
-            }
+            popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, cancel, exitSave, exitNoSave);
+        } else {
+            changeCurrentPanel(mainMenu, this, false);
+            mainMenu.timer.start();
         }
     }
 

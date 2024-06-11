@@ -41,16 +41,16 @@ public class GeneralUtils {
         BufferedImage image = new BufferedImage(128,128, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = image.createGraphics();
 
-        g2d.setPaint(new GradientPaint(0,0,color,128,128,ScrollGridPanel.adjustColor(color)));
+        g2d.setPaint(new GradientPaint(0,0,color,128,128,adjustColor(color)));
         g2d.fillRoundRect(posX,posY,size,size,arc,arc);
 
-        Color forgroundColor = ScrollGridPanel.adjustColor(color);
+        Color forgroundColor = adjustColor(color);
         int smallerSize = (int)(size * 0.8);
         int smallerPosX = posX + (size - smallerSize) / 2;
         int smallerPosY = posY + (size - smallerSize) / 2;
         int smallerArc = 20;
 
-        g2d.setPaint(new GradientPaint(0,0,forgroundColor,128,128,ScrollGridPanel.adjustColor(forgroundColor)));
+        g2d.setPaint(new GradientPaint(0,0,forgroundColor,128,128,adjustColor(forgroundColor)));
         g2d.fillRoundRect(smallerPosX,smallerPosY,smallerSize,smallerSize,smallerArc,smallerArc);
 
         g2d.setFont(font);
@@ -97,6 +97,15 @@ public class GeneralUtils {
         int green = Integer.parseInt(split[1]);
         int blue = Integer.parseInt(split[2]);
         return new Color(red,green,blue,alpha);
+    }
+
+    public static Color adjustColor(Color color) {
+        int totalRGB = color.getRed() + color.getGreen() + color.getBlue();
+        int adjustment = totalRGB > 180 ? -100 : 100;
+        int r = clamp(color.getRed() + adjustment);
+        int g = clamp(color.getGreen() + adjustment);
+        int b = clamp(color.getBlue() + adjustment);
+        return new Color(r, g, b);
     }
 
     public static Font generateFont(int fontSize){

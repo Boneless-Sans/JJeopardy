@@ -3,112 +3,79 @@ package com.boneless.util;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
-import static com.boneless.util.GeneralUtils.*;
+import static com.boneless.util.GeneralUtils.adjustColor;
 
 public class ScrollGridPanel extends JPanel {
-    public static final double SCROLL_SPEED_X = 1;
-    public static final double SCROLL_SPEED_Y = 1;
-    private final ArrayList<GradientSquare> squareList = new ArrayList<>();
-    public static final int GAP = 1;
-    public static final int SQUARE_SIZE = 70;
     public Timer timer;
-    private Color color1 = new Color(0,0,150);
-    private Color color2 = new Color(20,20,255);
+    private double offsetX = 0;
+    private double offsetY = 0;
+    private final int squareSize = 80;
+    private final Color squareColor = Color.blue;
+    private double angle = 225;
+    private double speed = 50; //Pixels Per Second
+    private long lastUpdateTime;
+    private BufferedImage buffer;
 
     public ScrollGridPanel() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        initializeSquares();
-        setBackground(Color.black);
-
-        timer = new Timer(20, e -> {
-            moveSquares();
-            repaint();
-        });
-
-        timer.start(); //disabled for now, macbook SHIT
+        setLayout(null);
+        setDoubleBuffered(true); //enable double buffer
+        timer = new Timer(10, e -> updateOffsets());
+        timer.start();
+        lastUpdateTime = System.currentTimeMillis();
     }
 
-    protected void changeColor(Color color) {
-        color1 = color;
-        color2 = adjustColor(color);
-        for (GradientSquare gradientSquare : squareList) {
-            gradientSquare.changeColors(color1, color2);
-        }
+    public void setAngle(double angle) {
+        this.angle = angle % 360;
     }
 
-    public static Color adjustColor(Color color) {
-        int totalRGB = color.getRed() + color.getGreen() + color.getBlue();
-        int adjustment = totalRGB > 180 ? -100 : 100;
-        int r = clamp(color.getRed() + adjustment);
-        int g = clamp(color.getGreen() + adjustment);
-        int b = clamp(color.getBlue() + adjustment);
-        return new Color(r, g, b);
+    public void setSpeed(double speed) {
+        this.speed = speed; //prob not needed, but it allows move dir change
     }
 
-    private void initializeSquares() {
-        for (int y = -SQUARE_SIZE; y < HEIGHT + SQUARE_SIZE; y += (SQUARE_SIZE + GAP)) {
-            for (int x = -SQUARE_SIZE; x < WIDTH + SQUARE_SIZE; x += (SQUARE_SIZE + GAP)) {
-                squareList.add(new GradientSquare(x, y, SQUARE_SIZE, color1, color2));
-            }
-        }
+    private void updateOffsets() {
+        long currentTime = System.currentTimeMillis();
+        double elapsedTime = (currentTime - lastUpdateTime) / 1000.0; //in seconds
+        lastUpdateTime = currentTime;
+
+        double radians = Math.toRadians(angle);
+
+        offsetX = (offsetX + speed * elapsedTime * Math.cos(radians)) % squareSize;
+        offsetY = (offsetY + speed * elapsedTime * Math.sin(radians)) % squareSize;
+
+        if (offsetX < 0) offsetX += squareSize;
+        if (offsetY < 0) offsetY += squareSize;
+
+        repaint();
     }
-    private void moveSquares() {
-        for (GradientSquare square : squareList) {
-            square.move((int) SCROLL_SPEED_X, (int) SCROLL_SPEED_Y, WIDTH, HEIGHT); //pause to optimize
-        }
-    }
-    private void drawSquares(Graphics2D g2d) {
-        for (GradientSquare square : squareList) {
-            square.draw(g2d);
-        }
-    }
-    public static BufferedImage createGradientImage(int size, Color color1, Color color2) {
-        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = image.createGraphics();
-        GradientPaint gradient = new GradientPaint(0, 0, color1, size, size, color2);
-        g2d.setPaint(gradient);
-        g2d.fillRect(0, 0, size, size);
-        g2d.dispose();
-        return image;
-    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        drawSquares(g2d);
-    }
-    private static class GradientSquare {
-        private int x;
-        private int y;
-        private final int size;
-        private BufferedImage image;
 
-        public GradientSquare(int x, int y, int size, Color color1, Color color2) {
-            this.x = x;
-            this.y = y;
-            this.size = size;
-            this.image = createGradientImage(size, color1, color2);
+        if (buffer == null || buffer.getWidth() != getWidth() || buffer.getHeight() != getHeight()) {
+            buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
-        public void changeColors(Color color1, Color color2){
-            image = createGradientImage(size, color1, color2);
-        }
-        public void move(int speedX, int speedY, int width, int height) {
-            x += speedX;
-            y += speedY;
 
-            if (x > width) {
-                x = -size;
-            }
+        Graphics2D g2d = buffer.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            if (y > height) {
-                y = -size;
+        //calc + padding
+        int rows = (getHeight() / squareSize) + 2;
+        int cols = (getWidth() / squareSize) + 2;
+
+        //draw
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                int x = (int) (col * squareSize - offsetX);
+                int y = (int) (row * squareSize - offsetY);
+
+                g2d.setPaint(new GradientPaint(x, y, squareColor, x + squareSize, y + squareSize, adjustColor(squareColor)));
+                g2d.fillRect(x, y, squareSize, squareSize);
             }
         }
 
-        public void draw(Graphics2D g2d) {
-            g2d.drawImage(image, x, y, null);
-        }
+        g.drawImage(buffer, 0, 0, null);
+        g2d.dispose();
     }
 }

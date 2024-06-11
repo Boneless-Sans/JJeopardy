@@ -16,10 +16,12 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName;
+    public static String fileName = "template.json";
     public static String settingsFile;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
+
+    public static KeyEvent lastKeyPressed;
 
     //init global panels
     public static MainMenu mainMenu;
@@ -36,9 +38,6 @@ public class Main extends JFrame implements KeyListener {
 
         //run program
         SwingUtilities.invokeLater(() -> new Main(args));
-
-        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
     }
 
     private static void setupSettings(){
@@ -64,6 +63,9 @@ public class Main extends JFrame implements KeyListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
+
+        screenWidth = 1200;
+        screenHeight = 700;
 
         try {
             if(System.getProperty("os.name").equalsIgnoreCase("windows")) {
@@ -135,6 +137,7 @@ public class Main extends JFrame implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {
+        lastKeyPressed = e;
         //esc handler
         if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "keyBinds", "exit")))) {
             if(mainMenu.menuIsActive) { //menu
