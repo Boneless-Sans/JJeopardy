@@ -33,7 +33,7 @@ public class JRoundedButton extends JButton {
         g2d.fillRoundRect(0,0,getWidth(),getHeight(),25,25);
 
         g2d.setColor(Color.black);
-        g2d.setFont(generateFont(15));
+        g2d.setFont(generateFont(getFont().getSize()));
         FontMetrics fm = g2d.getFontMetrics();
         int textWidth = fm.stringWidth(getText());
         int textHeight = fm.getAscent();

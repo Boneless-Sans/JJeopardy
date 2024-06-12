@@ -26,6 +26,9 @@ public class JPopUp extends JPanel {
     private Timer animationTimer;
     private Timer clearTimer;
 
+    private JButton sourceButton;
+    private JRoundedButton inputButton;
+
     public JPopUp(JPanel parent, int width, int height) {
         setSize(width, height);
         setLayout(new BorderLayout());
@@ -41,7 +44,9 @@ public class JPopUp extends JPanel {
         setLocation(startX, startY);
     }
 
-    public void showPopUp(String title, String message, int type, JRoundedButton... buttons) {
+    public void showPopUp(String title, String message, JButton sourceButton, int type, JButton... actionButtons) {
+        this.sourceButton = sourceButton;
+
         removeAll();
         Color mainColor;
         Color fontColor;
@@ -87,9 +92,8 @@ public class JPopUp extends JPanel {
         JPanel footerPanel = new JPanel();
         footerPanel.setBackground(accentColor);
 
-        assert buttons != null;
-        for (JButton button : buttons) {
-            footerPanel.add(button);
+        for(JButton actionButton : actionButtons){
+            footerPanel.add(actionButton);
         }
 
         add(headerPanel, BorderLayout.NORTH);
@@ -101,7 +105,7 @@ public class JPopUp extends JPanel {
     }
 
     private JRoundedButton createKeyButton() {
-        JRoundedButton inputButton = new JRoundedButton("Click to Set");
+        inputButton = new JRoundedButton("Click to Set");
         inputButton.setPreferredSize(new Dimension(300,100));
         inputButton.setFocusable(true);
         inputButton.addKeyListener(new KeyListener() {
@@ -115,7 +119,7 @@ public class JPopUp extends JPanel {
                     case 127: inputButton.setText("Delete"); break;
                     default: inputButton.setText(firstUpperCase(String.valueOf(e.getKeyChar())));
                 }
-                keyPressed = inputButton.getText();
+                sourceButton.setText(inputButton.getText());
                 revalidate();
                 repaint();
             }
@@ -126,6 +130,8 @@ public class JPopUp extends JPanel {
     }
 
     public void hidePopUp() {
+        inputButton.setFocusable(false);
+        inputButton.setEnabled(false);
         animateToPosition(startY);
     }
 

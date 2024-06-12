@@ -47,7 +47,18 @@ public class Main extends JFrame implements KeyListener {
             if (!file.exists() && file.createNewFile()) {
                 System.out.println("Settings File Missing, Created New File At: " + file.getAbsolutePath());
                 try(FileWriter writer = new FileWriter(file)){
-                    writer.write("{\n}");
+                    writer.write("""
+                            {
+                              "key_binds": {
+                                "exit": "esc",
+                                "advance": "space"
+                              },
+                              "misc": {
+                                "fullscreen": "false",
+                                "audio": "true"
+                              }
+                            }
+                            """);
                 }
             }
         } catch (Exception e){

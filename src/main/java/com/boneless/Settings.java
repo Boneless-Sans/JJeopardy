@@ -4,9 +4,6 @@ import com.boneless.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.boneless.Main.*;
@@ -41,7 +38,7 @@ public class Settings extends JPanel {
     private final Color accentColor;
     private final Color fontColor;
 
-    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();
+    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();;
     private final HashMap<String, ButtonIcon> toggleButtonList = new HashMap<>();
 
     private final JPopUp popup;
@@ -107,9 +104,28 @@ public class Settings extends JPanel {
 
         });
 
+        JRoundedButton saveBind = new JRoundedButton("Save");
+        saveBind.addActionListener(e -> popup.hidePopUp());
+
+
+
+        JRoundedButton exitBindButton = new JRoundedButton(JsonFile.read(settingsFile, "key_binds", "exit")){
+            @Override
+            protected void paintComponent(Graphics g){
+                Graphics2D g2d = (Graphics2D) g;
+            }
+        };
+        exitBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", exitBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(exitBindButton), saveBind));
+
+        JRoundedButton advanceBindButton = new JRoundedButton(JsonFile.read(settingsFile, "key_binds", "advance"));
+        advanceBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", advanceBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(advanceBindButton), saveBind));
+
+        keyBindButtonList.put("exit", exitBindButton);
+        keyBindButtonList.put("advance", advanceBindButton);
+
         panel.add(sectionLabel("Key Binds"));
-        panel.add(createKeyBindPanel("Exit", "exit",(Test) -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT, popup.BUTTON_CANCEL, saveExit)));
-        panel.add(createKeyBindPanel("Advance", "advance",(Test) -> popup.showPopUp("Press Any Key...", "", JPopUp.BUTTON_INPUT, popup.BUTTON_CANCEL, saveExit)));
+        panel.add(createKeyBindPanel("Exit", "exit", exitBindButton));
+        panel.add(createKeyBindPanel("Advance", "advance", advanceBindButton));
 
         panel.add(divider());
         panel.add(sectionLabel("Misc"));
@@ -121,6 +137,17 @@ public class Settings extends JPanel {
         scroller.getVerticalScrollBar().setUnitIncrement(15);
 
         return scroller;
+    }
+
+    private JRoundedButton createCancelBindButton(JButton source){ //>:(
+        String originalBind = source.getText();
+        JRoundedButton button = new JRoundedButton("Cancel");
+        button.addActionListener(e -> {
+            popup.hidePopUp();
+            source.setText(originalBind);
+        });
+
+        return button;
     }
 
     private JPanel divider(){
@@ -162,7 +189,7 @@ public class Settings extends JPanel {
         insets = new Insets(0,0,0,50);
     }};
 
-    private JPanel createKeyBindPanel(String text, String key, SetButtonText action){
+    private JPanel createKeyBindPanel(String text, String key, JButton button){
         JPanel panel = new SettingsOptionPanel();
 
         JPanel leftPanel = new JPanel(new GridBagLayout());
@@ -175,11 +202,6 @@ public class Settings extends JPanel {
 
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setOpaque(false);
-
-        JRoundedButton button = new JRoundedButton(JsonFile.read(settingsFile, "key_binds", key));
-        button.addActionListener(e -> );
-
-        keyBindButtonList.put(key, button);
 
         rightPanel.add(button, rightGBC);
 
@@ -241,7 +263,7 @@ public class Settings extends JPanel {
     private void save(){
         System.out.println("Saving Settings...");
 
-        JsonFile.writeln(settingsFile, "key_binds", "esc", keyBindButtonList.get("esc").getText());
+        JsonFile.writeln(settingsFile, "key_binds", "exit", keyBindButtonList.get("exit").getText());
         JsonFile.writeln(settingsFile, "key_binds", "advance", keyBindButtonList.get("advance").getText());
 
         JsonFile.writeln(settingsFile, "misc","fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
@@ -270,7 +292,7 @@ public class Settings extends JPanel {
                 mainMenu.timer.start();
             });
 
-            popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, null, cancel, exitSave, exitNoSave);
+            //popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, null, cancel, exitSave, exitNoSave);
         } else {
             changeCurrentPanel(mainMenu, this, false);
             mainMenu.timer.start();
@@ -292,10 +314,5 @@ public class Settings extends JPanel {
             g2d.fillRoundRect(0, 0, getWidth(), getHeight(),25,25);
         }
         @Override protected void paintBorder(Graphics g) {} //disable
-    }
-
-    @FunctionalInterface
-    interface SetButtonText {
-        void run(JButton button);
     }
 }
