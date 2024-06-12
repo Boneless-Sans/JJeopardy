@@ -37,9 +37,9 @@ public class JPopUp extends JPanel {
         BUTTON_CANCEL.addActionListener(e -> hidePopUp());
 
         //more calculations
-        startX = (screenWidth - parent.getWidth()) / 2 - width / 2;
-        startY = screenHeight - parent.getHeight();
-        centerY = (screenHeight - parent.getHeight()) / 2 - height / 2;
+        startX = (frameWidth - parent.getWidth()) / 2 - width / 2;
+        startY = frameHeight - parent.getHeight();
+        centerY = (frameHeight - parent.getHeight()) / 2 - height / 2;
 
         setLocation(startX, startY);
     }
