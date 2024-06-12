@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.AnimeJLabel;
 import com.boneless.util.JsonFile;
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +14,10 @@ import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class JCard extends JPanel {
-    private final SpinningLabel animatedQuestion;
+    private final SpinningLabel spinningQuestion;
+    private final AnimeJLabel typeQuestion;
     private final JLabel answerLabel;
+    private final JLabel questionLabel;
     private boolean hasFaded = false;
     private boolean hasFadedIn = true;
     private boolean hasFadedInQuestion = true;
@@ -24,7 +27,7 @@ public class JCard extends JPanel {
     private final JPanel fadePanel2;
     private final JButton sourceButton;
 
-    public int animationJCardBound = 1;
+    public int animationJCardBound = 4;
     // Set animationJCardBound to 1 for no animations
     // Set animationJCardBound to # of cases + 1 in animationSelect for all animations
 
@@ -55,15 +58,22 @@ public class JCard extends JPanel {
         fadePanel2 = new JPanel(new GridBagLayout());
         fadePanel2.setBackground(mainColor);
 
-        animatedQuestion = new SpinningLabel(question);
-        animatedQuestion.setForeground(fontColor);
-        animatedQuestion.setOpaque(false);
+        spinningQuestion = new SpinningLabel(question);
+        spinningQuestion.setForeground(fontColor);
+        spinningQuestion.setOpaque(false);
+
+        typeQuestion = new AnimeJLabel(fontColor, fontColor, 1);
+        typeQuestion.setForeground(fontColor);
+        typeQuestion.setOpaque(false);
+
+        questionLabel = new JLabel(question);
+        questionLabel.setForeground(fontColor);
+        questionLabel.setOpaque(false);
 
         answerLabel = new JLabel(answer);
         answerLabel.setForeground(parseColorFadeComplete);
         answerLabel.setOpaque(false);
 
-        moversPanel.add(animatedQuestion);
         fadePanel.add(answerLabel);
         add(moversPanel);
         add(fadePanel);
@@ -83,30 +93,39 @@ public class JCard extends JPanel {
         });
 
         setupMouseListeners();
-        setUpCharacters(35);
+        setUpCharacters(32);
     }
 
     private void animationSelect() throws InterruptedException {
         switch (generateRandomNumber(animationJCardBound)) {
             case 0: {
-                animatedQuestion.startAnimation();
+                moversPanel.add(spinningQuestion);
+                spinningQuestion.startAnimation(2500);
                 break;
             }
-            // Uncomment and add other cases here as needed
-//            case 1: {
-//                moversPanel.add(questionLabel);
-//                fadeInQuestion();
-//                break;
-//            }
-//            case 2: {
-//                if (mainMenu.hasNotBanged) {
-//                    mainMenu.hasNotBanged = false;
-//                    moversPanel.add(questionLabel);
-//                    startFlashBangTimingSolution();
-//                }
-//                moversPanel.add(questionLabel);
-//                break;
-//            }
+            case 1: {
+                moversPanel.add(questionLabel);
+                fadeInQuestion();
+                break;
+            }
+            case 2: {
+                if (mainMenu.hasNotBanged) {
+                    moversPanel.add(questionLabel);
+                    mainMenu.hasNotBanged = false;
+                    startFlashBangTimingSolution();
+                }
+                moversPanel.add(questionLabel);
+                break;
+            }
+            case 3: {
+                moversPanel.add(typeQuestion);
+                String[] arr = new String[question.length()];
+                for (int i = 0; i < question.length(); i++) {
+                    arr[i] = question.substring(0, i + 1);
+                }
+                typeQuestion.setTxtAnim(arr, 100);
+                break;
+            }
         }
     }
 
@@ -169,7 +188,9 @@ public class JCard extends JPanel {
 
     @SuppressWarnings("SameParameterValue")
     private void setUpCharacters(int size) {
-        animatedQuestion.setFont(generateFont(size));
+        typeQuestion.setFont(generateFont(size));
+        spinningQuestion.setFont(generateFont(size));
+        questionLabel.setFont(generateFont(size));
         answerLabel.setFont(generateFont(size));
         setBackground(mainColor);
     }
@@ -222,7 +243,7 @@ public class JCard extends JPanel {
             }
 
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int) (opacity3 * 255));
-            animatedQuestion.setForeground(fadedColor);
+            questionLabel.setForeground(fadedColor);
 
             revalidate();
             repaint();
@@ -296,7 +317,7 @@ public class JCard extends JPanel {
             Color fadedColor = parseColorFade(JsonFile.read(fileName, "data", "global_color"), (int) (opacity5 * 255));
             Color fadedFontColor = parseColorFade(JsonFile.read(fileName, "data", "font_color"), (int) (opacity5 * 255));
 
-            animatedQuestion.setForeground(fadedFontColor);
+            questionLabel.setForeground(fadedFontColor);
 
             setBackground(fadedColor);
 
@@ -310,7 +331,7 @@ public class JCard extends JPanel {
         Timer opacityFadeUp = new Timer(5, null);
         opacityFadeUp.addActionListener(e -> {
             if (opacity5 >= 0.6f) {
-                animatedQuestion.setForeground(fontColor);
+                questionLabel.setForeground(fontColor);
             }
         });
         opacityFadeUp.start();
@@ -336,25 +357,27 @@ public class JCard extends JPanel {
         setBackground(mainColor);
     }
 
-    // Custom JPanel for spinning characters
     private static class SpinningLabel extends JPanel {
         private final String text;
         private final double[] angles;
+        private final Timer timer;
 
         public SpinningLabel(String text) {
             this.text = text;
             angles = new double[text.length()];
-            setPreferredSize(new Dimension(400, 100)); // Adjust as needed
-        }
-
-        public void startAnimation() {
-            Timer timer = new Timer(100, e -> {
+            setPreferredSize(new Dimension(350, 100));
+            setLayout(new GridBagLayout());
+            timer = new Timer(100, e -> {
                 for (int i = 0; i < angles.length; i++) {
-                    angles[i] += Math.PI / 8; // Adjust rotation speed as needed
+                    angles[i] += Math.PI / 12; // Adjust rotation speed as needed
                 }
                 repaint();
             });
+        }
+
+        public void startAnimation(int durationInMilliseconds) {
             timer.start();
+            new Timer(durationInMilliseconds, e -> timer.stop()).start();
         }
 
         @Override
@@ -362,8 +385,16 @@ public class JCard extends JPanel {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
             FontMetrics fm = g2d.getFontMetrics();
-            int x = 10;
-            int y = getHeight() / 2;
+
+            // Calculate the total width of the text
+            int totalTextWidth = 0;
+            for (int i = 0; i < text.length(); i++) {
+                totalTextWidth += fm.charWidth(text.charAt(i));
+            }
+
+            // Calculate the starting x position to center the text
+            int x = (getWidth() - totalTextWidth) / 2;
+            int y = getHeight() / 2 + fm.getAscent() / 2;
 
             for (int i = 0; i < text.length(); i++) {
                 char c = text.charAt(i);
