@@ -66,8 +66,8 @@ public class Settings extends JPanel {
         masterPanel.setOpaque(false);
 
         masterPanel.add(header(), BorderLayout.NORTH);
-        masterPanel.add(mainBody(), BorderLayout.CENTER);
         masterPanel.add(footer(), BorderLayout.SOUTH);
+        masterPanel.add(mainBody(), BorderLayout.CENTER);
 
         add(masterPanel);
     }
@@ -95,11 +95,11 @@ public class Settings extends JPanel {
 
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g2d.setPaint(new GradientPaint(0,0,mainColor,getWidth(),getHeight(),accentColor));
+                g2d.setPaint(new GradientPaint(0,0, mainColor, getWidth(), getHeight(), accentColor));
                 g2d.fillRect(0,0,getWidth(),getHeight());
             }
         };
-        panel.setPreferredSize(new Dimension(frameWidth, frameHeight + 300));
+        panel.setPreferredSize(new Dimension(frameWidth, frameHeight)); //here
 
         JRoundedButton saveBind = new JRoundedButton("Save");
         saveBind.addActionListener(e -> popup.hidePopUp());
@@ -171,7 +171,7 @@ public class Settings extends JPanel {
 
     private JPanel divider(){
         JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(1000, 70));
+        panel.setPreferredSize(new Dimension(900, 70));
         panel.setOpaque(false);
         return panel;
     }
@@ -326,7 +326,7 @@ public class Settings extends JPanel {
 
     private static class SettingsOptionPanel extends JPanel {
         public SettingsOptionPanel(){
-            setPreferredSize(new Dimension(700, 100)); //todo: fix centering
+            setPreferredSize(new Dimension(900, 100));
             setLayout(new GridLayout(1,2));
         }
 

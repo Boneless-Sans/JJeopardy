@@ -5,6 +5,7 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import static com.boneless.Main.mainMenu;
@@ -37,10 +39,11 @@ public class BoardFactory extends JPanel {
     private final int fontSize = 20;
 
     private final String tempDir = System.getProperty("java.io.tmpdir");
+    private final String tempFile = tempDir + File.separator + "temp_board.json";
     private String fileName;
 
-    private final ArrayList<JTextField> catFields = new ArrayList<>();
-    private final ArrayList<MockJCard.TextBox> QALabels = new ArrayList<>();
+    private final ArrayList<JTextComponent> textBoxes = new ArrayList<>();
+    private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
 
     public BoardFactory(JFrame parent){
         factoryIsActive = true;
@@ -51,6 +54,20 @@ public class BoardFactory extends JPanel {
         } else {
             fileName = createNewFile("temp.json");
             loadColors();
+        }
+
+        //todo: add check for temp_board and have pop for rec
+        try {
+            File file = new File(tempFile);
+
+            boolean shutUp = file.delete();
+            boolean shutUpAgain = file.createNewFile();
+
+            try(FileWriter fw = new FileWriter(tempFile)){
+                fw.write("{\n}");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         mainMenu.changeFileName(fileName);
@@ -220,7 +237,7 @@ public class BoardFactory extends JPanel {
         field.getDocument().addDocumentListener(documentListener());
 
         panel.add(field, gbc);
-        catFields.add(field);
+        categoryBoxes.add(field);
 
         return panel;
     }
@@ -456,26 +473,14 @@ public class BoardFactory extends JPanel {
         }
     }
 
-    private void quickTempSave(){
-        for(MockJCard.TextBox qLabels : QALabels){
-//            JsonFile.writeln3Keys(
-//                    fileName,
-//                    "board",
-//                    "col_" + qLabels.col,
-//                    qLabels.isQuestion ? "question_" + qLabels.row : "answer_" + qLabels.row,
-//                    qLabels.getText());
-
-            System.out.println(qLabels.getText());
-        }
-
-        for(JTextField cats : catFields){
+    private void tempSave(){
+        for(JTextComponent field : textBoxes){
             //
         }
-
-        System.out.println("save ran");
     }
+
     private void save(){
-        //
+        //copy temp file to dest file
     }
 
     private void load(String filePath){
@@ -495,7 +500,6 @@ public class BoardFactory extends JPanel {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 changesMade = true;
-                quickTempSave();
             }
             @Override public void removeUpdate(DocumentEvent e) {}
             @Override public void changedUpdate(DocumentEvent e) {}
@@ -591,7 +595,7 @@ public class BoardFactory extends JPanel {
 
             TextBox textField = new TextBox(text, isQuestion, row, col);
 
-            QALabels.add(textField);
+            textBoxes.add(textField);
 
             panel.add(textField);
             add(panel);
@@ -632,7 +636,20 @@ public class BoardFactory extends JPanel {
                 setBorder(BorderFactory.createBevelBorder(1));
                 setPreferredSize(new Dimension(700,128));
 
-                getDocument().addDocumentListener(documentListener());
+                getDocument().addDocumentListener(new DocumentListener() {
+                    @Override
+                    public void insertUpdate(DocumentEvent e) {
+                        JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
+                    }
+
+                    @Override
+                    public void removeUpdate(DocumentEvent e) {
+                        JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
+                    }
+                    @Override public void changedUpdate(DocumentEvent e) {}
+                });
+
+                textBoxes.add(this);
             }
 
             @Override
