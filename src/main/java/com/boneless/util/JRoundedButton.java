@@ -8,10 +8,20 @@ import static com.boneless.util.GeneralUtils.generateFont;
 public class JRoundedButton extends JButton {
     private String id;
     private boolean renderBorder = false;
+    private final Color color;
+    private final Color fontColor;
 
-    public JRoundedButton(String text){
+    public JRoundedButton(String text, Color... colors){
         super(text);
         setFocusable(false);
+
+        if (colors.length == 2) {
+            color = colors[0];
+            fontColor = colors[1];
+        } else {
+            color = Color.white;
+            fontColor = Color.black;
+        }
     }
 
     public JRoundedButton(String text, String id){
@@ -29,10 +39,10 @@ public class JRoundedButton extends JButton {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        g2d.setColor(Color.white);
+        g2d.setColor(color);
         g2d.fillRoundRect(0,0,getWidth(),getHeight(),25,25);
 
-        g2d.setColor(Color.black);
+        g2d.setColor(fontColor);
         g2d.setFont(generateFont(getFont().getSize()));
         FontMetrics fm = g2d.getFontMetrics();
         int textWidth = fm.stringWidth(getText());

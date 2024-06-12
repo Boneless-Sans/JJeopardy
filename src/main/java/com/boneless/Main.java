@@ -29,7 +29,8 @@ public class Main extends JFrame implements KeyListener {
     public static JCard jCard;
     public static BoardFactory boardFactory;
 
-    public static int screenWidth, screenHeight;
+    public static int frameWidth, frameHeight;
+    public static int screenWidth, ScreenHeight;
 
     public static void main(String[] args) throws IOException {
 
@@ -74,8 +75,10 @@ public class Main extends JFrame implements KeyListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
 
-        screenWidth = 1200;
-        screenHeight = 700;
+        frameWidth = 1600;
+        frameHeight = 900;
+        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
         try {
             if(System.getProperty("os.name").equalsIgnoreCase("windows")) {

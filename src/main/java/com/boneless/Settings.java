@@ -12,26 +12,27 @@ import static com.boneless.util.GeneralUtils.*;
 public class Settings extends JPanel {
     /* slide bottom to middle
     -General | X
-        -Null Safety | X
+        -Null Safety | √
             -Main File | √
-            -Settings | X
+            -Settings | √
         -Exit Confirmation | X
     -Main Body | X
         -JScrollPane | √
-        -Rounded Boxes for Key Binds | X
-            -Key Bind Text | X
-            -Key Bind Setter | X
-        -Rounded Boxes for Toggles | X
-            -Item Name | X
-            -State | X
-    -Footer | X
+        -Rounded Boxes for Key Binds | √
+            -Key Bind Text | √
+            -Key Bind Setter | √
+        -Rounded Boxes for Toggles | √
+            -Item Name | √
+            -State | √
+    -Footer | √
         -Save Button | √
         -Exit Button | √
     -Settings | X
         -Exit | X
-        -Advance | X
+        -Advance | √
         -Play Audio, could be moved to start game | X
-        -Full Screen, requires restart | X
+        -Screen size dropdown | X
+        -Always on top | X
         -Scroll Bar Sensitivity | X
      */
     private final Color mainColor;
@@ -40,6 +41,7 @@ public class Settings extends JPanel {
 
     private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();;
     private final HashMap<String, ButtonIcon> toggleButtonList = new HashMap<>();
+    private final HashMap<String, JComboBox<String>> dropDownList = new HashMap<>();
 
     private final JPopUp popup;
 
@@ -60,7 +62,7 @@ public class Settings extends JPanel {
         add(popup = new JPopUp(this, 500,300));
 
         JPanel masterPanel = new JPanel(new BorderLayout());
-        masterPanel.setBounds(0,0,screenWidth, screenHeight);
+        masterPanel.setBounds(0,0, frameWidth, frameHeight);
         masterPanel.setOpaque(false);
 
         masterPanel.add(header(), BorderLayout.NORTH);
@@ -97,35 +99,52 @@ public class Settings extends JPanel {
                 g2d.fillRect(0,0,getWidth(),getHeight());
             }
         };
-        panel.setPreferredSize(new Dimension(screenWidth, screenHeight));
-
-        JRoundedButton saveExit = new JRoundedButton("Save");
-        saveExit.addActionListener(e -> {
-
-        });
+        panel.setPreferredSize(new Dimension(frameWidth, frameHeight + 300));
 
         JRoundedButton saveBind = new JRoundedButton("Save");
         saveBind.addActionListener(e -> popup.hidePopUp());
 
-
-
-        JRoundedButton exitBindButton = new JRoundedButton(JsonFile.read(settingsFile, "key_binds", "exit")){
-            @Override
-            protected void paintComponent(Graphics g){
-                Graphics2D g2d = (Graphics2D) g;
-            }
-        };
+        JRoundedButton exitBindButton = new JRoundedButton(firstUpperCase(JsonFile.read(settingsFile, "key_binds", "exit")), Color.lightGray, Color.white);
         exitBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", exitBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(exitBindButton), saveBind));
 
-        JRoundedButton advanceBindButton = new JRoundedButton(JsonFile.read(settingsFile, "key_binds", "advance"));
+        JRoundedButton advanceBindButton = new JRoundedButton(firstUpperCase(JsonFile.read(settingsFile, "key_binds", "advance")), Color.lightGray, Color.white);
         advanceBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", advanceBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(advanceBindButton), saveBind));
 
-        keyBindButtonList.put("exit", exitBindButton);
-        keyBindButtonList.put("advance", advanceBindButton);
+        String[] resolutions = {
+                "640x360",
+                "854x480",
+                "1280x720",
+                "1366x768",
+                "1600x900 (Default)",
+                "1680x1050",
+                "1920x1080",
+                "2048x1152",
+                "2560x1440",
+                "2880x1620",
+                "3200x1800",
+                "3440x1440",
+                "3840x2160",
+                "4096x2304",
+                "5120x2880",
+                "6016x3384"
+        };
+
+        for(String resolution : resolutions){
+            resolution = resolution.contains("(") ? resolution.split(",")[0] : resolution;
+            boolean nativeCheck = (Integer.parseInt(resolution.split("x")[0]) == screenWidth);
+            System.out.println(resolution + " " + nativeCheck + " " + screenWidth);
+        }
+
+        JComboBox<String> resSizeDropDown = new JComboBox<>(resolutions);
 
         panel.add(sectionLabel("Key Binds"));
         panel.add(createKeyBindPanel("Exit", "exit", exitBindButton));
         panel.add(createKeyBindPanel("Advance", "advance", advanceBindButton));
+
+        panel.add(divider());
+        panel.add(sectionLabel("Screen"));
+        panel.add(createDropDownPanel("Screen Size", "screen_resolution", resSizeDropDown));
+        panel.add(createTogglePanel("Always On Top", "always_on_top"));
 
         panel.add(divider());
         panel.add(sectionLabel("Misc"));
@@ -189,8 +208,8 @@ public class Settings extends JPanel {
         insets = new Insets(0,0,0,50);
     }};
 
-    private JPanel createKeyBindPanel(String text, String key, JButton button){
-        JPanel panel = new SettingsOptionPanel();
+    private SettingsOptionPanel createSettingsItem(String text, JComponent component){
+        SettingsOptionPanel panel = new SettingsOptionPanel();
 
         JPanel leftPanel = new JPanel(new GridBagLayout());
         leftPanel.setOpaque(false);
@@ -200,40 +219,43 @@ public class Settings extends JPanel {
 
         leftPanel.add(itemText, leftGBC);
 
+        panel.add(leftPanel);
+        panel.add(component);
+
+        return panel;
+    }
+    private JPanel createKeyBindPanel(String text, String key, JRoundedButton button){
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setOpaque(false);
 
         rightPanel.add(button, rightGBC);
 
-        panel.add(leftPanel);
-        panel.add(rightPanel);
+        keyBindButtonList.put(key, button);
 
-        return panel;
+        return createSettingsItem(text, rightPanel);
     }
 
     private JPanel createTogglePanel(String text, String key){
-        JPanel panel = new SettingsOptionPanel();
-
-        JPanel leftPanel = new JPanel(new GridBagLayout());
-        leftPanel.setOpaque(false);
-
-        JLabel itemText = new JLabel(text);
-        itemText.setFont(generateFont(40));
-
-        leftPanel.add(itemText, leftGBC);
-
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setOpaque(false);
 
         ButtonIcon button = new ButtonIcon(64, Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", key)));
-        toggleButtonList.put(key, button);
-
         rightPanel.add(button, rightGBC);
 
-        panel.add(leftPanel);
-        panel.add(rightPanel);
+        toggleButtonList.put("key",button);
 
-        return panel;
+        return createSettingsItem(text, rightPanel);
+    }
+
+    private JPanel createDropDownPanel(String text, String key, JComboBox<String> sourceBox){
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setOpaque(false);
+
+        rightPanel.add(sourceBox, rightGBC);
+
+        dropDownList.put(key, sourceBox);
+
+        return createSettingsItem(text, rightPanel);
     }
 
     private JPanel footer(){
@@ -265,6 +287,9 @@ public class Settings extends JPanel {
 
         JsonFile.writeln(settingsFile, "key_binds", "exit", keyBindButtonList.get("exit").getText());
         JsonFile.writeln(settingsFile, "key_binds", "advance", keyBindButtonList.get("advance").getText());
+
+        JsonFile.writeln(settingsFile, "misc", "screen_resolution", (String) dropDownList.get("screen_resolution").getSelectedItem());
+        JsonFile.writeln(settingsFile, "misc", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
 
         JsonFile.writeln(settingsFile, "misc","fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
         JsonFile.writeln(settingsFile, "misc","audio",getStringBoolean(toggleButtonList.get("audio").isChecked()));
@@ -304,6 +329,7 @@ public class Settings extends JPanel {
             setPreferredSize(new Dimension(700, 100)); //todo: fix centering
             setLayout(new GridLayout(1,2));
         }
+
         @Override
         protected void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
@@ -313,6 +339,7 @@ public class Settings extends JPanel {
             g2d.setColor(Color.white);
             g2d.fillRoundRect(0, 0, getWidth(), getHeight(),25,25);
         }
+
         @Override protected void paintBorder(Graphics g) {} //disable
     }
 }
