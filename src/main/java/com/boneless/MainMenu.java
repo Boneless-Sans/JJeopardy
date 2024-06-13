@@ -188,7 +188,7 @@ public class MainMenu extends ScrollGridPanel {
                     break;
                 }
                 case 2: { //board creator
-                    changeCurrentPanel(boardFactory = new BoardFactory(parent), this, true);
+                    changeCurrentPanel(boardFactory = new BoardFactory(parent, fileName), this, true);
                     break;
                 }
                 case 3: { //settings

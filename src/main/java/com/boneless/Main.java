@@ -122,7 +122,7 @@ public class Main extends JFrame implements KeyListener {
                     break;
                 }
                 case "board": {
-                    add(boardFactory = new BoardFactory(this));
+                    add(boardFactory = new BoardFactory(this, fileName));
                     break;
                 }
                 case "settings": {

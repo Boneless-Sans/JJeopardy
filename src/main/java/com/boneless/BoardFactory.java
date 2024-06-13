@@ -45,11 +45,14 @@ public class BoardFactory extends JPanel {
     private final ArrayList<MockJCard.TextBox> textBoxes = new ArrayList<>();
     private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
 
-    public BoardFactory(JFrame parent){
+    public BoardFactory(JFrame parent, String mainFile){
+        //todo: when loading, have non null file copy into temp, then use that file
+        //t
         factoryIsActive = true;
         this.parent = parent;
 
-        if(fileName != null){
+        if(mainFile != null){
+            fileName = mainFile;
             loadColors();
         } else {
             fileName = createNewFile("temp.json");
@@ -79,6 +82,7 @@ public class BoardFactory extends JPanel {
     }
 
     private void loadColors(){ //not really needed, but its cleaner
+        System.out.println(fileName);
         mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
         accentColor = new Color(
                 clamp(mainColor.getRed()   - 40),
@@ -300,7 +304,7 @@ public class BoardFactory extends JPanel {
             -font color | X
             -rows | X
             -cols | X
-            -scores? | X
+            -scores | X
                 -for rows, create a section with text fields for scores
          */
         JPanel panel = new JPanel(new FlowLayout());
