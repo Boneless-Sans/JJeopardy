@@ -42,7 +42,7 @@ public class BoardFactory extends JPanel {
     private final String tempFile = tempDir + File.separator + "temp_board.json";
     private String fileName;
 
-    private final ArrayList<JTextComponent> textBoxes = new ArrayList<>();
+    private final ArrayList<MockJCard.TextBox> textBoxes = new ArrayList<>();
     private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
 
     public BoardFactory(JFrame parent){
@@ -150,7 +150,7 @@ public class BoardFactory extends JPanel {
 
         JMenuItem saveItem = new JMenuItem("Save Board");
         saveItem.addActionListener(e -> {
-            //save file();
+            tempSave();
         });
 
         JMenuItem exitItem = new JMenuItem("Exit");
@@ -474,8 +474,11 @@ public class BoardFactory extends JPanel {
     }
 
     private void tempSave(){
-        for(JTextComponent field : textBoxes){
-            //
+        System.out.println("Ran");
+        System.out.println(textBoxes);
+        for(MockJCard.TextBox field : textBoxes){
+            System.out.println("Saved?");
+            JsonFile.writeln3Keys(tempFile, "board", "col_" + field.row, field.isQuestion ? "question_" + field.row : "answer_" + field.row, field.getText());
         }
     }
 
@@ -595,8 +598,6 @@ public class BoardFactory extends JPanel {
 
             TextBox textField = new TextBox(text, isQuestion, row, col);
 
-            textBoxes.add(textField);
-
             panel.add(textField);
             add(panel);
             return panel;
@@ -625,8 +626,16 @@ public class BoardFactory extends JPanel {
         }
 
         private class TextBox extends JTextField {
+            public int row;
+            public int col;
+            public boolean isQuestion;
+
             public TextBox(String text, boolean isQuestion, int row, int col){
                 super(JsonFile.readWithThreeKeys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
+
+                this.row = row;
+                this.col = col;
+                this.isQuestion = isQuestion;
 
                 setFont(generateFont(30));
                 setCaretColor(fontColor);
