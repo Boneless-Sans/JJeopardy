@@ -1,7 +1,6 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
-import org.w3c.dom.Text;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -9,9 +8,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
@@ -39,11 +36,11 @@ public class BoardFactory extends JPanel {
     private final int fontSize = 20;
 
     private final String tempDir = System.getProperty("java.io.tmpdir");
-    private final String tempFile = tempDir + File.separator + "temp_board.json";
+    private final String tempFile = tempDir + "temp_board.json";
     private final String fileName;
 
     private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
-    private final HashMap<AbstractMap.SimpleEntry<Boolean, AbstractMap.SimpleEntry<Integer, Integer>>, TextBox> labelList = new HashMap<>();
+    private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList = new HashMap<>();
 
     public BoardFactory(JFrame parent, String mainFile){
         //todo: when loading, have non null file copy into temp, then use that file
@@ -59,6 +56,9 @@ public class BoardFactory extends JPanel {
             loadColors();
         }
 
+        System.out.println("File: " + fileName);
+        System.out.println("Temp: " + tempFile);
+
         //todo: add check for temp_board and have pop for rec
         try {
             File file = new File(tempFile);
@@ -67,7 +67,16 @@ public class BoardFactory extends JPanel {
             boolean shutUpAgain = file.createNewFile();
 
             try(FileWriter fw = new FileWriter(tempFile)){
-                fw.write("{\n}");
+                if(fileName == null){
+                    fw.write("{\n}");
+                } else {
+                    try (FileReader fr = new FileReader(fileName)){
+                        int c;
+                        while((c = fr.read()) != -1){
+                            fw.write(c);
+                        }
+                    }
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -213,8 +222,8 @@ public class BoardFactory extends JPanel {
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
-                labelList.put(new AbstractMap.SimpleEntry<>(true, new AbstractMap.SimpleEntry<>(i,j)), new TextBox(question, true, i, j));
-                labelList.put(new AbstractMap.SimpleEntry<>(false, new AbstractMap.SimpleEntry<>(i,j)), new TextBox(answer, false, i, j));
+                putInLabelList(labelList, true, i, j, new TextBox(answer, true, i, j));
+                putInLabelList(labelList, false, i, j, new TextBox(question, false, i, j));
                 MockBoardButton button = new MockBoardButton(score, question, answer, 20, i, j);
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
@@ -224,6 +233,29 @@ public class BoardFactory extends JPanel {
         }
 
         return panel;
+    }
+
+    private void putInLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col, TextBox textBox){
+        System.out.println("Added something to the hash");
+        HashMap<Boolean, HashMap<Integer, Integer>> outerKey = new HashMap<>();
+        HashMap<Integer, Integer> innerKey = new HashMap<>();
+        innerKey.put(row, col);
+        outerKey.put(isQuestion, innerKey);
+
+        labelList.put(outerKey, textBox);
+    }
+
+    private TextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col){
+        System.out.println("read something to the hash");
+        for(HashMap<Boolean, HashMap<Integer, Integer>> outerKey : labelList.keySet()){
+            if(outerKey.containsKey(isQuestion)){
+                HashMap<Integer, Integer> innerKey = outerKey.get(isQuestion);
+                if(innerKey.containsKey(row) && innerKey.get(row).equals(col)){
+                    return labelList.get(outerKey);
+                }
+            }
+        }
+        return null;
     }
 
     private JPanel createCatPanel(int index) {
@@ -483,10 +515,15 @@ public class BoardFactory extends JPanel {
         int boardWidth = Integer.parseInt(JsonFile.read(tempFile, "data", "categories"));
         int boardHeight = Integer.parseInt(JsonFile.read(tempFile, "data", "rows"));
 
+        System.out.println(boardWidth);
         for(int i = 0; i < boardWidth; i++){
             for(int j = 0; j < boardHeight; j++){
-                TextBox box = labelList.get(new AbstractMap.SimpleEntry<>(i, j));
-                JsonFile.writeln3Keys(tempFile,"board","","","");
+                TextBox question = getFromLabelList(labelList, true, i, j);
+                TextBox answer = getFromLabelList(labelList, false, i, j);
+                assert question != null;
+                JsonFile.writeln3Keys(tempFile,"board","col_" + i,"row_" + j,question.getText());
+                assert answer != null;
+                JsonFile.writeln3Keys(tempFile,"board","col_" + i,"row_" + j,answer.getText());
             }
         }
     }
@@ -530,7 +567,7 @@ public class BoardFactory extends JPanel {
                 inJCard = true;
 
 
-                changeCurrentPanel(new MockJCard(row, col), boardPanel, true, 200);
+                changeCurrentPanel(card = new MockJCard(row, col), boardPanel, true, 200);
             });
         }
 
@@ -586,9 +623,9 @@ public class BoardFactory extends JPanel {
             fieldPanels.setOpaque(false);
 
             fieldPanels.add(createGap(55, null));
-            fieldPanels.add(labelList.get(new AbstractMap.SimpleEntry<>(true, new AbstractMap.SimpleEntry(row, col))));
+            fieldPanels.add(getFromLabelList(labelList, true, row, col));
             fieldPanels.add(createGap(80, null));
-            fieldPanels.add(labelList.get(new AbstractMap.SimpleEntry<>(false, new AbstractMap.SimpleEntry(row, col))));
+            fieldPanels.add(getFromLabelList(labelList, false, row, col));
 
             add(fieldPanels, gbc);
         }
