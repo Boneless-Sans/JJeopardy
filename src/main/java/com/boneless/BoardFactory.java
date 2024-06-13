@@ -1,20 +1,20 @@
 package com.boneless;
 
 import com.boneless.util.JsonFile;
+import org.w3c.dom.Text;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -40,10 +40,10 @@ public class BoardFactory extends JPanel {
 
     private final String tempDir = System.getProperty("java.io.tmpdir");
     private final String tempFile = tempDir + File.separator + "temp_board.json";
-    private String fileName;
+    private final String fileName;
 
-    private final ArrayList<MockJCard.TextBox> textBoxes = new ArrayList<>();
     private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
+    private final HashMap<AbstractMap.SimpleEntry<Boolean, AbstractMap.SimpleEntry<Integer, Integer>>, TextBox> labelList = new HashMap<>();
 
     public BoardFactory(JFrame parent, String mainFile){
         //todo: when loading, have non null file copy into temp, then use that file
@@ -213,6 +213,8 @@ public class BoardFactory extends JPanel {
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
 
+                labelList.put(new AbstractMap.SimpleEntry<>(true, new AbstractMap.SimpleEntry<>(i,j)), new TextBox(question, true, i, j));
+                labelList.put(new AbstractMap.SimpleEntry<>(false, new AbstractMap.SimpleEntry<>(i,j)), new TextBox(answer, false, i, j));
                 MockBoardButton button = new MockBoardButton(score, question, answer, 20, i, j);
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
@@ -288,7 +290,7 @@ public class BoardFactory extends JPanel {
 
         panel.add(leftPanel, gbc);
         panel.add(titlePanel, gbc);
-        panel.add(new JPanel(){{ //need to center title
+        panel.add(new JPanel(){{
             setOpaque(false);
         }});
 
@@ -478,11 +480,14 @@ public class BoardFactory extends JPanel {
     }
 
     private void tempSave(){
-        System.out.println("Ran");
-        System.out.println(textBoxes);
-        for(MockJCard.TextBox field : textBoxes){
-            System.out.println("Saved?");
-            JsonFile.writeln3Keys(tempFile, "board", "col_" + field.row, field.isQuestion ? "question_" + field.row : "answer_" + field.row, field.getText());
+        int boardWidth = Integer.parseInt(JsonFile.read(tempFile, "data", "categories"));
+        int boardHeight = Integer.parseInt(JsonFile.read(tempFile, "data", "rows"));
+
+        for(int i = 0; i < boardWidth; i++){
+            for(int j = 0; j < boardHeight; j++){
+                TextBox box = labelList.get(new AbstractMap.SimpleEntry<>(i, j));
+                JsonFile.writeln3Keys(tempFile,"board","","","");
+            }
         }
     }
 
@@ -523,7 +528,9 @@ public class BoardFactory extends JPanel {
 
             addActionListener(e -> {
                 inJCard = true;
-                changeCurrentPanel(card = new MockJCard(question, answer, row, col), boardPanel, true, 200);
+
+
+                changeCurrentPanel(new MockJCard(row, col), boardPanel, true, 200);
             });
         }
 
@@ -570,16 +577,7 @@ public class BoardFactory extends JPanel {
     }
 
     private class MockJCard extends JPanel {
-        String question;
-        String answer;
-        int row;
-        int col;
-        public MockJCard(String question, String answer, int row, int col){
-            this.question = question;
-            this.answer = answer;
-            this.row = row;
-            this.col = col;
-
+        public MockJCard(int row, int col){
             setLayout(new GridBagLayout());
             setBackground(mainColor);
 
@@ -588,23 +586,11 @@ public class BoardFactory extends JPanel {
             fieldPanels.setOpaque(false);
 
             fieldPanels.add(createGap(55, null));
-            fieldPanels.add(createTextField(question, true, row, col));
+            fieldPanels.add(labelList.get(new AbstractMap.SimpleEntry<>(true, new AbstractMap.SimpleEntry(row, col))));
             fieldPanels.add(createGap(80, null));
-            fieldPanels.add(createTextField(answer, false, row, col));
+            fieldPanels.add(labelList.get(new AbstractMap.SimpleEntry<>(false, new AbstractMap.SimpleEntry(row, col))));
 
             add(fieldPanels, gbc);
-        }
-
-        private JPanel createTextField(String text, boolean isQuestion, int row, int col){
-            JPanel panel = new JPanel();
-
-            panel.setOpaque(false);
-
-            TextBox textField = new TextBox(text, isQuestion, row, col);
-
-            panel.add(textField);
-            add(panel);
-            return panel;
         }
 
         @Override
@@ -628,47 +614,45 @@ public class BoardFactory extends JPanel {
 
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
+    }
 
-        private class TextBox extends JTextField {
-            public int row;
-            public int col;
-            public boolean isQuestion;
+    private class TextBox extends JTextField {
+        public int row;
+        public int col;
+        public boolean isQuestion;
 
-            public TextBox(String text, boolean isQuestion, int row, int col){
-                super(JsonFile.readWithThreeKeys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
+        public TextBox(String text, boolean isQuestion, int row, int col){
+            super(JsonFile.readWithThreeKeys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
 
-                this.row = row;
-                this.col = col;
-                this.isQuestion = isQuestion;
+            this.row = row;
+            this.col = col;
+            this.isQuestion = isQuestion;
 
-                setFont(generateFont(30));
-                setCaretColor(fontColor);
-                setForeground(fontColor);
-                setBackground(accentColor);
-                setHorizontalAlignment(JTextField.CENTER);
-                setBorder(BorderFactory.createBevelBorder(1));
-                setPreferredSize(new Dimension(700,128));
+            setFont(generateFont(30));
+            setCaretColor(fontColor);
+            setForeground(fontColor);
+            setBackground(accentColor);
+            setHorizontalAlignment(JTextField.CENTER);
+            setBorder(BorderFactory.createBevelBorder(1));
+            setPreferredSize(new Dimension(700,128));
 
-                getDocument().addDocumentListener(new DocumentListener() {
-                    @Override
-                    public void insertUpdate(DocumentEvent e) {
-                        JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
-                    }
+            getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
+                }
 
-                    @Override
-                    public void removeUpdate(DocumentEvent e) {
-                        JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
-                    }
-                    @Override public void changedUpdate(DocumentEvent e) {}
-                });
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
+                }
+                @Override public void changedUpdate(DocumentEvent e) {}
+            });
+        }
 
-                textBoxes.add(this);
-            }
-
-            @Override
-            protected void paintBorder(Graphics g) {
-                super.paintBorder(g);
-            }
+        @Override
+        protected void paintBorder(Graphics g) {
+            super.paintBorder(g);
         }
     }
 
