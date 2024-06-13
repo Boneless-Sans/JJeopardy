@@ -24,7 +24,7 @@ public class Dev extends JFrame implements KeyListener {
     }
 
     private void init() {
-        File file = new File(String.valueOf(getClass().getClassLoader().getResource("template.json")));
+        File file = new File(String.valueOf(getClass().getClassLoader().getResource("data/template.json")));
 
         try {
             FileReader reader = new FileReader(file);

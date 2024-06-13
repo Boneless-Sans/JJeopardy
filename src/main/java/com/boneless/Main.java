@@ -16,7 +16,7 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName = "template.json";
+    public static String fileName;
     public static String settingsFile;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;

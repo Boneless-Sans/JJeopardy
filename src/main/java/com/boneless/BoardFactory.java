@@ -11,7 +11,6 @@ import java.awt.geom.RoundRectangle2D;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -35,8 +34,6 @@ public class BoardFactory extends JPanel {
 
     private final int fontSize = 20;
 
-    private final String tempDir = System.getProperty("java.io.tmpdir");
-    private final String tempFile = tempDir + "temp_board.json";
     private final String fileName;
 
     private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
@@ -44,7 +41,6 @@ public class BoardFactory extends JPanel {
 
     public BoardFactory(JFrame parent, String mainFile){
         //todo: when loading, have non null file copy into temp, then use that file
-        //t
         factoryIsActive = true;
         this.parent = parent;
 
@@ -52,25 +48,23 @@ public class BoardFactory extends JPanel {
             fileName = mainFile;
             loadColors();
         } else {
-            fileName = createNewFile("temp.json");
+            fileName = createNewFile("temp_board.json");
             loadColors();
         }
 
-        System.out.println("File: " + fileName);
-        System.out.println("Temp: " + tempFile);
-
         //todo: add check for temp_board and have pop for rec
         try {
-            File file = new File(tempFile);
+            assert fileName != null;
+            File file = new File(fileName);
 
             boolean shutUp = file.delete();
             boolean shutUpAgain = file.createNewFile();
 
-            try(FileWriter fw = new FileWriter(tempFile)){
-                if(fileName == null){
+            try(FileWriter fw = new FileWriter(fileName)){
+                if(mainFile == null){
                     fw.write("{\n}");
                 } else {
-                    try (FileReader fr = new FileReader(fileName)){
+                    try (FileReader fr = new FileReader(mainFile)){
                         int c;
                         while((c = fr.read()) != -1){
                             fw.write(c);
@@ -91,7 +85,6 @@ public class BoardFactory extends JPanel {
     }
 
     private void loadColors(){ //not really needed, but its cleaner
-        System.out.println(fileName);
         mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
         accentColor = new Color(
                 clamp(mainColor.getRed()   - 40),
@@ -130,7 +123,7 @@ public class BoardFactory extends JPanel {
 
         //sub tabs - file
         JMenuItem newItem = new JMenuItem("New Board");
-        newItem.addActionListener(e -> {
+        newItem.addActionListener(e -> { //todo: change for JPopUp
             //text if changes have been made, use checkPop > field pop for name > create file via template (use devBoard?) > save file() > load file()
             JPanel fileNamePanel = new JPanel();
 
@@ -141,7 +134,7 @@ public class BoardFactory extends JPanel {
             int userInput = JOptionPane.showConfirmDialog(null, fileNamePanel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
             if(userInput == JOptionPane.OK_OPTION){
-                File file = new File(tempDir + "/" + textField.getText());
+                //File file = new File(tempDir + "/" + textField.getText());
             }
         });
 
@@ -490,30 +483,23 @@ public class BoardFactory extends JPanel {
         
         String tempDir = System.getProperty("java.io.tmpdir");
 
-        File tempFile = new File(tempDir, file);
+        File tempFile = new File(tempDir + file);
 
         try {
-            if (!tempFile.exists()) {
-                if(tempFile.createNewFile()){
-                    System.out.println("File Created");
-                } else {
-                    System.out.println("File Not Created");
+            if(tempFile.exists()){
+                try (FileWriter writer = new FileWriter(tempFile, false)){
+                    writer.close();
                 }
-
-                try (FileWriter writer = new FileWriter(tempFile)) {
-                    writer.write(jsonContent);
-                }
-
             }
-            return tempFile.getAbsolutePath();
-        } catch(Exception ignore) {
-            return null;
+        } catch (Exception e){
+            e.printStackTrace();
         }
+        return null;
     }
 
     private void tempSave(){
-        int boardWidth = Integer.parseInt(JsonFile.read(tempFile, "data", "categories"));
-        int boardHeight = Integer.parseInt(JsonFile.read(tempFile, "data", "rows"));
+        int boardWidth = Integer.parseInt(JsonFile.read(fileName, "data", "categories"));
+        int boardHeight = Integer.parseInt(JsonFile.read(fileName, "data", "rows"));
 
         System.out.println(boardWidth);
         for(int i = 0; i < boardWidth; i++){
@@ -521,9 +507,9 @@ public class BoardFactory extends JPanel {
                 TextBox question = getFromLabelList(labelList, true, i, j);
                 TextBox answer = getFromLabelList(labelList, false, i, j);
                 assert question != null;
-                JsonFile.writeln3Keys(tempFile,"board","col_" + i,"row_" + j,question.getText());
+                JsonFile.writeln3Keys(fileName,"board","col_" + i,"row_" + j,question.getText());
                 assert answer != null;
-                JsonFile.writeln3Keys(tempFile,"board","col_" + i,"row_" + j,answer.getText());
+                JsonFile.writeln3Keys(fileName,"board","col_" + i,"row_" + j,answer.getText());
             }
         }
     }
@@ -676,12 +662,12 @@ public class BoardFactory extends JPanel {
             getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent e) {
-                    JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
+                    JsonFile.writeln3Keys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent e) {
-                    JsonFile.writeln3Keys(tempFile, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
+                    JsonFile.writeln3Keys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
                 }
                 @Override public void changedUpdate(DocumentEvent e) {}
             });
