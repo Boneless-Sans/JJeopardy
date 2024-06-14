@@ -29,23 +29,29 @@ public class JPopUp extends JPanel {
     private JButton sourceButton;
     private JRoundedButton inputButton;
 
-    public JPopUp(JPanel parent, int width, int height) {
-        setSize(width, height);
+    private final Container parent;
+
+    public JPopUp(Container parent) {
+        this.parent = parent;
+
+        setSize(500,300);
         setLayout(new BorderLayout());
 
         BUTTON_CANCEL = new JRoundedButton("Cancel");
         BUTTON_CANCEL.addActionListener(e -> hidePopUp());
 
         //more calculations
-        startX = (frameWidth - parent.getWidth()) / 2 - width / 2;
+        startX = (frameWidth - parent.getWidth()) / 2 - getWidth() / 2;
         startY = frameHeight - parent.getHeight();
-        centerY = (frameHeight - parent.getHeight()) / 2 - height / 2;
+        centerY = (frameHeight - parent.getHeight()) / 2 - getHeight() / 2;
 
         setLocation(startX, startY);
     }
 
     public void showPopUp(String title, String message, JButton sourceButton, int type, JButton... actionButtons) {
         this.sourceButton = sourceButton;
+
+        System.out.println(parent.getLayout());
 
         removeAll();
         Color mainColor;

@@ -152,7 +152,7 @@ public class Main extends JFrame implements KeyListener {
     public void keyTyped(KeyEvent e) {
         lastKeyPressed = e;
         //esc handler
-        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "keyBinds", "exit")))) {
+        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "key_binds", "exit")))) {
             if(mainMenu.menuIsActive) { //menu
                 System.exit(0);
             }
@@ -168,7 +168,7 @@ public class Main extends JFrame implements KeyListener {
         }
 
         //continue handler - Dante
-        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "keyBinds", "continue")))) {
+        if (String.valueOf(e.getKeyChar()).equals(parseKeyStrokeInput(JsonFile.read(settingsFile, "key_binds", "continue")))) {
             if(gameBoard.jCardIsActive) {
                 jCard.moveQuestion();
             }

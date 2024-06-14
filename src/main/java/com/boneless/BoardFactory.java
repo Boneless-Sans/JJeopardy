@@ -1,5 +1,7 @@
 package com.boneless;
 
+import com.boneless.util.JPopUp;
+import com.boneless.util.JRoundedButton;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
@@ -23,6 +25,7 @@ public class BoardFactory extends JPanel {
     private final JFrame parent;
     private JPanel boardPanel;
     private MockJCard card;
+    private JPopUp popUp;
 
     private Color mainColor;
     public Color accentColor;
@@ -48,32 +51,10 @@ public class BoardFactory extends JPanel {
             fileName = mainFile;
             loadColors();
         } else {
+            System.out.println(createNewFile("temp_board.json"));
             fileName = createNewFile("temp_board.json");
+            System.out.println(fileName);
             loadColors();
-        }
-
-        //todo: add check for temp_board and have pop for rec
-        try {
-            assert fileName != null;
-            File file = new File(fileName);
-
-            boolean shutUp = file.delete();
-            boolean shutUpAgain = file.createNewFile();
-
-            try(FileWriter fw = new FileWriter(fileName)){
-                if(mainFile == null){
-                    fw.write("{\n}");
-                } else {
-                    try (FileReader fr = new FileReader(mainFile)){
-                        int c;
-                        while((c = fr.read()) != -1){
-                            fw.write(c);
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
 
         mainMenu.changeFileName(fileName);
@@ -109,6 +90,9 @@ public class BoardFactory extends JPanel {
         repaint();
         parent.revalidate();
         parent.repaint();
+
+
+        //add(popUp = new JPopUp(this));
     }
 
     private JMenuBar menuBar(){
@@ -156,7 +140,7 @@ public class BoardFactory extends JPanel {
 
         JMenuItem saveItem = new JMenuItem("Save Board");
         saveItem.addActionListener(e -> {
-            tempSave();
+            save();
         });
 
         JMenuItem exitItem = new JMenuItem("Exit");
@@ -282,7 +266,7 @@ public class BoardFactory extends JPanel {
         leftText.setForeground(fontColor);
         leftText.setFont(generateFont(fontSize));
 
-        String rawKeyBind = JsonFile.read(settingsFile, "keyBinds", "exit");
+        String rawKeyBind = JsonFile.read(settingsFile, "key_binds", "exit");
         String keyBind = rawKeyBind.substring(0, 1).toUpperCase() + rawKeyBind.substring(1);
 
         JButton headerExitButton = new JButton(keyBind);
@@ -487,31 +471,22 @@ public class BoardFactory extends JPanel {
 
         try {
             if(tempFile.exists()){
-                try (FileWriter writer = new FileWriter(tempFile, false)){
+                try (FileWriter writer = new FileWriter(tempFile, false)){ //clear file
                     writer.close();
+                }
+                try (FileWriter writer = new FileWriter(tempFile)){ //write to file
+                    writer.write(jsonContent);
+                }
+                return tempFile.getAbsolutePath();
+            } else {
+                if(tempFile.createNewFile()){
+                    return createNewFile(file);
                 }
             }
         } catch (Exception e){
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void tempSave(){
-        int boardWidth = Integer.parseInt(JsonFile.read(fileName, "data", "categories"));
-        int boardHeight = Integer.parseInt(JsonFile.read(fileName, "data", "rows"));
-
-        System.out.println(boardWidth);
-        for(int i = 0; i < boardWidth; i++){
-            for(int j = 0; j < boardHeight; j++){
-                TextBox question = getFromLabelList(labelList, true, i, j);
-                TextBox answer = getFromLabelList(labelList, false, i, j);
-                assert question != null;
-                JsonFile.writeln3Keys(fileName,"board","col_" + i,"row_" + j,question.getText());
-                assert answer != null;
-                JsonFile.writeln3Keys(fileName,"board","col_" + i,"row_" + j,answer.getText());
-            }
-        }
     }
 
     private void save(){
@@ -523,7 +498,16 @@ public class BoardFactory extends JPanel {
     }
 
     public void exit(){
-        if(!changesMade) {
+        if(changesMade) {
+            //setLayout(null);
+            JRoundedButton cancel = new JRoundedButton("Cancel");
+
+            JRoundedButton exitWS = new JRoundedButton("Exit and Save");
+
+            JRoundedButton exitWOS = new JRoundedButton("Exit Without Saving");
+
+            popUp.showPopUp("Exit comf", "Test Message",null, JPopUp.MESSAGE, cancel, exitWS, exitWOS);
+        } else {
             mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
             parent.setJMenuBar(null);

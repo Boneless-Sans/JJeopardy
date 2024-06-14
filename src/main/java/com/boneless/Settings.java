@@ -59,7 +59,7 @@ public class Settings extends JPanel {
         }
         accentColor = new Color(clamp(mainColor.getRed() - 40), clamp(mainColor.getGreen() - 40), clamp(mainColor.getBlue() - 40));
 
-        add(popup = new JPopUp(this, 500,300));
+        add(popup = new JPopUp(this));
 
         JPanel masterPanel = new JPanel(new BorderLayout());
         masterPanel.setBounds(0,0, frameWidth, frameHeight);
