@@ -70,7 +70,7 @@ public class Main extends JFrame implements KeyListener {
 
     public Main(String... arg){
         setTitle("Jeopardy!");
-        setSize(1200,700);
+        setSize(1600,900);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -126,7 +126,7 @@ public class Main extends JFrame implements KeyListener {
                     break;
                 }
                 case "settings": {
-                    add(new Settings());
+                    add(new Settings(this));
                     break;
                 }
             }

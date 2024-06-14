@@ -4,13 +4,31 @@ import com.boneless.util.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class Settings extends JPanel {
-    /* slide bottom to middle
+    private final Color mainColor;
+    private final Color accentColor;
+    private final Color fontColor;
+
+    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();;
+    private final HashMap<String, ButtonIcon> toggleButtonList = new HashMap<>();
+    private final HashMap<String, JComboBox<String>> dropDownList = new HashMap<>();
+
+    private final JPopUp popup;
+
+    private boolean changesMade = false;
+
+    private final int frameWidth;
+    private final int frameHeight;
+    private int stackHeight = 0;
+
+    public Settings(Container parent) {
+        /* slide bottom to middle
     -General | X
         -Null Safety | √
             -Main File | √
@@ -35,19 +53,9 @@ public class Settings extends JPanel {
         -Always on top | X
         -Scroll Bar Sensitivity | X
      */
-    private final Color mainColor;
-    private final Color accentColor;
-    private final Color fontColor;
+        this.frameWidth = parent.getWidth();
+        this.frameHeight = parent.getHeight();
 
-    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();;
-    private final HashMap<String, ButtonIcon> toggleButtonList = new HashMap<>();
-    private final HashMap<String, JComboBox<String>> dropDownList = new HashMap<>();
-
-    private final JPopUp popup;
-
-    private boolean changesMade = false;
-
-    public Settings() {
         setLayout(null);
 
         if(fileName == null){
@@ -57,9 +65,9 @@ public class Settings extends JPanel {
             mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
             fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
         }
-        accentColor = new Color(clamp(mainColor.getRed() - 40), clamp(mainColor.getGreen() - 40), clamp(mainColor.getBlue() - 40));
+        accentColor = new Color(clamp(mainColor.getRed() - 50), clamp(mainColor.getGreen() - 50), clamp(mainColor.getBlue() - 50));
 
-        add(popup = new JPopUp(this));
+        add(popup = new JPopUp(parent));
 
         JPanel masterPanel = new JPanel(new BorderLayout());
         masterPanel.setBounds(0,0, frameWidth, frameHeight);
@@ -96,10 +104,9 @@ public class Settings extends JPanel {
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                 g2d.setPaint(new GradientPaint(0,0, mainColor, getWidth(), getHeight(), accentColor));
-                g2d.fillRect(0,0,getWidth(),getHeight());
+                g2d.fillRect(0,0,frameWidth, stackHeight + 100);
             }
         };
-        panel.setPreferredSize(new Dimension(frameWidth, frameHeight)); //here
 
         JRoundedButton saveBind = new JRoundedButton("Save");
         saveBind.addActionListener(e -> popup.hidePopUp());
@@ -111,7 +118,7 @@ public class Settings extends JPanel {
         advanceBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", advanceBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(advanceBindButton), saveBind));
 
         String[] resolutions = {
-                "640x360",
+                "placeholder",
                 "854x480",
                 "1280x720",
                 "1366x768",
@@ -129,11 +136,23 @@ public class Settings extends JPanel {
                 "6016x3384"
         };
 
-        for(String resolution : resolutions){
-            resolution = resolution.contains("(") ? resolution.split(",")[0] : resolution;
-            boolean nativeCheck = (Integer.parseInt(resolution.split("x")[0]) == screenWidth);
-            System.out.println(resolution + " " + nativeCheck + " " + screenWidth);
+        for (int i = 0; i < resolutions.length; i++) { //figure out the native, then cut off the rest
+            if (resolutions[i].contains(String.valueOf(screenWidth))) {
+                resolutions[i] = resolutions[i] + " (Native)";
+
+                String[] newArray = new String[resolutions.length - (resolutions.length - i) + 1];
+
+                for (int k = 0, j = 0; k < newArray.length; k++) {
+                    newArray[j++] = resolutions[k];
+                }
+
+                resolutions = newArray;
+
+                break;
+            }
         }
+
+        resolutions[0] = frameWidth + "x" + frameHeight;
 
         JComboBox<String> resSizeDropDown = new JComboBox<>(resolutions);
 
@@ -150,6 +169,8 @@ public class Settings extends JPanel {
         panel.add(sectionLabel("Misc"));
         panel.add(createTogglePanel("Fullscreen", "fullscreen"));
         panel.add(createTogglePanel("Play Audio", "audio"));
+
+        panel.setPreferredSize(new Dimension(frameWidth, stackHeight + 100));
 
         HiddenScroller scroller = new HiddenScroller(panel, false);
         scroller.setBackground(mainColor);
@@ -173,6 +194,9 @@ public class Settings extends JPanel {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(900, 70));
         panel.setOpaque(false);
+
+        stackHeight += 70;
+
         return panel;
     }
 
@@ -186,6 +210,8 @@ public class Settings extends JPanel {
         label.setForeground(fontColor);
 
         panel.add(label);
+
+        stackHeight += 60;
 
         return panel;
     }
@@ -222,6 +248,8 @@ public class Settings extends JPanel {
         panel.add(leftPanel);
         panel.add(component);
 
+        stackHeight += 100;
+
         return panel;
     }
     private JPanel createKeyBindPanel(String text, String key, JRoundedButton button){
@@ -242,7 +270,7 @@ public class Settings extends JPanel {
         ButtonIcon button = new ButtonIcon(64, Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", key)));
         rightPanel.add(button, rightGBC);
 
-        toggleButtonList.put("key",button);
+        toggleButtonList.put(key,button);
 
         return createSettingsItem(text, rightPanel);
     }

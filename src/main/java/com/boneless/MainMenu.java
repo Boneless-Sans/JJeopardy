@@ -192,7 +192,7 @@ public class MainMenu extends ScrollGridPanel {
                     break;
                 }
                 case 3: { //settings
-                    changeCurrentPanel(new Settings(), this, true);
+                    changeCurrentPanel(new Settings(parent), this, true);
                     break;
                 }
                 case 4: { //exit

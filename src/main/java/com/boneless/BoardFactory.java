@@ -23,7 +23,7 @@ public class BoardFactory extends JPanel {
     private final JFrame parent;
     private JPanel boardPanel;
     private MockJCard card;
-    private JPopUp popUp;
+    private final JPopUp popUp;
 
     private Color mainColor;
     public Color accentColor;
@@ -32,27 +32,27 @@ public class BoardFactory extends JPanel {
     public boolean factoryIsActive;
     private boolean changesMade = false;
     private boolean inJCard = false;
+    private boolean usingTempFile;
 
     private final int fontSize = 20;
 
     private final String fileName;
 
     private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList = new HashMap<>();
-    private final ArrayList<JButton> boardButtonList = new ArrayList<>();
+    private final ArrayList<JComponent> boardButtonList = new ArrayList<>();
     private final ArrayList<JTextField> catFields = new ArrayList<>();
 
     public BoardFactory(JFrame parent, String mainFile){
-        //todo: when loading, have non null file copy into temp, then use that file
         factoryIsActive = true;
         this.parent = parent;
 
         if(mainFile != null){
+            usingTempFile = false;
             fileName = mainFile;
             loadColors();
         } else {
-            System.out.println(createNewFile("temp_board.json"));
+            usingTempFile = true;
             fileName = createNewFile("temp_board.json");
-            System.out.println(fileName);
             loadColors();
         }
 
@@ -63,7 +63,7 @@ public class BoardFactory extends JPanel {
 
         JPanel main = new JPanel(new BorderLayout());
 
-        add(popUp = new JPopUp(this));
+        add(popUp = new JPopUp(parent));
 
         reload();
     }
@@ -112,18 +112,11 @@ public class BoardFactory extends JPanel {
         //sub tabs - file
         JMenuItem newItem = new JMenuItem("New Board");
         newItem.addActionListener(e -> { //todo: change for JPopUp
-            //text if changes have been made, use checkPop > field pop for name > create file via template (use devBoard?) > save file() > load file()
-            JPanel fileNamePanel = new JPanel();
+            String test = "Orignal Text";
 
-            JTextField textField = new JTextField(10);
+            popUp.showPopUp("Title", test, null, JPopUp.TEXT_INPUT);
 
-            fileNamePanel.add(textField);
-
-            int userInput = JOptionPane.showConfirmDialog(null, fileNamePanel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-            if(userInput == JOptionPane.OK_OPTION){
-                //File file = new File(tempDir + "/" + textField.getText());
-            }
+            System.out.println(test);
         });
 
         JMenuItem openItem = new JMenuItem("Open Board");
@@ -143,9 +136,10 @@ public class BoardFactory extends JPanel {
         });
 
         JMenuItem saveItem = new JMenuItem("Save Board");
-        saveItem.addActionListener(e -> {
-            save();
-        });
+        saveItem.addActionListener(e -> save());
+
+        JMenuItem saveAsItem = new JMenuItem("Save Board At...");
+        saveAsItem.addActionListener(e -> saveAs());
 
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(e -> {
@@ -170,6 +164,7 @@ public class BoardFactory extends JPanel {
         fileMenu.add(newItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
+        fileMenu.add(saveAsItem);
         fileMenu.add(exitItem);
 
         //add Help tabs
@@ -248,6 +243,8 @@ public class BoardFactory extends JPanel {
 
         //setup field
         JTextField field = new JTextField(10);
+        catFields.add(field);
+        boardButtonList.add(field);
 
         field.setFont(generateFont(fontSize));
         field.setForeground(fontColor);
@@ -300,6 +297,8 @@ public class BoardFactory extends JPanel {
             }
             else exit();
         });
+
+        boardButtonList.add(headerExitButton);
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setOpaque(false);
@@ -394,95 +393,6 @@ public class BoardFactory extends JPanel {
     }
 
     private String createNewFile(String file){
-        String jsonContent = """
-                {
-                  "data" : {
-                    "board_name": "Template",
-                    "categories": 5,
-                    "rows": 5,
-                    "font": "Arial",
-                    "font_color": "255,255,255",
-                    "global_color": "20,20,255",
-                    "disabled_button_color": "80,80,80"
-                  },
-                  "board": {
-                    "categories": {
-                      "cat_0": "Test 1",
-                      "cat_1": "Test 2",
-                      "cat_2": "Test 3",
-                      "cat_3": "Test 4",
-                      "cat_4": "Test 5"
-                    },
-                    "scores": {
-                      "row_0": "100",
-                      "row_1": "200",
-                      "row_2": "300",
-                      "row_3": "400",
-                      "row_4": "500"
-                    },
-                    "col_0": {
-                      "question_0": "Column 0 Question 0",
-                      "question_1": "Column 0 Question 1",
-                      "question_2": "Column 0 Question 2",
-                      "question_3": "Column 0 Question 3",
-                      "question_4": "Column 0 Question 4",
-                      "answer_0": "Column 0 Answer 0",
-                      "answer_1": "Column 0 Answer 1",
-                      "answer_2": "Column 0 Answer 2",
-                      "answer_3": "Column 0 Answer 3",
-                      "answer_4": "Column 0 Answer 4"
-                    },
-                    "col_1": {
-                      "question_0": "Column 1 Question 0",
-                      "question_1": "Column 1 Question 1",
-                      "question_2": "Column 1 Question 2",
-                      "question_3": "Column 1 Question 3",
-                      "question_4": "Column 1 Question 4",
-                      "answer_0": "Column 1 Answer 0",
-                      "answer_1": "Column 1 Answer 1",
-                      "answer_2": "Column 1 Answer 2",
-                      "answer_3": "Column 1 Answer 3",
-                      "answer_4": "Column 1 Answer 4"
-                    },
-                    "col_2": {
-                      "question_0": "Column 2 Question 0",
-                      "question_1": "Column 2 Question 1",
-                      "question_2": "Column 2 Question 2",
-                      "question_3": "Column 2 Question 3",
-                      "question_4": "Column 2 Question 4",
-                      "answer_0": "Column 2 Answer 0",
-                      "answer_1": "Column 2 Answer 1",
-                      "answer_2": "Column 2 Answer 2",
-                      "answer_3": "Column 2 Answer 3",
-                      "answer_4": "Column 2 Answer 4"
-                    },
-                    "col_3": {
-                      "question_0": "Column 3 Question 0",
-                      "question_1": "Column 3 Question 1",
-                      "question_2": "Column 3 Question 2",
-                      "question_3": "Column 3 Question 3",
-                      "question_4": "Column 3 Question 4",
-                      "answer_0": "Column 3 Answer 0",
-                      "answer_1": "Column 3 Answer 1",
-                      "answer_2": "Column 3 Answer 2",
-                      "answer_3": "Column 3 Answer 3",
-                      "answer_4": "Column 3 Answer 4"
-                    },
-                    "col_4": {
-                      "question_0": "Column 4 Question 0",
-                      "question_1": "Column 4 Question 1",
-                      "question_2": "Column 4 Question 2",
-                      "question_3": "Column 4 Question 3",
-                      "question_4": "Column 4 Question 4",
-                      "answer_0": "Column 4 Answer 0",
-                      "answer_1": "Column 4 Answer 1",
-                      "answer_2": "Column 4 Answer 2",
-                      "answer_3": "Column 4 Answer 3",
-                      "answer_4": "Column 4 Answer 4"
-                    }
-                  }
-                }
-                """;
         
         String tempDir = System.getProperty("java.io.tmpdir");
 
@@ -491,10 +401,10 @@ public class BoardFactory extends JPanel {
         try {
             if(tempFile.exists()){
                 try (FileWriter writer = new FileWriter(tempFile, false)){ //clear file
-                    writer.close();
+                    writer.close(); //says redundant, isn't redundant
                 }
                 try (FileWriter writer = new FileWriter(tempFile)){ //write to file
-                    writer.write(jsonContent);
+                    writer.write(jsonContent());
                 }
                 return tempFile.getAbsolutePath();
             } else {
@@ -509,27 +419,52 @@ public class BoardFactory extends JPanel {
     }
 
     private void save(){
-        //copy temp file to dest file
+        if(usingTempFile) {
+            saveAs();
+            return;
+        }
+        System.out.println("test");
     }
 
     private void saveAs(){
         //have text box popup, get dir, get file name, save();
+        popUp.showPopUp("title", null, null, JPopUp.TEXT_INPUT);
     }
 
     private void load(String filePath){
         //
     }
 
-    public void exit(){
-        if(changesMade) {
-            //setLayout(null);
+    public void exit(boolean... skipCheck){
+        boolean doSkipCheck = skipCheck.length > 0;
+
+        if(changesMade && !doSkipCheck) {
+            for(JComponent button : boardButtonList){
+                button.setEnabled(false);
+            }
+
             JRoundedButton cancel = new JRoundedButton("Cancel");
+            cancel.addActionListener(e -> {
+                for(JComponent button : boardButtonList){
+                    button.setEnabled(true);
+                }
+                popUp.hidePopUp();
+            });
 
             JRoundedButton exitWS = new JRoundedButton("Exit and Save");
+            exitWS.addActionListener(e -> {
+                popUp.hidePopUp();
+                save();
+                exit();
+            });
 
             JRoundedButton exitWOS = new JRoundedButton("Exit Without Saving");
+            exitWOS.addActionListener(e -> {
+                popUp.hidePopUp();
+                exit();
+            });
 
-            popUp.showPopUp("Exit comf", "Test Message",null, JPopUp.MESSAGE, cancel, exitWS, exitWOS);
+            popUp.showPopUp("Changes Made!", "Changes have been made!",null, JPopUp.MESSAGE, cancel, exitWS, exitWOS);
         } else {
             mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
@@ -558,7 +493,6 @@ public class BoardFactory extends JPanel {
 
             addActionListener(e -> {
                 inJCard = true;
-
 
                 changeCurrentPanel(card = new MockJCard(row, col), boardPanel, true, 200);
             });
@@ -712,5 +646,96 @@ public class BoardFactory extends JPanel {
                 "https://loopedforinfinity.com/","https://end.city/","https://www.bouncingdvdlogo.com/","https://clicking.toys/peg-solitaire/english/","https://toms.toys"
         };
         return siteIndex[new Random().nextInt(siteIndex.length)];
+    }
+    private String jsonContent(){
+        return """
+                {
+                  "data" : {
+                    "board_name": "Template",
+                    "categories": 5,
+                    "rows": 5,
+                    "font": "Arial",
+                    "font_color": "255,255,255",
+                    "global_color": "20,20,255",
+                    "disabled_button_color": "80,80,80"
+                  },
+                  "board": {
+                    "categories": {
+                      "cat_0": "Test 1",
+                      "cat_1": "Test 2",
+                      "cat_2": "Test 3",
+                      "cat_3": "Test 4",
+                      "cat_4": "Test 5"
+                    },
+                    "scores": {
+                      "row_0": "100",
+                      "row_1": "200",
+                      "row_2": "300",
+                      "row_3": "400",
+                      "row_4": "500"
+                    },
+                    "col_0": {
+                      "question_0": "Column 0 Question 0",
+                      "question_1": "Column 0 Question 1",
+                      "question_2": "Column 0 Question 2",
+                      "question_3": "Column 0 Question 3",
+                      "question_4": "Column 0 Question 4",
+                      "answer_0": "Column 0 Answer 0",
+                      "answer_1": "Column 0 Answer 1",
+                      "answer_2": "Column 0 Answer 2",
+                      "answer_3": "Column 0 Answer 3",
+                      "answer_4": "Column 0 Answer 4"
+                    },
+                    "col_1": {
+                      "question_0": "Column 1 Question 0",
+                      "question_1": "Column 1 Question 1",
+                      "question_2": "Column 1 Question 2",
+                      "question_3": "Column 1 Question 3",
+                      "question_4": "Column 1 Question 4",
+                      "answer_0": "Column 1 Answer 0",
+                      "answer_1": "Column 1 Answer 1",
+                      "answer_2": "Column 1 Answer 2",
+                      "answer_3": "Column 1 Answer 3",
+                      "answer_4": "Column 1 Answer 4"
+                    },
+                    "col_2": {
+                      "question_0": "Column 2 Question 0",
+                      "question_1": "Column 2 Question 1",
+                      "question_2": "Column 2 Question 2",
+                      "question_3": "Column 2 Question 3",
+                      "question_4": "Column 2 Question 4",
+                      "answer_0": "Column 2 Answer 0",
+                      "answer_1": "Column 2 Answer 1",
+                      "answer_2": "Column 2 Answer 2",
+                      "answer_3": "Column 2 Answer 3",
+                      "answer_4": "Column 2 Answer 4"
+                    },
+                    "col_3": {
+                      "question_0": "Column 3 Question 0",
+                      "question_1": "Column 3 Question 1",
+                      "question_2": "Column 3 Question 2",
+                      "question_3": "Column 3 Question 3",
+                      "question_4": "Column 3 Question 4",
+                      "answer_0": "Column 3 Answer 0",
+                      "answer_1": "Column 3 Answer 1",
+                      "answer_2": "Column 3 Answer 2",
+                      "answer_3": "Column 3 Answer 3",
+                      "answer_4": "Column 3 Answer 4"
+                    },
+                    "col_4": {
+                      "question_0": "Column 4 Question 0",
+                      "question_1": "Column 4 Question 1",
+                      "question_2": "Column 4 Question 2",
+                      "question_3": "Column 4 Question 3",
+                      "question_4": "Column 4 Question 4",
+                      "answer_0": "Column 4 Answer 0",
+                      "answer_1": "Column 4 Answer 1",
+                      "answer_2": "Column 4 Answer 2",
+                      "answer_3": "Column 4 Answer 3",
+                      "answer_4": "Column 4 Answer 4"
+                    }
+                  }
+                }
+                """;
     }
 }
