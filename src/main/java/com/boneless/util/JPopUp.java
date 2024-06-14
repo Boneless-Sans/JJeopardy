@@ -11,19 +11,49 @@ import java.awt.event.KeyListener;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
-public class JPopUp {
-    public static void showButtonInputPopUp(Container parent, String title, JButton sourceButton, JButton... actionButtons) {
+public class JPopUp extends JPanel {
+    public static final int BUTTON_INPUT = 0;
+    public static final int TEXT_INPUT = 1;
+    public static final int MESSAGE = 2;
+    public JRoundedButton BUTTON_CANCEL;
 
-        JPanel panel = new JPanel(new BorderLayout());
+    private final int startX;
+    private final int startY;
+    private final int centerY;
 
-        panel.setSize(500,300);
+    private String keyPressed;
 
-        int startX = parent.getWidth() / 2 - panel.getWidth() / 2;
-        int startY = parent.getHeight();
-        int centerY = parent.getHeight() / 2 - panel.getHeight() / 2;
+    private Timer animationTimer;
+    private Timer clearTimer;
 
-        panel.setLocation(startX, startY);
+    private JButton sourceButton;
+    private JRoundedButton inputButton;
 
+    private final Container parent;
+
+    public JPopUp(Container parent) {
+        this.parent = parent;
+
+        setSize(500,300);
+        setLayout(new BorderLayout());
+
+        BUTTON_CANCEL = new JRoundedButton("Cancel");
+        BUTTON_CANCEL.addActionListener(e -> hidePopUp());
+
+        //more calculations
+        startX = parent.getWidth() / 2 - getWidth() / 2;
+        startY = parent.getHeight();
+        centerY = parent.getHeight() / 2 - getHeight() / 2;
+
+        setLocation(startX, startY);
+    }
+
+    public void showPopUp(String title, String message, JButton sourceButton, int type, JButton... actionButtons) {
+        this.sourceButton = sourceButton;
+
+        System.out.println(parent.getLayout());
+
+        removeAll();
         Color mainColor;
         Color fontColor;
 
@@ -50,7 +80,38 @@ public class JPopUp {
         JPanel bodyPanel = new JPanel(new GridBagLayout());
         bodyPanel.setBackground(mainColor);
 
-        JRoundedButton inputButton = new JRoundedButton("Click to Set");
+        switch (type){
+            case BUTTON_INPUT: {
+                JRoundedButton inputButton = createKeyButton();
+
+                bodyPanel.add(inputButton, gbc);
+            }
+            case TEXT_INPUT: {
+                //
+            }
+            case MESSAGE: {
+                //
+            }
+        }
+
+        //footer
+        JPanel footerPanel = new JPanel();
+        footerPanel.setBackground(accentColor);
+
+        for(JButton actionButton : actionButtons){
+            footerPanel.add(actionButton);
+        }
+
+        add(headerPanel, BorderLayout.NORTH);
+        add(bodyPanel, BorderLayout.CENTER);
+        add(footerPanel, BorderLayout.SOUTH);
+
+        animateToPosition(centerY);
+
+    }
+
+    private JRoundedButton createKeyButton() {
+        inputButton = new JRoundedButton("Click to Set");
         inputButton.setPreferredSize(new Dimension(300,100));
         inputButton.setFocusable(true);
         inputButton.addKeyListener(new KeyListener() {
@@ -65,47 +126,32 @@ public class JPopUp {
                     default: inputButton.setText(firstUpperCase(String.valueOf(e.getKeyChar())));
                 }
                 sourceButton.setText(inputButton.getText());
-                panel.revalidate();
-                panel.repaint();
+                revalidate();
+                repaint();
             }
             @Override public void keyPressed(KeyEvent e) {}
             @Override public void keyReleased(KeyEvent e) {}
         });
-
-        bodyPanel.add(inputButton);
-
-        //footer
-        JPanel footerPanel = new JPanel();
-        footerPanel.setBackground(accentColor);
-
-        for(JButton actionButton : actionButtons){
-            footerPanel.add(actionButton);
-        }
-
-        panel.add(headerPanel, BorderLayout.NORTH);
-        panel.add(bodyPanel, BorderLayout.CENTER);
-        panel.add(footerPanel, BorderLayout.SOUTH);
-
-        animateToPosition(centerY, startX);
+        return inputButton;
     }
 
-    public static void hidePopUp(int startY) {
-        if(inputButton != null) {
-            inputButton.setFocusable(false);
-            inputButton.setEnabled(false);
-        }
+    public void hidePopUp() {
+        inputButton.setFocusable(false);
+        inputButton.setEnabled(false);
         animateToPosition(startY);
     }
 
-    private static void animateToPosition(JPanel self, int targetY, int startX) {
-        Timer animationTimer;
-
+    private void animateToPosition(int targetY) {
         int duration = 1000; //ani time
         int framesPerSecond = 60;
         int delay = 1000 / framesPerSecond;
 
-        int startY = self.getY();
+        int startY = getY();
         int distance = targetY - startY;
+
+        if (animationTimer != null && animationTimer.isRunning()) {
+            animationTimer.stop();
+        }
 
         animationTimer = new Timer(delay, new ActionListener() {
             long startTime = -1;
@@ -128,16 +174,16 @@ public class JPopUp {
                 float easedTime = cubicEaseInOut(elapsedTime);
 
                 int newY = startY + Math.round(distance * easedTime);
-                self.setLocation(startX, newY);
-                self.revalidate();
-                self.repaint();
+                setLocation(startX, newY);
+                revalidate();
+                repaint();
             }
         });
 
         animationTimer.start();
     }
 
-    private static float cubicEaseInOut(float t) {
+    private float cubicEaseInOut(float t) {
         if (t < 0.5f) {
             return 4 * t * t * t; //ease in
         } else {
