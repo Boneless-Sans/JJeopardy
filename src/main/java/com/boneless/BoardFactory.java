@@ -7,7 +7,6 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.*;
@@ -17,8 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import static com.boneless.Main.mainMenu;
-import static com.boneless.Main.settingsFile;
+import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
 
 public class BoardFactory extends JPanel {
@@ -39,8 +37,9 @@ public class BoardFactory extends JPanel {
 
     private final String fileName;
 
-    private final ArrayList<JTextComponent> categoryBoxes = new ArrayList<>();
     private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList = new HashMap<>();
+    private final ArrayList<JButton> boardButtonList = new ArrayList<>();
+    private final ArrayList<JTextField> catFields = new ArrayList<>();
 
     public BoardFactory(JFrame parent, String mainFile){
         //todo: when loading, have non null file copy into temp, then use that file
@@ -58,14 +57,18 @@ public class BoardFactory extends JPanel {
         }
 
         mainMenu.changeFileName(fileName);
-        setLayout(new BorderLayout());
+        setLayout(null);
         parent.setJMenuBar(menuBar());
         setBackground(mainColor);
+
+        JPanel main = new JPanel(new BorderLayout());
+
+        add(popUp = new JPopUp(this));
 
         reload();
     }
 
-    private void loadColors(){ //not really needed, but its cleaner
+    private void loadColors(){ //not really needed, but its cleaner+-
         mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
         accentColor = new Color(
                 clamp(mainColor.getRed()   - 40),
@@ -75,24 +78,25 @@ public class BoardFactory extends JPanel {
     }
 
     private void reload(){
-        removeAll();
+        //removeAll();
 
-        JPanel panel = new JPanel(new BorderLayout()); //stupid work around
-        panel.setBackground(mainColor);
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBounds(0,0,parent.getWidth(), parent.getHeight());
 
-        panel.add(headerPanel(), BorderLayout.NORTH);
-        panel.add(boardPanel = boardPanel(), BorderLayout.CENTER);
+        JPanel boardHeaderPanel = new JPanel(new BorderLayout());
+        boardHeaderPanel.setBackground(mainColor);
 
-        add(panel, BorderLayout.CENTER);
-        add(controlPanel(), BorderLayout.EAST);
+        boardHeaderPanel.add(headerPanel(), BorderLayout.NORTH);
+        boardHeaderPanel.add(this.boardPanel = boardPanel(), BorderLayout.CENTER);
+
+        mainPanel.add(boardHeaderPanel, BorderLayout.CENTER);
+        mainPanel.add(controlPanel(), BorderLayout.EAST);
+        add(mainPanel);
 
         revalidate();
         repaint();
         parent.revalidate();
         parent.repaint();
-
-
-        //add(popUp = new JPopUp(this));
     }
 
     private JMenuBar menuBar(){
@@ -195,16 +199,20 @@ public class BoardFactory extends JPanel {
         for (int i = 0; i < boardY - 1; i++) {
             for (int j = 0; j < boardX; j++) {
                 String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
-                int score = Integer.parseInt(scoreString);
                 String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
+                int score = Integer.parseInt(scoreString);
 
                 putInLabelList(labelList, true, i, j, new TextBox(answer, true, i, j));
                 putInLabelList(labelList, false, i, j, new TextBox(question, false, i, j));
+
                 MockBoardButton button = new MockBoardButton(score, question, answer, 20, i, j);
+                boardButtonList.add(button);
+
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
+
                 panel.add(button);
             }
         }
@@ -212,8 +220,7 @@ public class BoardFactory extends JPanel {
         return panel;
     }
 
-    private void putInLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col, TextBox textBox){
-        System.out.println("Added something to the hash");
+    private void putInLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col, TextBox textBox){ //ass
         HashMap<Boolean, HashMap<Integer, Integer>> outerKey = new HashMap<>();
         HashMap<Integer, Integer> innerKey = new HashMap<>();
         innerKey.put(row, col);
@@ -222,8 +229,7 @@ public class BoardFactory extends JPanel {
         labelList.put(outerKey, textBox);
     }
 
-    private TextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col){
-        System.out.println("read something to the hash");
+    private TextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col){ //SHIT
         for(HashMap<Boolean, HashMap<Integer, Integer>> outerKey : labelList.keySet()){
             if(outerKey.containsKey(isQuestion)){
                 HashMap<Integer, Integer> innerKey = outerKey.get(isQuestion);
@@ -242,6 +248,7 @@ public class BoardFactory extends JPanel {
 
         //setup field
         JTextField field = new JTextField(10);
+
         field.setFont(generateFont(fontSize));
         field.setForeground(fontColor);
         field.setBackground(accentColor);
@@ -249,10 +256,22 @@ public class BoardFactory extends JPanel {
         field.setHorizontalAlignment(JTextField.CENTER);
         field.setText(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
         field.setCaretColor(fontColor);
-        field.getDocument().addDocumentListener(documentListener());
+        field.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                changesMade = true;
+                JsonFile.writeln(fileName, "board","categories","cat_" + index);
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                changesMade = true;
+                JsonFile.writeln(fileName, "board","categories","cat_" + index);
+            }
+            @Override public void changedUpdate(DocumentEvent e) {}
+        });
 
         panel.add(field, gbc);
-        categoryBoxes.add(field);
 
         return panel;
     }
@@ -493,6 +512,10 @@ public class BoardFactory extends JPanel {
         //copy temp file to dest file
     }
 
+    private void saveAs(){
+        //have text box popup, get dir, get file name, save();
+    }
+
     private void load(String filePath){
         //
     }
@@ -646,11 +669,13 @@ public class BoardFactory extends JPanel {
             getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent e) {
+                    changesMade = true;
                     JsonFile.writeln3Keys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent e) {
+                    changesMade = true;
                     JsonFile.writeln3Keys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row, getText());
                 }
                 @Override public void changedUpdate(DocumentEvent e) {}
