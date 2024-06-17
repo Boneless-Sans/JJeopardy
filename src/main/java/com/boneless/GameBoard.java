@@ -1,5 +1,6 @@
 package com.boneless;
 
+import com.boneless.util.JPopUp;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
@@ -7,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
 import static com.boneless.util.GeneralUtils.*;
@@ -14,29 +16,38 @@ import static com.boneless.util.GeneralUtils.*;
 public class GameBoard extends JPanel {
     public boolean GameIsActive;
     public boolean jCardIsActive = false;
+
     public static final Color mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
     public static final Color accentColor = new Color(
             clamp(mainColor.getRed()   - 40),
             clamp(mainColor.getGreen() - 40),
             clamp(mainColor.getBlue()  - 40));
     public static final Color fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+
     public static int fontSize = 20;
-    public final JPanel boardPanel;
     public int scoreToAdd = 0;
     private final int teamCount;
 
-    public GameBoard(int teamCount){
+    public final JPanel boardPanel;
+    private final JPopUp popup;
+
+    public GameBoard(int teamCount, Container parent){
         this.teamCount = teamCount;
         GameIsActive = true;
         mainMenu.menuIsActive = false;
 
-        setLayout(new BorderLayout());
+        JPanel masterPanel = new JPanel(new BorderLayout());
+        masterPanel.setBounds(0,0,frameWidth, frameHeight);
+
         setBackground(mainColor);
         setFocusable(true);
 
-        add(new HeaderPanel(), BorderLayout.NORTH);
-        add(createTeamsPanel(), BorderLayout.SOUTH);
-        add(boardPanel = mainBoard(), BorderLayout.CENTER);
+        masterPanel.add(new HeaderPanel(), BorderLayout.NORTH);
+        //masterPanel.add(createTeamsPanel(), BorderLayout.SOUTH);
+        masterPanel.add(boardPanel = mainBoard(), BorderLayout.CENTER);
+
+        add(popup = new JPopUp(parent));
+        add(masterPanel);
 
         revalidate();
         repaint();

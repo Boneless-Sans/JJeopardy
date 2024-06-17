@@ -40,7 +40,6 @@ public class BoardFactory extends JPanel {
 
     private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList = new HashMap<>();
     private final ArrayList<JComponent> boardButtonList = new ArrayList<>();
-    private final ArrayList<JTextField> catFields = new ArrayList<>();
 
     public BoardFactory(JFrame parent, String mainFile){
         factoryIsActive = true;
@@ -250,7 +249,6 @@ public class BoardFactory extends JPanel {
 
         //setup field
         JTextField field = new JTextField(10);
-        catFields.add(field);
         boardButtonList.add(field);
 
         field.setFont(generateFont(fontSize));
@@ -307,18 +305,21 @@ public class BoardFactory extends JPanel {
 
         boardButtonList.add(headerExitButton);
 
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel leftPanel = new JPanel(new GridBagLayout());
         leftPanel.setOpaque(false);
         leftPanel.add(headerExitButton);
         leftPanel.add(leftText);
 
         //center panel
-        JLabel title = new JLabel(JsonFile.read(fileName, "data", "board_name"));
+        JTextField title = new JTextField();
+        title.setText(JsonFile.read(fileName, "data", "board_name"));
+        title.setBackground(accentColor);
         title.setForeground(fontColor);
         title.setFont(generateFont(fontSize));
+        title.setBorder(BorderFactory.createBevelBorder(1));
+        title.setHorizontalAlignment(JTextField.CENTER);
 
         JPanel titlePanel = new JPanel(new GridBagLayout());
-        titlePanel.setOpaque(false);
 
         titlePanel.add(title, gbc);
 
@@ -428,7 +429,11 @@ public class BoardFactory extends JPanel {
         if(usingTempFile) {
             saveAs();
         } else {
-            //todo: override fileName with
+//            try {
+//                try(FileWriter writer = new FileWriter(fileName)){
+//                    //
+//                }
+//            }
         }
     }
 
