@@ -297,7 +297,7 @@ public class Settings extends JPanel {
     }
 
     private void save(){
-        System.out.println("Saving Settings...");
+        changesMade = false;
 
         JsonFile.writeln(settingsFile, "key_binds", "exit", keyBindButtonList.get("exit").getText());
         JsonFile.writeln(settingsFile, "key_binds", "advance", keyBindButtonList.get("advance").getText());

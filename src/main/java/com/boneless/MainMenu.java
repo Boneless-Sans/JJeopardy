@@ -136,7 +136,7 @@ public class MainMenu extends ScrollGridPanel {
         ButtonIcon startGame = new ButtonIcon(buttonSize, ButtonIcon.START, ButtonIcon.GREEN);
 
         startGame.addActionListener(a -> {
-            changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1), teamChoosePanel, true);
+            changeCurrentPanel(gameBoard = new GameBoard(dropDown.getSelectedIndex() + 1, parent), teamChoosePanel, true);
             hasNotBanged = true;
         });
 

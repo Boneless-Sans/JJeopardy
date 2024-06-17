@@ -125,7 +125,7 @@ public class Main extends JFrame implements KeyListener {
         if(startIndex != -1 && endIndex != -1) {
             switch (arg.substring(startIndex + 1, endIndex)) {
                 case "card": {
-                    add(gameBoard = new GameBoard(4));
+                    add(gameBoard = new GameBoard(4, this));
                     break;
                 }
                 case "board": {
