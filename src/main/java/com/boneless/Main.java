@@ -65,6 +65,7 @@ public class Main extends JFrame implements KeyListener {
                               "misc": {
                                 "fullscreen": "false",
                                 "audio": "false",
+                                "play_animations": "false",
                                 "always_on_top": "false",
                                 "screen_resolution": "1600x900"
                               }

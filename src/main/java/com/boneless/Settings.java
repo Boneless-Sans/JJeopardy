@@ -150,6 +150,8 @@ public class Settings extends JPanel {
         panel.add(createTogglePanel("Play Audio", "audio"));
         panel.add(createTogglePanel("Background Scrolling", "disable_background_scroll"));
 
+        panel.add(createTogglePanel("Play Animations", "play_animations"));
+
         panel.setPreferredSize(new Dimension(frameWidth, stackHeight + 100));
 
         HiddenScroller scroller = new HiddenScroller(panel, false);
@@ -303,6 +305,7 @@ public class Settings extends JPanel {
         JsonFile.writeln(settingsFile, "misc", "screen_resolution", (String) dropDownList.get("screen_resolution").getSelectedItem());
 
         JsonFile.writeln(settingsFile, "misc", "disable_background_scroll", getStringBoolean(toggleButtonList.get("disable_background_scroll").isChecked()));
+        JsonFile.writeln(settingsFile, "misc", "play_animations",getStringBoolean(toggleButtonList.get("play_animations").isChecked()));
         JsonFile.writeln(settingsFile, "misc", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
         JsonFile.writeln(settingsFile, "misc","fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
         JsonFile.writeln(settingsFile, "misc","audio",getStringBoolean(toggleButtonList.get("audio").isChecked()));

@@ -27,6 +27,8 @@ public class JCard extends JPanel {
     private final JPanel fadePanel2;
     private final JButton sourceButton;
 
+
+    private final boolean animationCheck = Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "play_animations"));
     public int animationJCardBound = 4;
     // Set animationJCardBound to 1 for no animations
     // Set animationJCardBound to # of cases + 1 in animationSelect for all animations
@@ -79,7 +81,12 @@ public class JCard extends JPanel {
         add(fadePanel);
 
         try {
-            animationSelect();
+            if(animationCheck){
+                System.out.println("its running bozo");
+                animationSelect();
+            }else{
+                moversPanel.add(questionLabel);
+            }
         } catch (InterruptedException ignored) {
         }
 
