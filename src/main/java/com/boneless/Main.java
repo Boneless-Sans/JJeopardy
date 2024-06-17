@@ -28,6 +28,7 @@ public class Main extends JFrame implements KeyListener {
     public static GameBoard gameBoard;
     public static JCard jCard;
     public static BoardFactory boardFactory;
+    public static Settings settings;
 
     public static int frameWidth, frameHeight;
     public static int screenWidth, ScreenHeight;
@@ -36,6 +37,13 @@ public class Main extends JFrame implements KeyListener {
 
         //setup settings file
         setupSettings();
+
+        //setup sizes
+        frameWidth = Integer.parseInt(JsonFile.read(settingsFile, "misc", "screen_resolution").split("x")[0]);
+        String rawHeight = JsonFile.read(settingsFile, "misc", "screen_resolution").split("x")[1];
+        frameHeight = rawHeight.contains("(") ? Integer.parseInt(rawHeight.split(" ")[0]) : Integer.parseInt(rawHeight);
+        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
+        ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
         //run program
         SwingUtilities.invokeLater(() -> new Main(args));
@@ -51,12 +59,14 @@ public class Main extends JFrame implements KeyListener {
                     writer.write("""
                             {
                               "key_binds": {
-                                "exit": "esc",
-                                "advance": "space"
+                                "exit": "Esc",
+                                "advance": "Space"
                               },
                               "misc": {
                                 "fullscreen": "false",
-                                "audio": "true"
+                                "audio": "false",
+                                "always_on_top": "false",
+                                "screen_resolution": "1600x900"
                               }
                             }
                             """);
@@ -70,15 +80,11 @@ public class Main extends JFrame implements KeyListener {
 
     public Main(String... arg){
         setTitle("Jeopardy!");
-        setSize(1600,900);
+        setSize(frameWidth, frameHeight);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setUndecorated(true);
-
-        frameWidth = 1600;
-        frameHeight = 900;
-        screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        setAlwaysOnTop(Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "always_on_top")));
 
         try {
             if(System.getProperty("os.name").equalsIgnoreCase("windows")) {
@@ -164,6 +170,9 @@ public class Main extends JFrame implements KeyListener {
             }
             else if(boardFactory.factoryIsActive) {
                 boardFactory.exit();
+            }
+            else if(settings.settingsIsActive){
+                settings.exit();
             }
         }
 

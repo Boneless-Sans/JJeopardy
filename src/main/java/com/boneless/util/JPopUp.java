@@ -2,6 +2,7 @@ package com.boneless.util;
 
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,8 +49,10 @@ public class JPopUp extends JPanel {
         setLocation(startX, startY);
     }
 
-    public void showPopUp(String title, String message, JButton sourceButton, int type, JButton... actionButtons) {
-        this.sourceButton = sourceButton;
+    public void showPopUp(String title, String message, JComponent objectToChange, int type, JButton... actionButtons) {
+        if(objectToChange instanceof JButton) {
+            this.sourceButton = (JButton) objectToChange;
+        }
 
         System.out.println(parent.getLayout());
 
@@ -71,7 +74,7 @@ public class JPopUp extends JPanel {
         headerPanel.setBackground(accentColor);
 
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(generateFont(15));
+        titleLabel.setFont(generateFont(20));
         titleLabel.setForeground(fontColor);
 
         headerPanel.add(titleLabel);
@@ -83,11 +86,17 @@ public class JPopUp extends JPanel {
         switch (type){
             case BUTTON_INPUT: {
                 JRoundedButton inputButton = createKeyButton();
+                inputButton.setFont(generateFont(25));
 
                 bodyPanel.add(inputButton, gbc);
             }
             case TEXT_INPUT: {
-                //
+                assert objectToChange instanceof JTextComponent;
+
+                JLabel textLabel = new JLabel(message);
+
+                //bodyPanel.add(textLabel);
+                bodyPanel.add(objectToChange);
             }
             case MESSAGE: {
                 //
@@ -125,7 +134,9 @@ public class JPopUp extends JPanel {
                     case 127: inputButton.setText("Delete"); break;
                     default: inputButton.setText(firstUpperCase(String.valueOf(e.getKeyChar())));
                 }
+
                 sourceButton.setText(inputButton.getText());
+
                 revalidate();
                 repaint();
             }
@@ -136,8 +147,10 @@ public class JPopUp extends JPanel {
     }
 
     public void hidePopUp() {
-        inputButton.setFocusable(false);
-        inputButton.setEnabled(false);
+        if(inputButton != null) {
+            inputButton.setFocusable(false);
+            inputButton.setEnabled(false);
+        }
         animateToPosition(startY);
     }
 

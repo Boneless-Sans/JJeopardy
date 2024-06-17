@@ -111,17 +111,24 @@ public class BoardFactory extends JPanel {
 
         //sub tabs - file
         JMenuItem newItem = new JMenuItem("New Board");
-        newItem.addActionListener(e -> { //todo: change for JPopUp
-            String test = "Orignal Text";
+        newItem.addActionListener(e -> { //todo: default dir bottom, field center, message top
+            setButtonsEnabled(false);
+            JTextField field = new JTextField();
+            field.setPreferredSize(new Dimension(300,100));
+            field.setFont(generateFont(25));
+            field.setHorizontalAlignment(JTextField.CENTER);
 
-            popUp.showPopUp("Title", test, null, JPopUp.TEXT_INPUT);
+            JRoundedButton cancel = new JRoundedButton("Cancel");
 
-            System.out.println(test);
+            JRoundedButton save = new JRoundedButton("Save");
+
+            popUp.showPopUp("New File", "Enter file name", field, JPopUp.TEXT_INPUT, cancel, save);
         });
 
         JMenuItem openItem = new JMenuItem("Open Board");
         openItem.addActionListener(e -> {
             //open dialog > load file()
+            setButtonsEnabled(false);
             JPanel panel = new JPanel();
 
             JTextField textField = new JTextField(10);
@@ -257,13 +264,13 @@ public class BoardFactory extends JPanel {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 changesMade = true;
-                JsonFile.writeln(fileName, "board","categories","cat_" + index);
+                JsonFile.writeln3Keys(fileName, "board","categories","cat_" + index, field.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
                 changesMade = true;
-                JsonFile.writeln(fileName, "board","categories","cat_" + index);
+                JsonFile.writeln3Keys(fileName, "board","categories","cat_" + index, field.getText());
             }
             @Override public void changedUpdate(DocumentEvent e) {}
         });
@@ -393,7 +400,6 @@ public class BoardFactory extends JPanel {
     }
 
     private String createNewFile(String file){
-        
         String tempDir = System.getProperty("java.io.tmpdir");
 
         File tempFile = new File(tempDir + file);
@@ -421,13 +427,14 @@ public class BoardFactory extends JPanel {
     private void save(){
         if(usingTempFile) {
             saveAs();
-            return;
+        } else {
+            //todo: override fileName with
         }
-        System.out.println("test");
     }
 
     private void saveAs(){
         //have text box popup, get dir, get file name, save();
+        setButtonsEnabled(false);
         popUp.showPopUp("title", null, null, JPopUp.TEXT_INPUT);
     }
 
@@ -439,15 +446,11 @@ public class BoardFactory extends JPanel {
         boolean doSkipCheck = skipCheck.length > 0;
 
         if(changesMade && !doSkipCheck) {
-            for(JComponent button : boardButtonList){
-                button.setEnabled(false);
-            }
+            setButtonsEnabled(false);
 
             JRoundedButton cancel = new JRoundedButton("Cancel");
             cancel.addActionListener(e -> {
-                for(JComponent button : boardButtonList){
-                    button.setEnabled(true);
-                }
+                setButtonsEnabled(true);
                 popUp.hidePopUp();
             });
 
@@ -461,7 +464,7 @@ public class BoardFactory extends JPanel {
             JRoundedButton exitWOS = new JRoundedButton("Exit Without Saving");
             exitWOS.addActionListener(e -> {
                 popUp.hidePopUp();
-                exit();
+                exit(true);
             });
 
             popUp.showPopUp("Changes Made!", "Changes have been made!",null, JPopUp.MESSAGE, cancel, exitWS, exitWOS);
@@ -469,6 +472,12 @@ public class BoardFactory extends JPanel {
             mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
             parent.setJMenuBar(null);
+        }
+    }
+
+    private void setButtonsEnabled(boolean isEnabled){
+        for(JComponent button : boardButtonList){
+            button.setEnabled(isEnabled);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.boneless;
 
+import com.boneless.util.JRoundedButton;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -24,27 +26,13 @@ public class Dev extends JFrame implements KeyListener {
     }
 
     private void init() {
-        File file = new File(String.valueOf(getClass().getClassLoader().getResource("data/template.json")));
+        setLayout(new FlowLayout());
 
-        try {
-            FileReader reader = new FileReader(file);
-            String test = reader.toString();
-            System.out.println(test);
-            add(new JLabel(test));
-        } catch (FileNotFoundException e) {}
-        System.out.println();
-    }
+        JRoundedButton button = new JRoundedButton("Test");
+        button.setPreferredSize(new Dimension(100, 50));
+        button.addActionListener(e -> System.out.println("Pressed"));
 
-    private void fontListTest(){
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-        String[] fonts = ge.getAvailableFontFamilyNames();
- 
-        JComboBox<String> comboBox = new JComboBox<>(fonts);
-        if(fonts[0].contains(".")){ //removes macOS's wierd font '.AppleSystemUIFont'
-            comboBox.removeItemAt(0);
-        }
-        add(comboBox);
+        add(button);
     }
 
     @Override

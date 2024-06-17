@@ -4,7 +4,6 @@ import com.boneless.util.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 import java.util.HashMap;
 
 import static com.boneless.Main.*;
@@ -21,40 +20,14 @@ public class Settings extends JPanel {
 
     private final JPopUp popup;
 
-    private boolean changesMade = false;
+    public boolean settingsIsActive;
 
-    private final int frameWidth;
-    private final int frameHeight;
     private int stackHeight = 0;
 
+    private boolean changesMade = false;
+
     public Settings(Container parent) {
-        /* slide bottom to middle
-    -General | X
-        -Null Safety | √
-            -Main File | √
-            -Settings | √
-        -Exit Confirmation | X
-    -Main Body | X
-        -JScrollPane | √
-        -Rounded Boxes for Key Binds | √
-            -Key Bind Text | √
-            -Key Bind Setter | √
-        -Rounded Boxes for Toggles | √
-            -Item Name | √
-            -State | √
-    -Footer | √
-        -Save Button | √
-        -Exit Button | √
-    -Settings | X
-        -Exit | X
-        -Advance | √
-        -Play Audio, could be moved to start game | X
-        -Screen size dropdown | X
-        -Always on top | X
-        -Scroll Bar Sensitivity | X
-     */
-        this.frameWidth = parent.getWidth();
-        this.frameHeight = parent.getHeight();
+        settingsIsActive = true;
 
         setLayout(null);
 
@@ -111,11 +84,15 @@ public class Settings extends JPanel {
         JRoundedButton saveBind = new JRoundedButton("Save");
         saveBind.addActionListener(e -> popup.hidePopUp());
 
-        JRoundedButton exitBindButton = new JRoundedButton(firstUpperCase(JsonFile.read(settingsFile, "key_binds", "exit")), Color.lightGray, Color.white);
+        JRoundedButton exitBindButton = new JRoundedButton(firstUpperCase(JsonFile.read(settingsFile, "key_binds", "exit")), Color.gray, Color.white);
         exitBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", exitBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(exitBindButton), saveBind));
+        exitBindButton.setPreferredSize(new Dimension(100,50));
+        exitBindButton.setFont(generateFont(20));
 
-        JRoundedButton advanceBindButton = new JRoundedButton(firstUpperCase(JsonFile.read(settingsFile, "key_binds", "advance")), Color.lightGray, Color.white);
+        JRoundedButton advanceBindButton = new JRoundedButton(firstUpperCase(JsonFile.read(settingsFile, "key_binds", "advance")), Color.gray, Color.white);
         advanceBindButton.addActionListener(e -> popup.showPopUp("Exit Bind", "", advanceBindButton, JPopUp.BUTTON_INPUT, createCancelBindButton(advanceBindButton), saveBind));
+        advanceBindButton.setPreferredSize(new Dimension(100,50));
+        advanceBindButton.setFont(generateFont(20));
 
         String[] resolutions = {
                 "placeholder",
@@ -152,9 +129,11 @@ public class Settings extends JPanel {
             }
         }
 
-        resolutions[0] = frameWidth + "x" + frameHeight;
+        resolutions[0] = frameWidth + "x" + frameHeight + " (Current)";
 
         JComboBox<String> resSizeDropDown = new JComboBox<>(resolutions);
+        resSizeDropDown.addActionListener(e -> changesMade = true);
+        resSizeDropDown.setFont(generateFont(20));
 
         panel.add(sectionLabel("Key Binds"));
         panel.add(createKeyBindPanel("Exit", "exit", exitBindButton));
@@ -169,6 +148,7 @@ public class Settings extends JPanel {
         panel.add(sectionLabel("Misc"));
         panel.add(createTogglePanel("Fullscreen", "fullscreen"));
         panel.add(createTogglePanel("Play Audio", "audio"));
+        panel.add(createTogglePanel("Background Scrolling", "disable_background_scroll"));
 
         panel.setPreferredSize(new Dimension(frameWidth, stackHeight + 100));
 
@@ -202,7 +182,7 @@ public class Settings extends JPanel {
 
     private JPanel sectionLabel(String text){
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setPreferredSize(new Dimension(700,60));
+        panel.setPreferredSize(new Dimension(frameWidth - frameWidth / 6,60));
         panel.setOpaque(false);
 
         JLabel label = new JLabel(text);
@@ -258,6 +238,8 @@ public class Settings extends JPanel {
 
         rightPanel.add(button, rightGBC);
 
+        button.addActionListener(e -> changesMade = true);
+
         keyBindButtonList.put(key, button);
 
         return createSettingsItem(text, rightPanel);
@@ -268,6 +250,8 @@ public class Settings extends JPanel {
         rightPanel.setOpaque(false);
 
         ButtonIcon button = new ButtonIcon(64, Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", key)));
+        button.addActionListener(e -> changesMade = true);
+
         rightPanel.add(button, rightGBC);
 
         toggleButtonList.put(key,button);
@@ -317,8 +301,9 @@ public class Settings extends JPanel {
         JsonFile.writeln(settingsFile, "key_binds", "advance", keyBindButtonList.get("advance").getText());
 
         JsonFile.writeln(settingsFile, "misc", "screen_resolution", (String) dropDownList.get("screen_resolution").getSelectedItem());
-        JsonFile.writeln(settingsFile, "misc", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
 
+        JsonFile.writeln(settingsFile, "misc", "disable_background_scroll", getStringBoolean(toggleButtonList.get("disable_background_scroll").isChecked()));
+        JsonFile.writeln(settingsFile, "misc", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
         JsonFile.writeln(settingsFile, "misc","fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
         JsonFile.writeln(settingsFile, "misc","audio",getStringBoolean(toggleButtonList.get("audio").isChecked()));
     }
@@ -327,25 +312,23 @@ public class Settings extends JPanel {
         return bool ? "true" : "false";
     }
 
-    private void exit(){
-        if(changesMade) {
+    public void exit(boolean... skipCheck){
+        boolean doSkip = skipCheck.length > 0;
+
+        if(changesMade && !doSkip) {
             JRoundedButton cancel = new JRoundedButton("Continue");
             cancel.addActionListener(e -> popup.hidePopUp());
 
             JRoundedButton exitNoSave = new JRoundedButton("Exit Without Saving");
-            exitNoSave.addActionListener(e -> {
-                changeCurrentPanel(mainMenu, this, false);
-                mainMenu.timer.start();
-            });
+            exitNoSave.addActionListener(e -> exit(true));
 
             JRoundedButton exitSave = new JRoundedButton("Exit and Save");
             exitSave.addActionListener(e -> {
                 save();
-                changeCurrentPanel(mainMenu, this, false);
-                mainMenu.timer.start();
+                exit(true);
             });
 
-            //popup.showPopUp("Changes Made", "Do you wish to exit without saving?", JPopUp.MESSAGE, null, cancel, exitSave, exitNoSave);
+            popup.showPopUp("Changes Made", "Do you wish to exit without saving?", null, JPopUp.MESSAGE, cancel, exitSave, exitNoSave);
         } else {
             changeCurrentPanel(mainMenu, this, false);
             mainMenu.timer.start();
@@ -354,7 +337,7 @@ public class Settings extends JPanel {
 
     private static class SettingsOptionPanel extends JPanel {
         public SettingsOptionPanel(){
-            setPreferredSize(new Dimension(900, 100));
+            setPreferredSize(new Dimension(frameWidth - frameWidth / 6, 100));
             setLayout(new GridLayout(1,2));
         }
 

@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static com.boneless.Main.settingsFile;
 import static com.boneless.util.GeneralUtils.adjustColor;
 
 public class ScrollGridPanel extends JPanel {
@@ -21,7 +22,11 @@ public class ScrollGridPanel extends JPanel {
         setLayout(null);
         setDoubleBuffered(true); //enable double buffer
         timer = new Timer(10, e -> updateOffsets());
-        timer.start();
+
+        if(!Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "disable_background_scroll"))) {
+            timer.start();
+        }
+
         lastUpdateTime = System.currentTimeMillis();
     }
 
@@ -34,8 +39,11 @@ public class ScrollGridPanel extends JPanel {
     }
 
     private void updateOffsets() {
+        if(Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "disable_background_scroll"))){
+            return;
+        }
         long currentTime = System.currentTimeMillis();
-        double elapsedTime = (currentTime - lastUpdateTime) / 1000.0; //in seconds
+        double elapsedTime = (currentTime - lastUpdateTime) / 1000.0; //in ms
         lastUpdateTime = currentTime;
 
         double radians = Math.toRadians(angle);

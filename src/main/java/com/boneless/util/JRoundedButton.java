@@ -2,13 +2,16 @@ package com.boneless.util;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static com.boneless.util.GeneralUtils.generateFont;
 
 public class JRoundedButton extends JButton {
     private String id;
     private boolean renderBorder = false;
-    private final Color color;
+    private final Color normalColor;
+    private Color color;
     private final Color fontColor;
 
     public JRoundedButton(String text, Color... colors){
@@ -16,12 +19,41 @@ public class JRoundedButton extends JButton {
         setFocusable(false);
 
         if (colors.length == 2) {
+            normalColor = colors[0];
             color = colors[0];
             fontColor = colors[1];
         } else {
+            normalColor = Color.white;
             color = Color.white;
             fontColor = Color.black;
         }
+
+        //listener for changing color
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                color = color.darker();
+                repaint();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                color = normalColor;
+                repaint();
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                color = color.brighter();
+                repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                color = normalColor;
+                repaint();
+            }
+        });
     }
 
     public JRoundedButton(String text, String id){
