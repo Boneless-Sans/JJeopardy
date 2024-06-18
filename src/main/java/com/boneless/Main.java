@@ -34,9 +34,8 @@ public class Main extends JFrame implements KeyListener {
     public static int screenWidth, ScreenHeight;
 
     public static void main(String[] args) throws IOException {
-
         //setup settings file
-        setupSettings();
+        checkSettingsFileIntegrity();
 
         //setup sizes
         frameWidth = Integer.parseInt(JsonFile.read(settingsFile, "misc", "screen_resolution").split("x")[0]);
@@ -49,34 +48,35 @@ public class Main extends JFrame implements KeyListener {
         SwingUtilities.invokeLater(() -> new Main(args));
     }
 
-    private static void setupSettings(){
+    private static void checkSettingsFileIntegrity(){
         File file = new File(System.getProperty("user.home") + "/settings.json");
 
+        String[] items = {
+                //ensure user has a valid settings file, set value using this format: key#item#default state (i.e. true, false, "name here")
+                "key_bind#exit@Esc",
+                "key_bind#advance@Space",
+
+                "screen#fullscreen@false",
+                "screen#screen_resolution@1600x900",
+                "screen#always_on_top@false",
+
+                "misc#audio@false",
+                "misc#play_animations@true",
+                "misc#disable_scroll_animation@false"
+        };
+
         try {
-            if (!file.exists() && file.createNewFile()) {
-                System.out.println("Settings File Missing, Created New File At: " + file.getAbsolutePath());
-                try(FileWriter writer = new FileWriter(file)){
-                    writer.write("""
-                            {
-                              "key_binds": {
-                                "exit": "Esc",
-                                "advance": "Space"
-                              },
-                              "misc": {
-                                "fullscreen": "false",
-                                "audio": "false",
-                                "play_animations": "false",
-                                "always_on_top": "false",
-                                "screen_resolution": "1600x900"
-                              }
-                            }
-                            """);
-                }
+            boolean shutUp = file.createNewFile();
+
+            for (String item : items) {
+                String key = item.split("#")[0];
+                String itemName =  item.split("@")[0].split("#")[1];
+                String bind = item.split("@")[1];
+
+                System.out.println(JsonFile.read(settingsFile, key, itemName));
+                JsonFile.writeln(settingsFile, key, itemName, bind);
             }
-        } catch (Exception e){
-            System.out.println("Error Creating File: \n" + e);
-        }
-        settingsFile = file.getAbsolutePath();
+        } catch (IOException ignore){}
     }
 
     public Main(String... arg){

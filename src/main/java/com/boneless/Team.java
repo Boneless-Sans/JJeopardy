@@ -73,8 +73,6 @@ public class Team extends JPanel {
         g2d.fillRoundRect(0, 0, getWidth(), getHeight(),45,45);
     }
 
-    //todo: round borders 45arc should do
-
     public void addToScore(int scoreToAdd){
         score += scoreToAdd;
         scoreField.setFocusable(false);

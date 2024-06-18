@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.boneless'
-version = 'Alpha 0.1'
+version = 'Beta v4'
 
 repositories {
     mavenLocal()

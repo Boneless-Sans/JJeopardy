@@ -77,8 +77,6 @@ public class BoardFactory extends JPanel {
     }
 
     private void reload(){
-        //removeAll();
-
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBounds(0,0,parent.getWidth(), parent.getHeight());
 
