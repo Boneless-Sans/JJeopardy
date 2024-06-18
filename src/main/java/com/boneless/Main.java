@@ -16,7 +16,7 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName;
+    public static String fileName = "temp.json";
     public static String settingsFile;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
@@ -38,8 +38,8 @@ public class Main extends JFrame implements KeyListener {
         checkSettingsFileIntegrity();
 
         //setup sizes
-        frameWidth = Integer.parseInt(JsonFile.read(settingsFile, "misc", "screen_resolution").split("x")[0]);
-        String rawHeight = JsonFile.read(settingsFile, "misc", "screen_resolution").split("x")[1];
+        frameWidth = Integer.parseInt(JsonFile.read(settingsFile, "screen", "screen_resolution").split("x")[0]);
+        String rawHeight = JsonFile.read(settingsFile, "screen", "screen_resolution").split("x")[1];
         frameHeight = rawHeight.contains("(") ? Integer.parseInt(rawHeight.split(" ")[0]) : Integer.parseInt(rawHeight);
         screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
         ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
@@ -53,12 +53,13 @@ public class Main extends JFrame implements KeyListener {
 
         String[] items = {
                 //ensure user has a valid settings file, set value using this format: key#item#default state (i.e. true, false, "name here")
-                "key_bind#exit@Esc",
-                "key_bind#advance@Space",
+                "key_binds#exit@Esc",
+                "key_binds#advance@Space",
 
                 "screen#fullscreen@false",
-                "screen#screen_resolution@1600x900",
+                "screen#screen_resolution@1600x900 (Default)",
                 "screen#always_on_top@false",
+                "screen#reduce_animations@false",
 
                 "misc#audio@false",
                 "misc#play_animations@true",
@@ -67,14 +68,29 @@ public class Main extends JFrame implements KeyListener {
 
         try {
             boolean shutUp = file.createNewFile();
+            settingsFile = file.getAbsolutePath();
+
+            FileReader fr = new FileReader(settingsFile);
+
+            if(!String.valueOf(fr.read()).equals("-1")){
+                return;
+            }
+
+            try(FileWriter fw = new FileWriter(settingsFile)){
+                fw.write("{}");
+            }
+
+            fr.close();
+
 
             for (String item : items) {
                 String key = item.split("#")[0];
                 String itemName =  item.split("@")[0].split("#")[1];
                 String bind = item.split("@")[1];
 
-                System.out.println(JsonFile.read(settingsFile, key, itemName));
-                JsonFile.writeln(settingsFile, key, itemName, bind);
+                if(JsonFile.read(settingsFile, key, itemName).contains("-1") || JsonFile.read(settingsFile, key, itemName).contains("key")) {
+                    JsonFile.writeln(settingsFile, key, itemName, bind);
+                }
             }
         } catch (IOException ignore){}
     }
@@ -125,14 +141,17 @@ public class Main extends JFrame implements KeyListener {
         if(startIndex != -1 && endIndex != -1) {
             switch (arg.substring(startIndex + 1, endIndex)) {
                 case "card": {
+                    fileName = "temp.json";
                     add(gameBoard = new GameBoard(4, this));
                     break;
                 }
                 case "board": {
+                    fileName = "temp.json";
                     add(boardFactory = new BoardFactory(this, fileName));
                     break;
                 }
                 case "settings": {
+                    fileName = "temp.json";
                     add(new Settings(this));
                     break;
                 }

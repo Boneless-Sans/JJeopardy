@@ -28,7 +28,7 @@ public class JCard extends JPanel {
     private final JButton sourceButton;
 
 
-    private final boolean animationCheck = Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "play_animations"));
+    private final boolean animationCheck = Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "play_card_animations"));
     public int animationJCardBound = 4;
     // Set animationJCardBound to 1 for no animations
     // Set animationJCardBound to # of cases + 1 in animationSelect for all animations

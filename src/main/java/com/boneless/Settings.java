@@ -140,17 +140,17 @@ public class Settings extends JPanel {
         panel.add(createKeyBindPanel("Advance", "advance", advanceBindButton));
 
         panel.add(divider());
-        panel.add(sectionLabel("Screen"));
+        panel.add(sectionLabel("Display"));
         panel.add(createDropDownPanel("Screen Size", "screen_resolution", resSizeDropDown));
         panel.add(createTogglePanel("Always On Top", "always_on_top"));
+        panel.add(createTogglePanel("Full screen", "fullscreen"));
+        panel.add(createTogglePanel("Reduce Animations", "reduce_animations"));
+        panel.add(createTogglePanel("Play Question Card Animations", "play_card_animations"));
 
         panel.add(divider());
         panel.add(sectionLabel("Misc"));
-        panel.add(createTogglePanel("Fullscreen", "fullscreen"));
+        panel.add(createTogglePanel("Play Menu Animation", "disable_background_scroll"));
         panel.add(createTogglePanel("Play Audio", "audio"));
-        panel.add(createTogglePanel("Background Scrolling", "disable_background_scroll"));
-
-        panel.add(createTogglePanel("Play Animations", "play_animations"));
 
         panel.setPreferredSize(new Dimension(frameWidth, stackHeight + 100));
 
@@ -302,12 +302,13 @@ public class Settings extends JPanel {
         JsonFile.writeln(settingsFile, "key_binds", "exit", keyBindButtonList.get("exit").getText());
         JsonFile.writeln(settingsFile, "key_binds", "advance", keyBindButtonList.get("advance").getText());
 
-        JsonFile.writeln(settingsFile, "misc", "screen_resolution", (String) dropDownList.get("screen_resolution").getSelectedItem());
+        JsonFile.writeln(settingsFile, "screen", "screen_resolution", (String) dropDownList.get("screen_resolution").getSelectedItem());
+        JsonFile.writeln(settingsFile, "screen", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
+        JsonFile.writeln(settingsFile, "screen", "fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
+        JsonFile.writeln(settingsFile, "screen", "reduce_animations", getStringBoolean(toggleButtonList.get("reduce_animations").isChecked()));
+        JsonFile.writeln(settingsFile, "screen", "play_card_animations",getStringBoolean(toggleButtonList.get("play_card_animations").isChecked()));
 
         JsonFile.writeln(settingsFile, "misc", "disable_background_scroll", getStringBoolean(toggleButtonList.get("disable_background_scroll").isChecked()));
-        JsonFile.writeln(settingsFile, "misc", "play_animations",getStringBoolean(toggleButtonList.get("play_animations").isChecked()));
-        JsonFile.writeln(settingsFile, "misc", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
-        JsonFile.writeln(settingsFile, "misc","fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
         JsonFile.writeln(settingsFile, "misc","audio",getStringBoolean(toggleButtonList.get("audio").isChecked()));
     }
 
@@ -319,17 +320,19 @@ public class Settings extends JPanel {
         boolean doSkip = skipCheck.length > 0;
 
         if(changesMade && !doSkip) {
+            changesMade = false;
+
             JRoundedButton cancel = new JRoundedButton("Continue");
             cancel.addActionListener(e -> popup.hidePopUp());
-
-            JRoundedButton exitNoSave = new JRoundedButton("Exit Without Saving");
-            exitNoSave.addActionListener(e -> exit(true));
 
             JRoundedButton exitSave = new JRoundedButton("Exit and Save");
             exitSave.addActionListener(e -> {
                 save();
                 exit(true);
             });
+
+            JRoundedButton exitNoSave = new JRoundedButton("Exit Without Saving");
+            exitNoSave.addActionListener(e -> exit(true));
 
             popup.showPopUp("Changes Made", "Do you wish to exit without saving?", null, JPopUp.MESSAGE, cancel, exitSave, exitNoSave);
         } else {

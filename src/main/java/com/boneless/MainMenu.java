@@ -159,6 +159,8 @@ public class MainMenu extends ScrollGridPanel {
     }
 
     public void changeFileName(String newFile){
+        if(newFile == null || newFile.contains("Using")) return;
+
         fileName = newFile;
         currentFile.setText("Current Board: " + fileName);
         buttonsList.get(0).setEnabled(!fileName.isEmpty());

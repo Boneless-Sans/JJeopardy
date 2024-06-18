@@ -7,6 +7,7 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.io.*;
@@ -37,6 +38,7 @@ public class BoardFactory extends JPanel {
     private final int fontSize = 20;
 
     private final String fileName;
+    private final String fileToSaveAt;
 
     private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList = new HashMap<>();
     private final ArrayList<JComponent> boardButtonList = new ArrayList<>();
@@ -45,17 +47,17 @@ public class BoardFactory extends JPanel {
         factoryIsActive = true;
         this.parent = parent;
 
+        fileName = createTempFile("temp_board.json");
         if(mainFile != null){
             usingTempFile = false;
-            fileName = mainFile;
+            fileToSaveAt = mainFile;
             loadColors();
         } else {
             usingTempFile = true;
-            fileName = createNewFile("temp_board.json");
+            fileToSaveAt = "File Not Set (Using Temporary Board File)";
             loadColors();
         }
-
-        mainMenu.changeFileName(fileName);
+        mainMenu.changeFileName(fileToSaveAt);
         setLayout(null);
         parent.setJMenuBar(menuBar());
         setBackground(mainColor);
@@ -108,36 +110,10 @@ public class BoardFactory extends JPanel {
 
         //sub tabs - file
         JMenuItem newItem = new JMenuItem("New Board");
-        newItem.addActionListener(e -> { //todo: default dir bottom, field center, message top
-            setButtonsEnabled(false);
-            JTextField field = new JTextField();
-            field.setPreferredSize(new Dimension(300,100));
-            field.setFont(generateFont(25));
-            field.setHorizontalAlignment(JTextField.CENTER);
-
-            JRoundedButton cancel = new JRoundedButton("Cancel");
-
-            JRoundedButton save = new JRoundedButton("Save");
-
-            popUp.showPopUp("New File", "Enter file name", field, JPopUp.TEXT_INPUT, cancel, save);
-        });
+        newItem.addActionListener(e -> newFile());
 
         JMenuItem openItem = new JMenuItem("Open Board");
-        openItem.addActionListener(e -> {
-            //open dialog > load file()
-            setButtonsEnabled(false);
-            JPanel panel = new JPanel();
-
-            JTextField textField = new JTextField(10);
-
-            panel.add(textField);
-
-            int userInput = JOptionPane.showConfirmDialog(null, panel, "", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-            if(userInput == JOptionPane.OK_OPTION){
-                createNewFile(textField.getText() + ".json");
-            }
-        });
+        openItem.addActionListener(e -> load());
 
         JMenuItem saveItem = new JMenuItem("Save Board");
         saveItem.addActionListener(e -> save());
@@ -146,10 +122,7 @@ public class BoardFactory extends JPanel {
         saveAsItem.addActionListener(e -> saveAs());
 
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> {
-            //use bool for change confirmation > exit()
-            exit();
-        });
+        exitItem.addActionListener(e -> exit());
 
         //sub tabs - help
         JMenuItem aboutItem = new JMenuItem("About");
@@ -228,7 +201,7 @@ public class BoardFactory extends JPanel {
         labelList.put(outerKey, textBox);
     }
 
-    private TextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col){ //SHIT
+    private TextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col){
         for(HashMap<Boolean, HashMap<Integer, Integer>> outerKey : labelList.keySet()){
             if(outerKey.containsKey(isQuestion)){
                 HashMap<Integer, Integer> innerKey = outerKey.get(isQuestion);
@@ -303,21 +276,53 @@ public class BoardFactory extends JPanel {
 
         boardButtonList.add(headerExitButton);
 
-        JPanel leftPanel = new JPanel(new GridBagLayout());
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setOpaque(false);
         leftPanel.add(headerExitButton);
         leftPanel.add(leftText);
 
         //center panel
-        JTextField title = new JTextField();
+        JTextField title = new JTextField(20);
         title.setText(JsonFile.read(fileName, "data", "board_name"));
         title.setBackground(accentColor);
         title.setForeground(fontColor);
         title.setFont(generateFont(fontSize));
         title.setBorder(BorderFactory.createBevelBorder(1));
         title.setHorizontalAlignment(JTextField.CENTER);
+        ((AbstractDocument) title.getDocument()).setDocumentFilter(new DocumentFilter() { //char limiter
+            @Override
+            public void insertString(FilterBypass fb, int offset, String text, AttributeSet attrs) throws BadLocationException {
+                if(text == null){
+                    return;
+                }
+                if((fb.getDocument().getLength() + text.length()) <= 30){
+                    super.insertString(fb, offset, text, attrs);
+                }
+            }
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                if(text == null){
+                    return;
+                }
+                if((fb.getDocument().getLength() + text.length()) <= 30){
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+        });
+        title.getDocument().addDocumentListener(new DocumentListener() { //save to temp
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                JsonFile.writeln(fileName, "data","board_name",title.getText());
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                JsonFile.writeln(fileName, "data","board_name",title.getText());
+            }
+            @Override public void changedUpdate(DocumentEvent e) {}
+        });
 
-        JPanel titlePanel = new JPanel(new GridBagLayout());
+        JPanel titlePanel = new JPanel();
+        titlePanel.setOpaque(false);
 
         titlePanel.add(title, gbc);
 
@@ -398,7 +403,7 @@ public class BoardFactory extends JPanel {
         frame.setVisible(true);
     }
 
-    private String createNewFile(String file){
+    private String createTempFile(String file){
         String tempDir = System.getProperty("java.io.tmpdir");
 
         File tempFile = new File(tempDir + file);
@@ -414,24 +419,83 @@ public class BoardFactory extends JPanel {
                 return tempFile.getAbsolutePath();
             } else {
                 if(tempFile.createNewFile()){
-                    return createNewFile(file);
+                    return createTempFile(file);
                 }
             }
         } catch (Exception e){
             e.printStackTrace();
         }
-        return null;
+        return tempFile.getAbsolutePath();
+    }
+
+    private void newFile(){
+        setButtonsEnabled(false);
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Specify a file to save");
+        chooser.setApproveButtonText("Save");
+
+        JRoundedButton cancel = new JRoundedButton("Cancel");
+        cancel.addActionListener(e -> {
+            setButtonsEnabled(true);
+            popUp.hidePopUp();
+        });
+
+        if(changesMade){
+            popUp.showPopUp("Changes Made!", "Fuck off", null, JPopUp.MESSAGE);
+        }
+
+        int userSelection = chooser.showSaveDialog(parent);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = chooser.getSelectedFile();
+            //todo> check diag > fileName = createTempFile() > use dialog for save location and save it with fileToSaveAt
+
+            try {
+                if (fileToSave.createNewFile()) {
+                    JOptionPane.showMessageDialog(parent, "File created: " + fileToSave.getAbsolutePath());
+                } else {
+                    JRoundedButton load = new JRoundedButton("Load");
+                    load.addActionListener(e -> {
+                        setButtonsEnabled(true);
+                        popUp.hidePopUp();
+                        load(fileToSave.getAbsolutePath());
+                    });
+
+                    JRoundedButton override = new JRoundedButton("Override (Will delete file!)");
+                    override.addActionListener(e -> {
+                        setButtonsEnabled(true);
+                        try(FileWriter writer = new FileWriter(fileToSave)){
+                            writer.close();
+                        } catch (IOException ignore){}
+                        popUp.hidePopUp();
+                    });
+
+                    popUp.showPopUp("File Conflict", "File already exists!",null, JPopUp.MESSAGE, cancel, load, override);
+                }
+            } catch (IOException ioException) {
+                JOptionPane.showMessageDialog(parent, "Error creating file: " + ioException.getMessage());
+            }
+        } else {
+            setButtonsEnabled(true);
+        }
+
+        load();
+    }
+
+    private void load(String... filePath){
+        //todo: get file browser input, filename = selected file, reload()
     }
 
     private void save(){
         if(usingTempFile) {
+            usingTempFile = false;
             saveAs();
         } else {
-//            try {
-//                try(FileWriter writer = new FileWriter(fileName)){
-//                    //
-//                }
-//            }
+            try(FileWriter writer = new FileWriter(fileName)){
+                //FileReader reader = new FileReader();
+            } catch (IOException e){
+                //
+            }
         }
     }
 
@@ -439,10 +503,6 @@ public class BoardFactory extends JPanel {
         //have text box popup, get dir, get file name, save();
         setButtonsEnabled(false);
         popUp.showPopUp("title", null, null, JPopUp.TEXT_INPUT);
-    }
-
-    private void load(String filePath){
-        //
     }
 
     public void exit(boolean... skipCheck){
@@ -558,12 +618,12 @@ public class BoardFactory extends JPanel {
             setBackground(mainColor);
 
             JPanel fieldPanels = new JPanel(new FlowLayout());
-            fieldPanels.setPreferredSize(new Dimension(750,600));
+            fieldPanels.setPreferredSize(new Dimension(frameWidth - frameWidth / 5,600));
             fieldPanels.setOpaque(false);
 
             fieldPanels.add(createGap(55, null));
             fieldPanels.add(getFromLabelList(labelList, true, row, col));
-            fieldPanels.add(createGap(80, null));
+            fieldPanels.add(createGap(205, null));
             fieldPanels.add(getFromLabelList(labelList, false, row, col));
 
             add(fieldPanels, gbc);
@@ -579,14 +639,7 @@ public class BoardFactory extends JPanel {
             g2.setColor(fontColor);
             g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 2, dashPattern, 0));
 
-            int factor = 2;
-            int sizeY = (getHeight() - (getHeight() / factor)) / factor;
-            int sixth = (getHeight() - (getHeight() / 2)) / 6;
-            int y = (getHeight() / 2) - (sizeY / 2);
-            int y3 = (getHeight() / 2) - (sizeY / 2);
-            int yComplete = ((y + sixth) + y3) / 2;
-
-            g2.drawLine(10, yComplete, this.getWidth() - 10, yComplete);
+            g2.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2);
 
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
@@ -610,7 +663,7 @@ public class BoardFactory extends JPanel {
             setBackground(accentColor);
             setHorizontalAlignment(JTextField.CENTER);
             setBorder(BorderFactory.createBevelBorder(1));
-            setPreferredSize(new Dimension(700,128));
+            setPreferredSize(new Dimension(1500,128));
 
             getDocument().addDocumentListener(new DocumentListener() {
                 @Override

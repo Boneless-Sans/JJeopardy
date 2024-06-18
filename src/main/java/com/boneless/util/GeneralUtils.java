@@ -5,7 +5,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static com.boneless.Main.fileName;
+import static com.boneless.Main.*;
 
 public class GeneralUtils {
     public static final GridBagConstraints gbc = new GridBagConstraints(){{
@@ -129,6 +129,20 @@ public class GeneralUtils {
     }
 
     public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
+        if(Boolean.parseBoolean(JsonFile.read(settingsFile, "screen", "reduce_animations"))){
+            Container parent = self.getParent();
+
+            parent.remove(self);
+
+            panelToAdd.setBounds(0,0,frameWidth,frameHeight);
+
+            parent.add(panelToAdd);
+
+            parent.revalidate();
+            parent.repaint();
+
+            return;
+        }
         int selfStartY = self.getY();
         int selfTargetY;
         int panelToAddStartY;

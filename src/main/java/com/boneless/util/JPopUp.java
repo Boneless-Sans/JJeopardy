@@ -54,8 +54,6 @@ public class JPopUp extends JPanel {
             this.sourceButton = (JButton) objectToChange;
         }
 
-        System.out.println(parent.getLayout());
-
         removeAll();
         Color mainColor;
         Color fontColor;
@@ -99,7 +97,11 @@ public class JPopUp extends JPanel {
                 bodyPanel.add(objectToChange);
             }
             case MESSAGE: {
-                //
+                JLabel text = new JLabel(message);
+                text.setFont(generateFont(25));
+                text.setForeground(fontColor);
+
+                bodyPanel.add(text, gbc);
             }
         }
 
@@ -116,7 +118,60 @@ public class JPopUp extends JPanel {
         add(footerPanel, BorderLayout.SOUTH);
 
         animateToPosition(centerY);
+    }
 
+    public String showPopUpTextInput(String title, String message, JButton... actionButtons) {
+        removeAll();
+        Color mainColor;
+        Color fontColor;
+
+        if(fileName == null){
+            mainColor = new Color(20,20,255);
+            fontColor = Color.white;
+        } else {
+            mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
+            fontColor = parseColor(JsonFile.read(fileName, "data", "font_color"));
+        }
+        Color accentColor = adjustColor(mainColor);
+
+        //header
+        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        headerPanel.setBackground(accentColor);
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(generateFont(20));
+        titleLabel.setForeground(fontColor);
+
+        headerPanel.add(titleLabel);
+
+        //body
+        JPanel bodyPanel = new JPanel(new GridBagLayout());
+        bodyPanel.setBackground(mainColor);
+
+        JLabel textLabel = new JLabel(message);
+        textLabel.setFont(generateFont(25));
+        textLabel.setForeground(fontColor);
+
+        JTextField field = new JTextField();
+
+        bodyPanel.add(textLabel);
+        bodyPanel.add(field);
+
+        //footer
+        JPanel footerPanel = new JPanel();
+        footerPanel.setBackground(accentColor);
+
+        for(JButton actionButton : actionButtons){
+            footerPanel.add(actionButton);
+        }
+
+        add(headerPanel, BorderLayout.NORTH);
+        add(bodyPanel, BorderLayout.CENTER);
+        add(footerPanel, BorderLayout.SOUTH);
+
+        animateToPosition(centerY);
+
+        return null;
     }
 
     private JRoundedButton createKeyButton() {
