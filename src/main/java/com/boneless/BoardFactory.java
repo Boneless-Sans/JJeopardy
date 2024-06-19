@@ -47,13 +47,14 @@ public class BoardFactory extends JPanel {
         factoryIsActive = true;
         this.parent = parent;
 
-        fileName = createTempFile("temp_board.json");
         if(mainFile != null){
             usingTempFile = false;
+            fileName = mainFile;
             fileToSaveAt = mainFile;
             loadColors();
         } else {
             usingTempFile = true;
+            fileName = createTempFile("temp_board.json");
             fileToSaveAt = "File Not Set (Using Temporary Board File)";
             loadColors();
         }
@@ -289,6 +290,7 @@ public class BoardFactory extends JPanel {
         title.setFont(generateFont(fontSize));
         title.setBorder(BorderFactory.createBevelBorder(1));
         title.setHorizontalAlignment(JTextField.CENTER);
+        title.setCaretColor(fontColor);
         ((AbstractDocument) title.getDocument()).setDocumentFilter(new DocumentFilter() { //char limiter
             @Override
             public void insertString(FilterBypass fb, int offset, String text, AttributeSet attrs) throws BadLocationException {
@@ -346,6 +348,7 @@ public class BoardFactory extends JPanel {
             -cols | X
             -scores | X
                 -for rows, create a section with text fields for scores
+                styled like settings
          */
         JPanel panel = new JPanel(new FlowLayout());
         panel.setPreferredSize(new Dimension(500,getHeight()));
@@ -464,9 +467,7 @@ public class BoardFactory extends JPanel {
                     JRoundedButton override = new JRoundedButton("Override (Will delete file!)");
                     override.addActionListener(e -> {
                         setButtonsEnabled(true);
-                        try(FileWriter writer = new FileWriter(fileToSave)){
-                            writer.close();
-                        } catch (IOException ignore){}
+                        overrideFile(fileToSave.getAbsolutePath());
                         popUp.hidePopUp();
                     });
 
@@ -500,9 +501,53 @@ public class BoardFactory extends JPanel {
     }
 
     private void saveAs(){
-        //have text box popup, get dir, get file name, save();
         setButtonsEnabled(false);
-        popUp.showPopUp("title", null, null, JPopUp.TEXT_INPUT);
+
+        JFileChooser chooser = new JFileChooser();
+
+        int userSelection = chooser.showSaveDialog(parent);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = chooser.getSelectedFile();
+
+            try {
+                if (fileToSave.createNewFile()) {
+                    overrideFile(fileToSave.getAbsolutePath());
+                } else {
+                    JRoundedButton cancel = new JRoundedButton("Load");
+                    cancel.addActionListener(e -> {
+                        setButtonsEnabled(true);
+                        popUp.hidePopUp();
+                    });
+
+                    JRoundedButton override = new JRoundedButton("Override (Will delete file!)");
+                    override.addActionListener(e -> {
+                        setButtonsEnabled(true);
+                        overrideFile(fileToSave.getAbsolutePath());
+                        popUp.hidePopUp();
+                    });
+
+                    popUp.showPopUp("File Conflict", "File already exists!",null, JPopUp.MESSAGE, cancel, override);
+                }
+            } catch (IOException ioException) {
+                JOptionPane.showMessageDialog(parent, "Error creating file: " + ioException.getMessage());
+            }
+        } else {
+            setButtonsEnabled(true);
+        }
+    }
+
+    public void overrideFile(String saveDir){
+        try {
+            FileReader reader = new FileReader(fileName);
+            FileWriter writer = new FileWriter(saveDir);
+
+            int c;
+
+            while((c = reader.read()) != -1){
+                writer.write(c);
+            }
+        } catch (IOException ignore) {}
     }
 
     public void exit(boolean... skipCheck){

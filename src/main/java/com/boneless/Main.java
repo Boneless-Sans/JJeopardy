@@ -16,7 +16,7 @@ X  - \bX\b
 !! - !!(.*?)!!
  */
 public class Main extends JFrame implements KeyListener {
-    public static String fileName = "temp.json";
+    public static String fileName;
     public static String settingsFile;
     public boolean doFullScreen = false;
     public static boolean playAudio = false;
@@ -63,7 +63,7 @@ public class Main extends JFrame implements KeyListener {
 
                 "misc#audio@false",
                 "misc#play_animations@true",
-                "misc#disable_scroll_animation@false"
+                "misc#disable_scroll_animation@true"
         };
 
         try {
@@ -73,15 +73,12 @@ public class Main extends JFrame implements KeyListener {
             FileReader fr = new FileReader(settingsFile);
 
             if(!String.valueOf(fr.read()).equals("-1")){
-                return;
-            }
-
-            try(FileWriter fw = new FileWriter(settingsFile)){
-                fw.write("{}");
+                try(FileWriter fw = new FileWriter(settingsFile)){
+                    fw.write("{}");
+                }
             }
 
             fr.close();
-
 
             for (String item : items) {
                 String key = item.split("#")[0];
@@ -141,17 +138,17 @@ public class Main extends JFrame implements KeyListener {
         if(startIndex != -1 && endIndex != -1) {
             switch (arg.substring(startIndex + 1, endIndex)) {
                 case "card": {
-                    fileName = "temp.json";
+                    fileName = "data/temp.json";
                     add(gameBoard = new GameBoard(4, this));
                     break;
                 }
                 case "board": {
-                    fileName = "temp.json";
+                    fileName = "data/temp.json";
                     add(boardFactory = new BoardFactory(this, fileName));
                     break;
                 }
                 case "settings": {
-                    fileName = "temp.json";
+                    fileName = "data/temp.json";
                     add(new Settings(this));
                     break;
                 }
