@@ -12,7 +12,6 @@ import java.io.*;
 public class JsonFile {
     private JsonFile() {} //disable no arg so the class can't be created
 
-    //very fun to read :)
     public static String read(String filename, String mainKey, String valueKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokenizer = new JSONTokener(reader);
@@ -48,7 +47,7 @@ public class JsonFile {
         return "invalid key";
     }
 
-    public static String readWithThreeKeys(String filename, String mainKey, String subKey, String valueKey) {
+    public static String readWith3Keys(String filename, String mainKey, String subKey, String valueKey) {
         try (Reader reader = new FileReader(getFilePath(filename))) {
             JSONTokener tokenizer = new JSONTokener(reader);
             JSONObject jsonObject = new JSONObject(tokenizer);
@@ -66,7 +65,6 @@ public class JsonFile {
                             if (valueObject.has(valueKey)) {
                                 Object value = valueObject.get(valueKey);
 
-                                // Check the type of value and handle accordingly
                                 if (value instanceof String) {
                                     return (String) value;
                                 } else if (value instanceof Number) {
@@ -87,7 +85,7 @@ public class JsonFile {
                     return "invalid mainKey type";
                 }
             } else {
-                return "-1"; // Return a sentinel value for invalid mainKey
+                return "-1"; //return value for invalid mainKey
             }
 
         } catch (IOException | JSONException ignored) {}
@@ -120,39 +118,81 @@ public class JsonFile {
 
     public static void writeln3Keys(String filename, String key1, String key2, String key3, String value) {
         try {
-            // Read the existing JSON content from the file
+            //read data from json
             JSONObject jsonObject = readJsonObject(filename);
 
-            // If the file is empty or does not exist, create a new JSONObject
+            //if its empty (shouldn't be), make sure it's properly formatted, so it doesn't go ka-boom
             if (jsonObject == null) {
                 jsonObject = new JSONObject();
             }
 
-            // Navigate or create the nested structure for key1
+            //navigate
             JSONObject level1Object = jsonObject.optJSONObject(key1);
             if (level1Object == null) {
                 level1Object = new JSONObject();
                 jsonObject.put(key1, level1Object);
             }
 
-            // Navigate or create the nested structure for key2 within key1
+            //navigate more
             JSONObject level2Object = level1Object.optJSONObject(key2);
             if (level2Object == null) {
                 level2Object = new JSONObject();
                 level1Object.put(key2, level2Object);
             }
 
-            // Directly put the value for key3 within key2
+            //put date into key set
             level2Object.put(key3, value);
 
-            // Write the updated JSON object back to the file
+            //write
             try (Writer writer = new FileWriter(getFilePath(filename))) {
-                writer.write(jsonObject.toString(2)); // Indent with 2 spaces for readability
+                writer.write(jsonObject.toString(2)); //indent
             }
 
-        } catch (IOException ignored) {
-            // Handle the exception as needed
-        }
+        } catch (IOException ignored) {}
+    }
+
+    //delete object with 2 keys
+    public static void delete(String filename, String mainKey, String valueKey) {
+        try {
+            JSONObject jsonObject = readJsonObject(filename);
+
+            if (jsonObject != null && jsonObject.has(mainKey)) {
+                JSONObject valuesObject = jsonObject.optJSONObject(mainKey);
+
+                if (valuesObject != null && valuesObject.has(valueKey)) {
+                    valuesObject.remove(valueKey);
+
+                    try (Writer writer = new FileWriter(getFilePath(filename))) {
+                        writer.write(jsonObject.toString(2));
+                    }
+                }
+            }
+
+        } catch (IOException ignored) {}
+    }
+
+    //delete object with 3 keys
+    public static void delete3Keys(String filename, String key1, String key2, String key3) {
+        try {
+            JSONObject jsonObject = readJsonObject(filename);
+
+            if (jsonObject != null && jsonObject.has(key1)) {
+                JSONObject level1Object = jsonObject.optJSONObject(key1);
+
+                if (level1Object != null && level1Object.has(key2)) {
+                    JSONObject level2Object = level1Object.optJSONObject(key2);
+
+                    if (level2Object != null && level2Object.has(key3)) {
+                        level2Object.remove(key3);
+
+                        try (Writer writer = new FileWriter(getFilePath(filename))) {
+                            writer.write(jsonObject.toString(2));
+                        }
+                    }
+                }
+            }
+
+        } catch (IOException ignored) {}
     }
 
     private static String getFilePath(String filename) {

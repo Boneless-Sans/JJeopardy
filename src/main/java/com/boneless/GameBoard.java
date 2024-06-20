@@ -74,10 +74,10 @@ public class GameBoard extends JPanel {
         //setup board
         for (int i = 0; i < boardY - 1; i++) {
             for (int j = 0; j < boardX; j++) {
-                String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
+                String scoreString = JsonFile.readWith3Keys(fileName, "board", "scores", "row_" + i);
                 int score = Integer.parseInt(scoreString);
-                String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
-                String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
+                String question = JsonFile.readWith3Keys(fileName, "board", "col_" + j, "question_" + i);
+                String answer = JsonFile.readWith3Keys(fileName, "board", "col_" + j, "answer_" + i);
 
                 BoardButton button = new BoardButton(score, question, answer, 20);
                 button.setBackground(mainColor);
@@ -96,7 +96,7 @@ public class GameBoard extends JPanel {
         panel.setBorder(BorderFactory.createBevelBorder(0));
         panel.setBackground(accentColor);
 
-        JLabel label = new JLabel(JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index));
+        JLabel label = new JLabel(JsonFile.readWith3Keys(fileName, "board", "categories", "cat_" + index));
         label.setFont(generateFont(fontSize));
         label.setForeground(fontColor);
 

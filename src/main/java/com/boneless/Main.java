@@ -31,7 +31,7 @@ public class Main extends JFrame implements KeyListener {
     public static Settings settings;
 
     public static int frameWidth, frameHeight;
-    public static int screenWidth, ScreenHeight;
+    public static int screenWidth, screenHeight;
 
     public static void main(String[] args) throws IOException {
         //setup settings file
@@ -42,7 +42,7 @@ public class Main extends JFrame implements KeyListener {
         String rawHeight = JsonFile.read(settingsFile, "screen", "screen_resolution").split("x")[1];
         frameHeight = rawHeight.contains("(") ? Integer.parseInt(rawHeight.split(" ")[0]) : Integer.parseInt(rawHeight);
         screenWidth = Toolkit.getDefaultToolkit().getScreenSize().width;
-        ScreenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
+        screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 
         //run program
         SwingUtilities.invokeLater(() -> new Main(args));

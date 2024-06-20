@@ -26,7 +26,10 @@ public class Settings extends JPanel {
 
     private boolean changesMade = false;
 
+    private final Container parent;
+
     public Settings(Container parent) {
+        this.parent = parent;
         settingsIsActive = true;
 
         setLayout(null);
@@ -135,6 +138,15 @@ public class Settings extends JPanel {
         resSizeDropDown.addActionListener(e -> changesMade = true);
         resSizeDropDown.setFont(generateFont(20));
 
+        JRoundedButton updateScreenSize = new JRoundedButton("Update");
+        updateScreenSize.addActionListener(e -> {
+            frameWidth = Integer.parseInt(((String) resSizeDropDown.getSelectedItem()).split("x")[0]);
+            String rawHeight = ((String) resSizeDropDown.getSelectedItem()).split("x")[1];
+            frameHeight = rawHeight.contains("(") ? Integer.parseInt(rawHeight.split(" ")[0]) : Integer.parseInt(rawHeight);
+            parent.setSize(frameWidth, frameHeight);
+            parent.setLocation(screenWidth / 2 - frameWidth / 2, screenHeight / 2 - frameHeight / 2);
+        });
+
         panel.add(sectionLabel("Key Binds"));
         panel.add(createKeyBindPanel("Exit", "exit", exitBindButton));
         panel.add(createKeyBindPanel("Advance", "advance", advanceBindButton));
@@ -142,6 +154,7 @@ public class Settings extends JPanel {
         panel.add(divider());
         panel.add(sectionLabel("Display"));
         panel.add(createDropDownPanel(resSizeDropDown));
+       // panel.add(createSettingsItem("Update Screen", updateScreenSize));
         panel.add(createTogglePanel("Always On Top", "screen", "always_on_top"));
         panel.add(createTogglePanel("Full screen", "screen", "fullscreen"));
 

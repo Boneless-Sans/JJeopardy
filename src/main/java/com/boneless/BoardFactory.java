@@ -215,12 +215,16 @@ public class BoardFactory extends JPanel {
         //setup board
         for (int i = 0; i < boardY - 1; i++) {
             for (int j = 0; j < boardX; j++) {
-                String scoreString = JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i);
-                String question = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "question_" + i);
-                String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
-                if(scoreString.contains("key")){
+                String scoreString = JsonFile.readWith3Keys(fileName, "board", "scores", "row_" + i);
+                String question = JsonFile.readWith3Keys(fileName, "board", "col_" + j, "question_" + i);
+                String answer = JsonFile.readWith3Keys(fileName, "board", "col_" + j, "answer_" + i);
+                if(scoreString.contains("key") || question.contains("key")){
                     JsonFile.writeln3Keys(fileName, "board", "scores", "row_" + i, "0");
+                    JsonFile.writeln3Keys(fileName, "board", "col_" + j, "question_" + i, "Column " + j + " Question " + i);
+                    JsonFile.writeln3Keys(fileName, "board", "col_" + j, "answer_" + i, "Column " + j + " Answer " + i);
                     scoreString = "0";
+                    question = "Column " + j + " Question " + i;
+                    answer = "Column " + j + " Answer " + i;
                 }
                 int score = Integer.parseInt(scoreString);
 
@@ -274,7 +278,7 @@ public class BoardFactory extends JPanel {
         buttonsList.add(field);
         headerPanels.add(field);
 
-        String text = JsonFile.readWithThreeKeys(fileName, "board", "categories", "cat_" + index);
+        String text = JsonFile.readWith3Keys(fileName, "board", "categories", "cat_" + index);
         field.setText(text.toLowerCase().contains("key") ? "Blank" : text);
         field.setFont(generateFont(fontSize));
         field.setForeground(fontColor);
@@ -412,7 +416,7 @@ public class BoardFactory extends JPanel {
         for(int i = 0; i < Integer.parseInt(JsonFile.read(fileName, "data", "rows"));i++){
             JTextField field = new JTextField(5);
 
-            field.setText(JsonFile.readWithThreeKeys(fileName, "board", "scores", "row_" + i));
+            field.setText(JsonFile.readWith3Keys(fileName, "board", "scores", "row_" + i));
             field.setBackground(Color.LIGHT_GRAY);
             field.setHorizontalAlignment(JTextField.CENTER);
             field.setFont(generateFont(15));
@@ -459,7 +463,12 @@ public class BoardFactory extends JPanel {
         String[] fonts = ge.getAvailableFontFamilyNames();
 
         JComboBox<String> comboBox = new JComboBox<>(fonts);
-        comboBox.setSelectedIndex(dropDownIndex);
+        for(int i = 0; i < fonts.length; i++){
+            if(fonts[i].equals(JsonFile.read(fileName, "data", "font"))){
+                comboBox.setSelectedIndex(i);
+            }
+        }
+
         comboBox.addActionListener(e -> {
             dropDownIndex = comboBox.getSelectedIndex();
             JsonFile.writeln(fileName, "data", "font", (String) comboBox.getSelectedItem());
@@ -852,7 +861,7 @@ public class BoardFactory extends JPanel {
         public boolean isQuestion;
 
         public QATextBox(String text, boolean isQuestion, int row, int col){
-            super(JsonFile.readWithThreeKeys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
+            super(JsonFile.readWith3Keys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
 
             this.row = row;
             this.col = col;
@@ -908,6 +917,12 @@ public class BoardFactory extends JPanel {
                 private void handleChange(){
                     changesMade = true;
                     JsonFile.writeln(fileName, "data", key, getText());
+
+//                    int index = Integer.parseInt(getText());
+//                    while(!JsonFile.read(fileName, "data", key).contains("key")){
+//                        System.out.println(JsonFile.read(fileName, "data", key));
+//                    }
+
                     if(!getText().isEmpty()) reload();
                 }
             });

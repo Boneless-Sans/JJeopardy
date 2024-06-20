@@ -132,11 +132,9 @@ public class GeneralUtils {
     }
 
     private static boolean canChangePanels = true;
-
     public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
         if(!canChangePanels) return;
 
-        canChangePanels = false;
         if(Boolean.parseBoolean(JsonFile.read(settingsFile, "screen", "reduce_animations"))){
             Container parent = self.getParent();
 
@@ -151,6 +149,9 @@ public class GeneralUtils {
 
             return;
         }
+
+        canChangePanels = false;
+
         int selfStartY = self.getY();
         int selfTargetY;
         int panelToAddStartY;
