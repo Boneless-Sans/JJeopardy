@@ -7,6 +7,7 @@ import com.boneless.util.JsonFile;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -24,7 +25,7 @@ public class BoardFactory extends JPanel {
     private final JFrame parent;
     private JPanel boardPanel;
     private MockJCard card;
-    private final JPopUp popUp;
+    private JPopUp popUp;
 
     private Color mainColor;
     public Color accentColor;
@@ -37,10 +38,10 @@ public class BoardFactory extends JPanel {
 
     private final int fontSize = 20;
 
-    private final String fileName;
-    private final String fileToSaveAt;
+    private String fileName;
+    private String fileToSaveAt;
 
-    private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList = new HashMap<>();
+    private final HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, QATextBox> labelList = new HashMap<>();
     private final ArrayList<JComponent> boardButtonList = new ArrayList<>();
 
     public BoardFactory(JFrame parent, String mainFile){
@@ -51,26 +52,22 @@ public class BoardFactory extends JPanel {
             usingTempFile = false;
             fileName = mainFile;
             fileToSaveAt = mainFile;
-            loadColors();
         } else {
             usingTempFile = true;
             fileName = createTempFile("temp_board.json");
             fileToSaveAt = "File Not Set (Using Temporary Board File)";
-            loadColors();
         }
-        mainMenu.changeFileName(fileToSaveAt);
+        mainMenu.changeFileName(fileName);
         setLayout(null);
         parent.setJMenuBar(menuBar());
         setBackground(mainColor);
 
         JPanel main = new JPanel(new BorderLayout());
 
-        add(popUp = new JPopUp(parent));
-
         reload();
     }
 
-    private void loadColors(){ //not really needed, but its cleaner+-
+    private void loadColors(){
         mainColor = parseColor(JsonFile.read(fileName, "data", "global_color"));
         accentColor = new Color(
                 clamp(mainColor.getRed()   - 40),
@@ -80,6 +77,17 @@ public class BoardFactory extends JPanel {
     }
 
     private void reload(){
+        loadColors();
+
+        removeAll();
+        boardButtonList.clear();
+        labelList.clear();
+        changesMade = false;
+        inJCard = false;
+        usingTempFile = false;
+
+        add(popUp = new JPopUp(parent));
+
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBounds(0,0,parent.getWidth(), parent.getHeight());
 
@@ -123,7 +131,7 @@ public class BoardFactory extends JPanel {
         saveAsItem.addActionListener(e -> saveAs());
 
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> exit());
+        exitItem.addActionListener(e -> exit(false));
 
         //sub tabs - help
         JMenuItem aboutItem = new JMenuItem("About");
@@ -176,8 +184,8 @@ public class BoardFactory extends JPanel {
                 String answer = JsonFile.readWithThreeKeys(fileName, "board", "col_" + j, "answer_" + i);
                 int score = Integer.parseInt(scoreString);
 
-                putInLabelList(labelList, true, i, j, new TextBox(answer, true, i, j));
-                putInLabelList(labelList, false, i, j, new TextBox(question, false, i, j));
+                putInLabelList(labelList, true, i, j, new QATextBox(answer, true, i, j));
+                putInLabelList(labelList, false, i, j, new QATextBox(question, false, i, j));
 
                 MockBoardButton button = new MockBoardButton(score, question, answer, 20, i, j);
                 boardButtonList.add(button);
@@ -193,16 +201,16 @@ public class BoardFactory extends JPanel {
         return panel;
     }
 
-    private void putInLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col, TextBox textBox){ //ass
+    private void putInLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, QATextBox> labelList, boolean isQuestion, int row, int col, QATextBox QATextBox){ //ass
         HashMap<Boolean, HashMap<Integer, Integer>> outerKey = new HashMap<>();
         HashMap<Integer, Integer> innerKey = new HashMap<>();
         innerKey.put(row, col);
         outerKey.put(isQuestion, innerKey);
 
-        labelList.put(outerKey, textBox);
+        labelList.put(outerKey, QATextBox);
     }
 
-    private TextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, TextBox> labelList, boolean isQuestion, int row, int col){
+    private QATextBox getFromLabelList(HashMap<HashMap<Boolean, HashMap<Integer, Integer>>, QATextBox> labelList, boolean isQuestion, int row, int col){
         for(HashMap<Boolean, HashMap<Integer, Integer>> outerKey : labelList.keySet()){
             if(outerKey.containsKey(isQuestion)){
                 HashMap<Integer, Integer> innerKey = outerKey.get(isQuestion);
@@ -270,9 +278,10 @@ public class BoardFactory extends JPanel {
         headerExitButton.addActionListener(e -> {
             if (inJCard) {
                 inJCard = false;
+                setButtonsEnabled(true);
                 changeCurrentPanel(boardPanel, card, false);
             }
-            else exit();
+            else exit(false);
         });
 
         boardButtonList.add(headerExitButton);
@@ -337,36 +346,155 @@ public class BoardFactory extends JPanel {
         return panel;
     }
 
-    private JScrollPane controlPanel(){
-        /*
-        Sub-roadmap
-            -Board name | X
-            -global color | X
-            -font | X
-            -font color | X
-            -rows | X
-            -cols | X
-            -scores | X
-                -for rows, create a section with text fields for scores
-                styled like settings
-         */
+    private JPanel controlPanel(){
         JPanel panel = new JPanel(new FlowLayout());
-        panel.setPreferredSize(new Dimension(500,getHeight()));
+        panel.setBackground(accentColor);
+        panel.setPreferredSize(new Dimension(360,getHeight()));
 
-        panel.add(createTextField());
+        //panel.add(sectionLabel("Board Settings", 30));
 
-        HiddenScroller scroller = new HiddenScroller(panel, false);
-        scroller.setPreferredSize(new Dimension(120, getHeight()));
-        return scroller;
+        NumberedTextBox catCountBox = new NumberedTextBox("categories");
+        NumberedTextBox rowCountBox = new NumberedTextBox("rows");
+
+        //panel.add(divider());
+        panel.add(sectionLabel("Board Size"));
+        panel.add(itemPanel("Categories", catCountBox));
+        panel.add(itemPanel("Rows", rowCountBox));
+
+        panel.add(divider());
+        panel.add(sectionLabel("Colors & Text"));
+        panel.add(colorPicker("Global Color", "global_color"));
+        panel.add(colorPicker("Font Color","font_color"));
+        panel.add(colorPicker("Disabled Color", "disabled_button_color"));
+
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        String[] fonts = ge.getAvailableFontFamilyNames();
+
+        JComboBox<String> comboBox = new JComboBox<>(fonts);
+        if(fonts[0].contains(".")){ //removes macOS's wierd font '.AppleSystemUIFont'
+            comboBox.removeItemAt(0);
+        }
+
+        panel.add(itemPanel("Font", comboBox));
+
+
+        return panel;
     }
 
-    private JPanel createTextField(){
+    private final GridBagConstraints leftGBC = new GridBagConstraints(){{
+        gridx = 0;
+        gridy = 0;
+        weightx = 1;
+        weighty = 1;
+        anchor = GridBagConstraints.WEST;
+        insets = new Insets(0,20,0,0);
+    }};
+
+    private final GridBagConstraints rightGBC = new GridBagConstraints(){{
+        gridx = 0;
+        gridy = 0;
+        weightx = 1;
+        weighty = 1;
+        anchor = GridBagConstraints.EAST;
+        insets = new Insets(0,0,0,20);
+    }};
+
+    private JPanel divider(){
         JPanel panel = new JPanel();
-        panel.setBackground(accentColor);
+        panel.setPreferredSize(new Dimension(250,25));
+        panel.setOpaque(false);
 
-        JTextField field = new JTextField(10);
+        return panel;
+    }
 
-        panel.add(field);
+    private JPanel sectionLabel(String text, int... fontSize) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panel.setPreferredSize(new Dimension(250, 35));
+        panel.setOpaque(false);
+
+        JLabel label = new JLabel(text);
+        label.setFont(generateFont(fontSize.length > 0 ? fontSize[0] : 25));
+        label.setForeground(fontColor);
+
+        panel.add(label);
+
+        return panel;
+    }
+
+    private JPanel colorPicker(String text, String key){
+        int width = 350;
+        int height = 40;
+        JPanel panel = new JPanel(new GridLayout(1,2)){
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2d.setColor(Color.white);
+                g2d.fillRoundRect(0, 0, width, height, 25,25);
+            }
+        };
+        panel.setPreferredSize(new Dimension(width, height));
+
+        JPanel textPanel = new JPanel(new GridBagLayout());
+        textPanel.setOpaque(false);
+
+        JLabel label = new JLabel(text);
+        label.setFont(generateFont(20));
+
+        textPanel.add(label, leftGBC);
+
+        JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        itemPanel.setOpaque(false);
+
+        NumberedTextBox redBox = new NumberedTextBox(0, key);
+        NumberedTextBox greenBox = new NumberedTextBox(1, key);
+        NumberedTextBox blueBox = new NumberedTextBox(2, key);
+
+        JLabel comma = new JLabel(",");
+        comma.setFont(generateFont(10));
+
+        itemPanel.add(redBox);
+        itemPanel.add(greenBox);
+        itemPanel.add(blueBox);
+
+        panel.add(textPanel);
+        panel.add(itemPanel);
+
+        return panel;
+    }
+
+    private JPanel itemPanel(String text, JComponent component, int... fontSize){
+        int width = 350;
+        int height = 40;
+        JPanel panel = new JPanel(new GridLayout(1,2)){
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2d.setColor(Color.white);
+                g2d.fillRoundRect(0, 0, width, height, 25,25);
+            }
+        };
+        panel.setPreferredSize(new Dimension(width, height));
+
+        JPanel leftPanel = new JPanel(new GridBagLayout());
+        leftPanel.setOpaque(false);
+
+        JLabel label = new JLabel(text);
+        label.setFont(generateFont(fontSize.length > 0 ? fontSize[0] : 20));
+        label.setForeground(Color.BLACK);
+
+        leftPanel.add(label, leftGBC);
+
+        JPanel rightPanel = new JPanel(new GridBagLayout());
+        rightPanel.setOpaque(false);
+        rightPanel.add(component, rightGBC);
+
+        panel.add(leftPanel);
+        panel.add(rightPanel);
 
         return panel;
     }
@@ -413,10 +541,7 @@ public class BoardFactory extends JPanel {
 
         try {
             if(tempFile.exists()){
-                try (FileWriter writer = new FileWriter(tempFile, false)){ //clear file
-                    writer.close(); //says redundant, isn't redundant
-                }
-                try (FileWriter writer = new FileWriter(tempFile)){ //write to file
+                try (FileWriter writer = new FileWriter(tempFile, false)){ //write to file
                     writer.write(jsonContent());
                 }
                 return tempFile.getAbsolutePath();
@@ -432,59 +557,36 @@ public class BoardFactory extends JPanel {
     }
 
     private void newFile(){
-        setButtonsEnabled(false);
-        JFileChooser chooser = new JFileChooser();
-        chooser.setDialogTitle("Specify a file to save");
-        chooser.setApproveButtonText("Save");
+        String file = saveAs(true);
+        try(FileWriter writer = new FileWriter(file)){
+            writer.write(jsonContent());
+        } catch (IOException ignore){}
 
-        JRoundedButton cancel = new JRoundedButton("Cancel");
-        cancel.addActionListener(e -> {
-            setButtonsEnabled(true);
-            popUp.hidePopUp();
-        });
-
-        if(changesMade){
-            popUp.showPopUp("Changes Made!", "Fuck off", null, JPopUp.MESSAGE);
-        }
-
-        int userSelection = chooser.showSaveDialog(parent);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = chooser.getSelectedFile();
-            //todo> check diag > fileName = createTempFile() > use dialog for save location and save it with fileToSaveAt
-
-            try {
-                if (fileToSave.createNewFile()) {
-                    JOptionPane.showMessageDialog(parent, "File created: " + fileToSave.getAbsolutePath());
-                } else {
-                    JRoundedButton load = new JRoundedButton("Load");
-                    load.addActionListener(e -> {
-                        setButtonsEnabled(true);
-                        popUp.hidePopUp();
-                        load(fileToSave.getAbsolutePath());
-                    });
-
-                    JRoundedButton override = new JRoundedButton("Override (Will delete file!)");
-                    override.addActionListener(e -> {
-                        setButtonsEnabled(true);
-                        overrideFile(fileToSave.getAbsolutePath());
-                        popUp.hidePopUp();
-                    });
-
-                    popUp.showPopUp("File Conflict", "File already exists!",null, JPopUp.MESSAGE, cancel, load, override);
-                }
-            } catch (IOException ioException) {
-                JOptionPane.showMessageDialog(parent, "Error creating file: " + ioException.getMessage());
-            }
-        } else {
-            setButtonsEnabled(true);
-        }
-
-        load();
+        load(file);
     }
 
     private void load(String... filePath){
         //todo: get file browser input, filename = selected file, reload()
+        setButtonsEnabled(false);
+
+        String filePathItem = null;
+        if(filePath.length == 0){
+            JFileChooser chooser = new JFileChooser();
+
+            int returnVal = chooser.showOpenDialog(this);
+
+            if(returnVal == JFileChooser.APPROVE_OPTION){
+                filePathItem = chooser.getSelectedFile().getAbsolutePath();
+            }
+        } else {
+            filePathItem = filePath[0];
+        }
+        fileToSaveAt = filePathItem;
+        fileName = filePathItem;
+        mainMenu.changeFileName(filePathItem);
+
+        reload();
+        setButtonsEnabled(true);
     }
 
     private void save(){
@@ -492,27 +594,27 @@ public class BoardFactory extends JPanel {
             usingTempFile = false;
             saveAs();
         } else {
-            try(FileWriter writer = new FileWriter(fileName)){
-                //FileReader reader = new FileReader();
-            } catch (IOException e){
-                //
-            }
+            overrideFile(fileToSaveAt);
         }
     }
 
-    private void saveAs(){
+    private String saveAs(boolean... returnName){
         setButtonsEnabled(false);
 
         JFileChooser chooser = new JFileChooser();
 
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("JSON files", "json");
+        chooser.setFileFilter(filter);
+
         int userSelection = chooser.showSaveDialog(parent);
 
         if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = chooser.getSelectedFile();
-
             try {
-                if (fileToSave.createNewFile()) {
-                    overrideFile(fileToSave.getAbsolutePath());
+                fileToSaveAt = chooser.getSelectedFile().getAbsolutePath().contains(".json") ? chooser.getSelectedFile().getAbsolutePath() : chooser.getSelectedFile().getAbsolutePath() + ".json";
+                if (new File(fileToSaveAt).createNewFile()) {
+                    if(returnName.length > 0) return fileToSaveAt; //sloppy return method, out of time, don't care
+                    overrideFile(fileToSaveAt);
+                    setButtonsEnabled(true);
                 } else {
                     JRoundedButton cancel = new JRoundedButton("Load");
                     cancel.addActionListener(e -> {
@@ -523,7 +625,7 @@ public class BoardFactory extends JPanel {
                     JRoundedButton override = new JRoundedButton("Override (Will delete file!)");
                     override.addActionListener(e -> {
                         setButtonsEnabled(true);
-                        overrideFile(fileToSave.getAbsolutePath());
+                        overrideFile(fileToSaveAt);
                         popUp.hidePopUp();
                     });
 
@@ -535,25 +637,24 @@ public class BoardFactory extends JPanel {
         } else {
             setButtonsEnabled(true);
         }
+        return fileToSaveAt;
     }
 
-    public void overrideFile(String saveDir){
-        try {
-            FileReader reader = new FileReader(fileName);
-            FileWriter writer = new FileWriter(saveDir);
+    public void overrideFile(String saveDir) {
+        try (FileReader reader = new FileReader(fileName);
+             FileWriter writer = new FileWriter(saveDir, false)) {
 
             int c;
-
-            while((c = reader.read()) != -1){
+            while ((c = reader.read()) != -1) {
                 writer.write(c);
             }
-        } catch (IOException ignore) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void exit(boolean... skipCheck){
-        boolean doSkipCheck = skipCheck.length > 0;
-
-        if(changesMade && !doSkipCheck) {
+    public void exit(boolean skipCheck){
+        if(changesMade && !skipCheck) {
             setButtonsEnabled(false);
 
             JRoundedButton cancel = new JRoundedButton("Cancel");
@@ -566,7 +667,7 @@ public class BoardFactory extends JPanel {
             exitWS.addActionListener(e -> {
                 popUp.hidePopUp();
                 save();
-                exit();
+                exit(false);
             });
 
             JRoundedButton exitWOS = new JRoundedButton("Exit Without Saving");
@@ -577,6 +678,7 @@ public class BoardFactory extends JPanel {
 
             popUp.showPopUp("Changes Made!", "Changes have been made!",null, JPopUp.MESSAGE, cancel, exitWS, exitWOS);
         } else {
+            factoryIsActive = false;
             mainMenu.timer.start();
             changeCurrentPanel(mainMenu, this, false);
             parent.setJMenuBar(null);
@@ -610,6 +712,13 @@ public class BoardFactory extends JPanel {
 
             addActionListener(e -> {
                 inJCard = true;
+                setButtonsEnabled(false);
+
+                Timer timer = new Timer(1000, a -> { //stop user from spamming the button, fixes bug where it would go from jCard to MainMenu, instead of jCard to GameBoard
+                    boardButtonList.get(0).setEnabled(true); //ensure header exit button is enabled
+                });
+                timer.start();
+                timer.setRepeats(false);
 
                 changeCurrentPanel(card = new MockJCard(row, col), boardPanel, true, 200);
             });
@@ -617,7 +726,7 @@ public class BoardFactory extends JPanel {
 
         @Override
         protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
+            //super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -690,12 +799,12 @@ public class BoardFactory extends JPanel {
         }
     }
 
-    private class TextBox extends JTextField {
+    private class QATextBox extends JTextField {
         public int row;
         public int col;
         public boolean isQuestion;
 
-        public TextBox(String text, boolean isQuestion, int row, int col){
+        public QATextBox(String text, boolean isQuestion, int row, int col){
             super(JsonFile.readWithThreeKeys(fileName, "board", "col_" + col, isQuestion ? "question_" + row : "answer_" + row));
 
             this.row = row;
@@ -729,6 +838,130 @@ public class BoardFactory extends JPanel {
         @Override
         protected void paintBorder(Graphics g) {
             super.paintBorder(g);
+        }
+    }
+
+    private class NumberedTextBox extends JTextField {
+        public NumberedTextBox(String key){
+            super(2);
+            setText(JsonFile.read(fileName, "data", key));
+
+            setBackground(Color.LIGHT_GRAY);
+            setHorizontalAlignment(JTextField.CENTER);
+
+            setFont(generateFont(20));
+            setBorder(BorderFactory.createBevelBorder(1));
+
+            ((AbstractDocument) getDocument()).setDocumentFilter(new NumberFilter());
+            getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    changesMade = true;
+                    JsonFile.writeln(fileName, "data", key, getText());
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    changesMade = true;
+                    JsonFile.writeln(fileName, "data", key, getText());
+                }
+                @Override public void changedUpdate(DocumentEvent e) {}
+            });
+        }
+        public NumberedTextBox(int pos, String key){
+            super(3);
+            String rgbValue = JsonFile.read(fileName, "data", key);
+            setText(rgbValue.split(",")[pos]);
+
+            setBackground(Color.LIGHT_GRAY);
+            setHorizontalAlignment(JTextField.CENTER);
+
+            setFont(generateFont(18));
+            setBorder(BorderFactory.createBevelBorder(1));
+
+            ((AbstractDocument) getDocument()).setDocumentFilter(new DocumentFilter(){ //length limiter
+                private AttributeSet attributeSet = null;
+                @Override
+                public void insertString(FilterBypass fb, int offset, String text, AttributeSet attr) throws BadLocationException {
+                    attributeSet = attr;
+                    if (text == null) {
+                        return;
+                    }
+                    if (isNumeric(text) && (fb.getDocument().getLength() + text.length()) <= 3) {
+                        super.insertString(fb, offset, text, attr);
+                        loadColors();
+                    }
+                }
+
+                @Override
+                public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                    if (text == null) {
+                        return;
+                    }
+                    if (isNumeric(text) && (fb.getDocument().getLength() + text.length()) <= 3) {
+                        super.replace(fb, offset, length, text, attrs);
+                        loadColors();
+                    }
+                }
+
+                @Override
+                public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                    System.out.println("String Length: " + fb.getDocument().getLength());
+                    if(fb.getDocument().getLength() - 1 > 0) {
+                        super.remove(fb, offset, length);
+                    } else {
+                        replace(fb, offset, length, "0", attributeSet);
+                    }
+                }
+
+                private boolean isNumeric(String text) {
+                    for (char c : text.toCharArray()) {
+                        System.out.println("Char: " + c);
+                        if (!Character.isDigit(c)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            });
+            getDocument().addDocumentListener(new DocumentListener() { //rgb clamp
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    changesMade = true;
+                    if(Integer.parseInt(getText()) > 0 && Integer.parseInt(getText()) < 256){
+                        String[] rgb = rgbValue.split(",");
+                        String data = switch (pos) {
+                            case 0 -> getText() + "," + rgb[1] + "," + rgb[2];
+                            case 1 -> rgb[0] + "," + getText() + "," + rgb[2];
+                            case 2 -> rgb[0] + "," + rgb[1] + "," + getText();
+                            default -> rgbValue;
+                        };
+                        JsonFile.writeln(fileName, "data", key, data);
+                        reload();
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    changesMade = true;
+                    if(Integer.parseInt(getText()) > 0 && Integer.parseInt(getText()) < 256){
+                        String[] rgb = rgbValue.split(",");
+                        try {
+                            String data = switch (pos) {
+                                case 0 -> getText() + "," + rgb[1] + "," + rgb[2];
+                                case 1 -> rgb[0] + "," + getText() + "," + rgb[2];
+                                case 2 -> rgb[0] + "," + rgb[1] + "," + getText();
+                                default -> rgbValue;
+                            };
+                            JsonFile.writeln(fileName, "data", key, data);
+                            reload();
+                        } catch (NumberFormatException exception) {
+                            setText("0");
+                        }
+                    }
+                }
+                @Override public void changedUpdate(DocumentEvent e) {}
+            });
         }
     }
 

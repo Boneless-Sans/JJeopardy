@@ -48,7 +48,6 @@ public class Main extends JFrame implements KeyListener {
         SwingUtilities.invokeLater(() -> new Main(args));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored") //SHUT THE FUCK UP
     private static void checkSettingsFileIntegrity(){
         System.out.println("Ran Method");
         File file = new File(System.getProperty("user.home") + "/settings.json");
@@ -69,22 +68,18 @@ public class Main extends JFrame implements KeyListener {
         };
 
         try {
-            System.out.println("Ran Try");
             settingsFile = file.getAbsolutePath();
 
-            FileReader fr = new FileReader(settingsFile);
-            System.out.println("fr");
-
             if(file.createNewFile()) System.out.println("Settings file created");
-            else System.out.println("Settings file already exists");
-            System.out.println("Created File?");
 
-            if(!String.valueOf(fr.read()).equals("-1")) {
+            FileReader fr = new FileReader(settingsFile);
+
+            if(String.valueOf(fr.read()).equals("-1")) {
                 System.out.println("Ran");
                 try (FileWriter fw = new FileWriter(settingsFile)) {
                     fw.write("{}");
                 }
-            } else System.out.println("Did not run");
+            }
 
             fr.close();
 
@@ -97,7 +92,9 @@ public class Main extends JFrame implements KeyListener {
                     JsonFile.writeln(settingsFile, key, itemName, bind);
                 }
             }
-        } catch (IOException ignore){}
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public Main(String... arg){
@@ -152,7 +149,6 @@ public class Main extends JFrame implements KeyListener {
                     break;
                 }
                 case "board": {
-                    fileName = file;
                     add(boardFactory = new BoardFactory(this, fileName));
                     break;
                 }
@@ -193,16 +189,16 @@ public class Main extends JFrame implements KeyListener {
             if(mainMenu.menuIsActive) { //menu
                 System.exit(0);
             }
-            else if (gameBoard.GameIsActive) { //game board
+            else if (gameBoard != null && gameBoard.GameIsActive) { //game board
                 gameBoard.exit();
             }
-            else if(gameBoard.jCardIsActive) { //jCard
+            else if(gameBoard != null && gameBoard.jCardIsActive) { //jCard
                 jCard.exit();
             }
-            else if(boardFactory.factoryIsActive) {
-                boardFactory.exit();
+            else if(boardFactory != null && boardFactory.factoryIsActive) {
+                boardFactory.exit(false);
             }
-            else if(settings.settingsIsActive){
+            else if(settings != null && settings.settingsIsActive){
                 settings.exit();
             }
         }
@@ -213,19 +209,8 @@ public class Main extends JFrame implements KeyListener {
                 jCard.moveQuestion();
             }
         }
-
-        //reset handler
-        if(e.getKeyChar() == 'r'){
-            reset();
-        }
     }
 
-    public static void reset(){
-        mainMenu.menuIsActive = true;
-        gameBoard.GameIsActive = false;
-        gameBoard.jCardIsActive = false;
-        new Main();
-    }
     @Override public void keyPressed(KeyEvent e) {}
     @Override public void keyReleased(KeyEvent e) {}
 }

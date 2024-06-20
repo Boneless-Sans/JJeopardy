@@ -305,10 +305,10 @@ public class Settings extends JPanel {
         JsonFile.writeln(settingsFile, "screen", "screen_resolution", (String) dropDownList.get("screen_resolution").getSelectedItem());
         JsonFile.writeln(settingsFile, "screen", "always_on_top", getStringBoolean(toggleButtonList.get("always_on_top").isChecked()));
         JsonFile.writeln(settingsFile, "screen", "fullscreen",getStringBoolean(toggleButtonList.get("fullscreen").isChecked()));
-        JsonFile.writeln(settingsFile, "screen", "reduce_animations", getStringBoolean(toggleButtonList.get("reduce_animations").isChecked()));
-        JsonFile.writeln(settingsFile, "screen", "play_card_animations",getStringBoolean(toggleButtonList.get("play_card_animations").isChecked()));
 
-        JsonFile.writeln(settingsFile, "misc", "disable_background_scroll", getStringBoolean(toggleButtonList.get("disable_background_scroll").isChecked()));
+        JsonFile.writeln(settingsFile, "misc", "reduce_animations", getStringBoolean(toggleButtonList.get("reduce_animations").isChecked()));
+        JsonFile.writeln(settingsFile, "misc", "play_card_animations",getStringBoolean(toggleButtonList.get("play_card_animations").isChecked()));
+        JsonFile.writeln(settingsFile, "misc", "play_background_ani", getStringBoolean(toggleButtonList.get("play_background_ani").isChecked()));
         JsonFile.writeln(settingsFile, "misc","audio",getStringBoolean(toggleButtonList.get("audio").isChecked()));
     }
 
@@ -336,6 +336,7 @@ public class Settings extends JPanel {
 
             popup.showPopUp("Changes Made", "Do you wish to exit without saving?", null, JPopUp.MESSAGE, cancel, exitSave, exitNoSave);
         } else {
+            settingsIsActive = false;
             changeCurrentPanel(mainMenu, this, false);
             mainMenu.timer.start();
         }

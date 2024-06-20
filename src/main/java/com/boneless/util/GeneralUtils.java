@@ -2,6 +2,9 @@ package com.boneless.util;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -128,7 +131,12 @@ public class GeneralUtils {
         return text.substring(0, 1).toUpperCase() + text.substring(1);
     }
 
+    private static boolean canChangePanels = true;
+
     public static void changeCurrentPanel(JPanel panelToAdd, JPanel self, boolean moveDown, int... extraMoveDistance) {
+        if(!canChangePanels) return;
+
+        canChangePanels = false;
         if(Boolean.parseBoolean(JsonFile.read(settingsFile, "screen", "reduce_animations"))){
             Container parent = self.getParent();
 
@@ -182,6 +190,7 @@ public class GeneralUtils {
             if (progress >= 1.0) {
                 timer.stop();
                 self.getParent().remove(self);
+                canChangePanels = true;
             }
 
             // Refresh the UI
@@ -247,6 +256,42 @@ public class GeneralUtils {
             @Override protected void configureScrollBarColors() {}
             @Override protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {}
             @Override protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {}
+        }
+    }
+
+    public static class NumberFilter extends DocumentFilter {
+        @Override
+        public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            if (string == null) {
+                return;
+            }
+            if (isNumeric(string)) {
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text == null) {
+                return;
+            }
+            if (isNumeric(text)) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+            super.remove(fb, offset, length);
+        }
+
+        private boolean isNumeric(String text) {
+            for (char c : text.toCharArray()) {
+                if (!Character.isDigit(c)) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

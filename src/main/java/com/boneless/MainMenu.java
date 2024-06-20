@@ -159,7 +159,7 @@ public class MainMenu extends ScrollGridPanel {
     }
 
     public void changeFileName(String newFile){
-        if(newFile == null || newFile.contains("Using")) return;
+        if(newFile == null) return;
 
         fileName = newFile;
         currentFile.setText("Current Board: " + fileName);
@@ -168,7 +168,7 @@ public class MainMenu extends ScrollGridPanel {
 
     private ActionListener listener(int UUID){
         return e -> {
-            menuIsActive = true;
+            menuIsActive = false;
             timer.stop();
             switch (UUID){
                 case 0: { //start

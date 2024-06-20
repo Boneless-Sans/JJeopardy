@@ -1,6 +1,7 @@
 package com.boneless;
 
 import com.boneless.util.JPopUp;
+import com.boneless.util.JRoundedButton;
 import com.boneless.util.JsonFile;
 
 import javax.swing.*;
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static com.boneless.GameBoard.HeaderPanel.*;
 import static com.boneless.Main.*;
@@ -31,19 +33,22 @@ public class GameBoard extends JPanel {
     public final JPanel boardPanel;
     private final JPopUp popup;
 
+    private final ArrayList<JComponent> boardButtonList = new ArrayList<>();
+
     public GameBoard(int teamCount, Container parent){
         this.teamCount = teamCount;
         GameIsActive = true;
         mainMenu.menuIsActive = false;
 
+        setLayout(null);
+
         JPanel masterPanel = new JPanel(new BorderLayout());
         masterPanel.setBounds(0,0,frameWidth, frameHeight);
 
         setBackground(mainColor);
-        setFocusable(true);
 
         masterPanel.add(new HeaderPanel(), BorderLayout.NORTH);
-        //masterPanel.add(createTeamsPanel(), BorderLayout.SOUTH);
+        masterPanel.add(createTeamsPanel(), BorderLayout.SOUTH);
         masterPanel.add(boardPanel = mainBoard(), BorderLayout.CENTER);
 
         add(popup = new JPopUp(parent));
@@ -78,6 +83,8 @@ public class GameBoard extends JPanel {
                 button.setBackground(mainColor);
                 button.setForeground(fontColor);
                 button.setFont(generateFont(fontSize));
+
+                boardButtonList.add(button);
                 panel.add(button);
             }
         }
@@ -127,46 +134,32 @@ public class GameBoard extends JPanel {
     }
 
     public void exit() {
-        int size = 32;
-
-        BufferedImage bufferedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics2D g2d = bufferedImage.createGraphics();
-
-        g2d.fillRect(0, 0, size, size);
-
-        g2d.setColor(Color.black);
-
-        g2d.setFont(generateFont(30));
-
-        FontMetrics fm = g2d.getFontMetrics();
-        int textWidth = fm.stringWidth("?");
-        int textHeight = fm.getHeight();
-        int x = (size - textWidth) / 2;
-        int y = (size - textHeight) / 2 + fm.getAscent();
-
-        g2d.drawString("?", x, y);
-
-        g2d.dispose();
-
-        String[] responses = {"Exit", "Resume"};
-        int answer = JOptionPane.showOptionDialog(
-                null,
-                "Is your departure truly inevitable?",
-                "",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                new ImageIcon(bufferedImage), responses, 0);
-        if (answer == 0) {
+        setButtonsEnabled(false);
+        JRoundedButton exit = new JRoundedButton("Exit");
+        exit.addActionListener(e -> {
             gameBoard.GameIsActive = false;
             mainMenu.menuIsActive = true;
             mainMenu.timer.start();
             Team.teamCount = 0;
             changeCurrentPanel(mainMenu, gameBoard, false);
+        });
+
+        JRoundedButton resume = new JRoundedButton("Resume");
+        resume.addActionListener(e -> {
+            popup.hidePopUp();
+            setButtonsEnabled(true);
+        });
+
+        popup.showPopUp("Exit Comfermation", "Do you wish to leave?", null, JPopUp.MESSAGE, exit, resume);
+    }
+
+    private void setButtonsEnabled(boolean isEnabled){
+        for(JComponent button : boardButtonList){
+            button.setEnabled(isEnabled);
         }
     }
 
-    public static class HeaderPanel extends JPanel {
+    public class HeaderPanel extends JPanel {
         public static JLabel leftText;
         public static JPanel rightPanel;
 
@@ -179,6 +172,8 @@ public class GameBoard extends JPanel {
             leftText.setFont(generateFont(fontSize));
 
             JButton exitButton = createHeaderButton("exit", true);
+
+            boardButtonList.add(exitButton);
 
             JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             leftPanel.setOpaque(false);

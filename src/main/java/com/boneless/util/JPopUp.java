@@ -30,11 +30,7 @@ public class JPopUp extends JPanel {
     private JButton sourceButton;
     private JRoundedButton inputButton;
 
-    private final Container parent;
-
     public JPopUp(Container parent) {
-        this.parent = parent;
-
         setSize(500,300);
         setLayout(new BorderLayout());
 
