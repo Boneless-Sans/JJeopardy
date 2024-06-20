@@ -24,11 +24,9 @@ public class JCard extends JPanel {
     private final static Color parseColorFadeComplete = parseColorFade(JsonFile.read(fileName, "data", "font_color"), 0);
     private final JPanel moversPanel;
     private final JPanel fadePanel;
-    private final JPanel fadePanel2;
     private final JButton sourceButton;
 
 
-    private final boolean animationCheck = Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "play_card_animations"));
     public int animationJCardBound = 4;
     // Set animationJCardBound to 1 for no animations
     // Set animationJCardBound to # of cases + 1 in animationSelect for all animations
@@ -57,9 +55,6 @@ public class JCard extends JPanel {
         fadePanel.setBackground(mainColor);
         fadePanel.setOpaque(false);
 
-        fadePanel2 = new JPanel(new GridBagLayout());
-        fadePanel2.setBackground(mainColor);
-
         spinningQuestion = new SpinningLabel(question);
         spinningQuestion.setForeground(fontColor);
         spinningQuestion.setOpaque(false);
@@ -81,6 +76,7 @@ public class JCard extends JPanel {
         add(fadePanel);
 
         try {
+            boolean animationCheck = Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "play_card_animations"));
             if(animationCheck){
                 System.out.println("its running bozo");
                 animationSelect();
