@@ -162,14 +162,8 @@ public class JCard extends JPanel {
         g2.setColor(fontColor);
         g2.setStroke(dashedLineStroke);
 
-        int factor = 2;
-        int sizeY = (getHeight() - (getHeight() / factor)) / factor;
-        int sixth = (getHeight() - (getHeight() / 2)) / 6;
-        int y = (getHeight() / 2) - (sizeY / 2);
-        int y3 = (getHeight() / 2) - (sizeY / 2);
-        int yComplete = ((y + sixth) + y3) / 2;
-
-        g2.drawLine(10, yComplete, this.getWidth() - 10, yComplete);
+        int yCenter = getHeight() / 2;
+        g2.drawLine(10, yCenter, this.getWidth() - 10, yCenter);
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
@@ -185,10 +179,11 @@ public class JCard extends JPanel {
         int sizeY = (getHeight() - (getHeight() / factor)) / factor;
         int x = (getWidth() / 2) - (sizeX2 / 2);
         int y = (getHeight() / 2) - (sizeY / 2);
-        int sixth = (getHeight() - (getHeight() / factor)) / 6;
+        int quarterHeight = getHeight() / 4;
+
         moversPanel.setBounds(x, y, sizeX2, sizeY);
-        fadePanel.setBounds(x, y + sixth, sizeX2, sizeY);
-        fadePanel2.setBounds(x, y - sixth, sizeX2, sizeY);
+//        fadePanel2.setBounds(x, y, sizeX2, quarterHeight);
+        fadePanel.setBounds(x, y + quarterHeight, sizeX2, quarterHeight);
         revalidate();
         repaint();
     }
@@ -213,7 +208,7 @@ public class JCard extends JPanel {
         int sizeY = 200;
         int x = (getWidth() - sizeX) / 2;
         int yQuestion = (getHeight() - sizeY) / 2;
-        int targetY = 50; // Target Y position for question label
+        int targetY = getHeight() / 4 - sizeY / 2; // Target Y position for question label
 
         Timer questionMoveUp = new Timer(7, null);
         questionMoveUp.addActionListener(new ActionListener() {
@@ -234,6 +229,7 @@ public class JCard extends JPanel {
         });
         questionMoveUp.start();
     }
+
 
     private void fadeInQuestion() {
         if (!hasFadedInQuestion) {
