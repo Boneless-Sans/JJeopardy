@@ -48,7 +48,7 @@ public class Main extends JFrame implements KeyListener {
         SwingUtilities.invokeLater(() -> new Main(args));
     }
 
-    private static void checkSettingsFileIntegrity(){
+        private static void checkSettingsFileIntegrity(){
         File file = new File(System.getProperty("user.home") + "/settings.json");
 
         String[] items = {
@@ -136,20 +136,26 @@ public class Main extends JFrame implements KeyListener {
         int startIndex = arg.indexOf("-");
         int endIndex = arg.indexOf("]");
         if(startIndex != -1 && endIndex != -1) {
+            String file = "temp.json";
             switch (arg.substring(startIndex + 1, endIndex)) {
                 case "card": {
-                    fileName = "data/temp.json";
+                    fileName = file;
                     add(gameBoard = new GameBoard(4, this));
                     break;
                 }
                 case "board": {
-                    fileName = "data/temp.json";
+                    fileName = file;
                     add(boardFactory = new BoardFactory(this, fileName));
                     break;
                 }
                 case "settings": {
-                    fileName = "data/temp.json";
+                    fileName = file;
                     add(new Settings(this));
+                    break;
+                }
+                case "dev": {
+                    fileName = file;
+                    add(mainMenu = new MainMenu(this));
                     break;
                 }
             }
