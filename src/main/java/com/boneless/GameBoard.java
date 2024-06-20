@@ -43,6 +43,7 @@ public class GameBoard extends JPanel {
         setLayout(null);
 
         JPanel masterPanel = new JPanel(new BorderLayout());
+        masterPanel.setBackground(mainColor);
         masterPanel.setBounds(0,0,frameWidth, frameHeight);
 
         setBackground(mainColor);
