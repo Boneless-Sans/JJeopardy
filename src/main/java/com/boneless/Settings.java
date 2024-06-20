@@ -14,7 +14,7 @@ public class Settings extends JPanel {
     private final Color accentColor;
     private final Color fontColor;
 
-    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();;
+    private final HashMap<String, JRoundedButton> keyBindButtonList = new HashMap<>();
     private final HashMap<String, ButtonIcon> toggleButtonList = new HashMap<>();
     private final HashMap<String, JComboBox<String>> dropDownList = new HashMap<>();
 
@@ -141,7 +141,7 @@ public class Settings extends JPanel {
 
         panel.add(divider());
         panel.add(sectionLabel("Display"));
-        panel.add(createDropDownPanel("Screen Size", "screen_resolution", resSizeDropDown));
+        panel.add(createDropDownPanel(resSizeDropDown));
         panel.add(createTogglePanel("Always On Top", "screen", "always_on_top"));
         panel.add(createTogglePanel("Full screen", "screen", "fullscreen"));
 
@@ -261,15 +261,15 @@ public class Settings extends JPanel {
         return createSettingsItem(text, rightPanel);
     }
 
-    private JPanel createDropDownPanel(String text, String key, JComboBox<String> sourceBox){
+    private JPanel createDropDownPanel(JComboBox<String> sourceBox){
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setOpaque(false);
 
         rightPanel.add(sourceBox, rightGBC);
 
-        dropDownList.put(key, sourceBox);
+        dropDownList.put("screen_resolution", sourceBox);
 
-        return createSettingsItem(text, rightPanel);
+        return createSettingsItem("Screen Size", rightPanel);
     }
 
     private JPanel footer(){

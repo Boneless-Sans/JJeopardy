@@ -5,9 +5,6 @@ import com.boneless.util.ButtonIcon;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
 import java.awt.*;
 
 import static com.boneless.Main.*;

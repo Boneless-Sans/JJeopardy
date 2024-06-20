@@ -49,7 +49,6 @@ public class Main extends JFrame implements KeyListener {
     }
 
     private static void checkSettingsFileIntegrity(){
-        System.out.println("Ran Method");
         File file = new File(System.getProperty("user.home") + "/settings.json");
 
         String[] items = {

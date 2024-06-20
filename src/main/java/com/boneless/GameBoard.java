@@ -8,7 +8,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static com.boneless.GameBoard.HeaderPanel.*;
@@ -151,7 +150,7 @@ public class GameBoard extends JPanel {
             setButtonsEnabled(true);
         });
 
-        popup.showPopUp("Exit Comfermation", "Do you wish to leave?", null, JPopUp.MESSAGE, exit, resume);
+        popup.showPopUp("Exit Confirmation", "Do you wish to leave?", null, JPopUp.MESSAGE, exit, resume);
     }
 
     private void setButtonsEnabled(boolean isEnabled){
