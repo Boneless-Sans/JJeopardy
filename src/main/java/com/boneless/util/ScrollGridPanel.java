@@ -23,9 +23,7 @@ public class ScrollGridPanel extends JPanel {
         setDoubleBuffered(true); //enable double buffer
         timer = new Timer(10, e -> updateOffsets());
 
-        if(Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "disable_background_scroll"))) {
-            timer.start();
-        }
+        timer.start();
 
         lastUpdateTime = System.currentTimeMillis();
     }
@@ -39,7 +37,7 @@ public class ScrollGridPanel extends JPanel {
     }
 
     private void updateOffsets() {
-        if(!Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "disable_background_scroll"))){
+        if(!Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", "play_background_ani"))){
             return;
         }
         long currentTime = System.currentTimeMillis();

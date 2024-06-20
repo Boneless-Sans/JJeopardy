@@ -48,7 +48,9 @@ public class Main extends JFrame implements KeyListener {
         SwingUtilities.invokeLater(() -> new Main(args));
     }
 
-        private static void checkSettingsFileIntegrity(){
+    @SuppressWarnings("ResultOfMethodCallIgnored") //SHUT THE FUCK UP
+    private static void checkSettingsFileIntegrity(){
+        System.out.println("Ran Method");
         File file = new File(System.getProperty("user.home") + "/settings.json");
 
         String[] items = {
@@ -59,24 +61,30 @@ public class Main extends JFrame implements KeyListener {
                 "screen#fullscreen@false",
                 "screen#screen_resolution@1600x900 (Default)",
                 "screen#always_on_top@false",
-                "screen#reduce_animations@false",
 
                 "misc#audio@false",
+                "misc#reduce_animations@false",
                 "misc#play_animations@true",
-                "misc#disable_scroll_animation@true"
+                "misc#play_background_ani@true"
         };
 
         try {
-            boolean shutUp = file.createNewFile();
+            System.out.println("Ran Try");
             settingsFile = file.getAbsolutePath();
 
             FileReader fr = new FileReader(settingsFile);
+            System.out.println("fr");
 
-            if(!String.valueOf(fr.read()).equals("-1")){
-                try(FileWriter fw = new FileWriter(settingsFile)){
+            if(file.createNewFile()) System.out.println("Settings file created");
+            else System.out.println("Settings file already exists");
+            System.out.println("Created File?");
+
+            if(!String.valueOf(fr.read()).equals("-1")) {
+                System.out.println("Ran");
+                try (FileWriter fw = new FileWriter(settingsFile)) {
                     fw.write("{}");
                 }
-            }
+            } else System.out.println("Did not run");
 
             fr.close();
 

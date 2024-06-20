@@ -142,15 +142,15 @@ public class Settings extends JPanel {
         panel.add(divider());
         panel.add(sectionLabel("Display"));
         panel.add(createDropDownPanel("Screen Size", "screen_resolution", resSizeDropDown));
-        panel.add(createTogglePanel("Always On Top", "always_on_top"));
-        panel.add(createTogglePanel("Full screen", "fullscreen"));
-        panel.add(createTogglePanel("Reduce Animations", "reduce_animations"));
-        panel.add(createTogglePanel("Play Question Card Animations", "play_card_animations"));
+        panel.add(createTogglePanel("Always On Top", "screen", "always_on_top"));
+        panel.add(createTogglePanel("Full screen", "screen", "fullscreen"));
 
         panel.add(divider());
         panel.add(sectionLabel("Misc"));
-        panel.add(createTogglePanel("Play Menu Animation", "disable_background_scroll"));
-        panel.add(createTogglePanel("Play Audio", "audio"));
+        panel.add(createTogglePanel("Play Menu Animation", "misc", "play_background_ani"));
+        panel.add(createTogglePanel("Reduce Animations", "misc", "reduce_animations"));
+        panel.add(createTogglePanel("Play Question Card Animations", "misc", "play_card_animations"));
+        panel.add(createTogglePanel("Play Audio", "misc", "audio"));
 
         panel.setPreferredSize(new Dimension(frameWidth, stackHeight + 100));
 
@@ -247,11 +247,11 @@ public class Settings extends JPanel {
         return createSettingsItem(text, rightPanel);
     }
 
-    private JPanel createTogglePanel(String text, String key){
+    private JPanel createTogglePanel(String text, String parentKey, String key){
         JPanel rightPanel = new JPanel(new GridBagLayout());
         rightPanel.setOpaque(false);
 
-        ButtonIcon button = new ButtonIcon(64, Boolean.parseBoolean(JsonFile.read(settingsFile, "misc", key)));
+        ButtonIcon button = new ButtonIcon(64, Boolean.parseBoolean(JsonFile.read(settingsFile, parentKey, key)));
         button.addActionListener(e -> changesMade = true);
 
         rightPanel.add(button, rightGBC);
